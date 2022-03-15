@@ -23,23 +23,25 @@ const Container = styled.div`
         padding-left: 20px;
         padding-right: 20px;
     }
-
+    .wrapper {
+        display: block;
+        justify-content: center;
+        width: 270px;
+    }
     .toggle-btn{
         background: url("../img/toggle_blue.svg");
-        width: 28px;
+        width: 27px;
         height: 18px;
         cursor: pointer;
         text-indent: -9999px;
         margin: 28px 0px;
     }
-
     .title-group{
         display: flex;
         justify-content: center;
         align-items: center;
         margin: 0 auto;
     }
-
     .title-group .logo {
         background: url("../img/owl.svg");
         width: 36px;
@@ -78,7 +80,9 @@ const Header = () => {
         <Sidebar/>
         <Container>
             <div className="inner">
-                <div className={`toggle-btn ${isToggle ? "on" : ""}`} onClick={changeToggle}>Header Menu Button</div>
+                <div className="wrapper">
+                    <div className={`toggle-btn ${isToggle ? "on" : ""}`} onClick={changeToggle}>Header Menu Button</div>
+                </div>
                 <div className="title-group">
                     <div className="logo">부엉이</div>
                     <Link href="/">
