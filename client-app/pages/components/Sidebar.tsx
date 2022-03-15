@@ -4,6 +4,7 @@ import styled, { css } from "styled-components";
 import { useSelector } from "../../store";
 import { commonState } from "../../store/common";
 import Button from "./common/Button";
+import Input from "./common/Input";
 
 interface StyledProps {
   istoggle: boolean;
@@ -162,13 +163,16 @@ const Sidebar = () => {
           Header Menu Button
         </div>
         <form id="search-form" method="post" action="#">
-          <input
-            type="text"
-            id="search"
-            className="input--text"
-            placeholder="Search"
-          />
-          <input type="submit" value="submit" />
+            <Input 
+                type="text" 
+                id="search"
+                placeholder="Search"
+            />
+            <Input
+                type="submit"
+                value="submit"
+            />
+          {/* <input type="submit" value="submit" /> */}
         </form>
         <div className="btn-group toggle">
           <Button>Login</Button>
