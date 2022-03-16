@@ -9,6 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^33.0.0",
+    "@ckeditor/ckeditor5-react": "^4.0.0",
+    "@fortawesome/fontawesome-svg-core": "^6.1.0",
+    "@fortawesome/free-brands-svg-icons": "^6.1.0",
+    "@fortawesome/free-solid-svg-icons": "^6.1.0",
+    "@fortawesome/react-fontawesome": "^0.1.17",
     "@reduxjs/toolkit": "^1.8.0",
     "@types/styled-components": "^5.1.24",
     "babel-plugin-styled-components": "^2.0.6",
@@ -20,6 +26,7 @@
     "styled-components": "^5.3.3"
   },
   "devDependencies": {
+    "@types/ckeditor__ckeditor5-build-classic": "^29.0.1",
     "@types/node": "^17.0.21",
     "@types/react": "17.0.40",
     "eslint": "8.11.0",
