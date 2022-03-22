@@ -1,4 +1,9 @@
 {
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "concurrently \"dotnet watch run\" \"cd client-app && npm run dev\""
+  },
   "dependencies": {
     "concurrently": "^7.0.0"
   }
