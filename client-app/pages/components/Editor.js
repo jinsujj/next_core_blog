@@ -10,6 +10,17 @@ const Container = styled.div`
         border-left: 5px solid #eee;
     }
 
+    ul li  {
+    padding: 5px 0px 5px 5px;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #efefef;
+    }
+
+    ol li{
+        margin-bottom: .5rem;
+    }   
+
+
     pre{
         display: block;
         padding: 9.5px;
@@ -55,9 +66,9 @@ const Editor = () => {
                 ['help', ['help']]
             ],
             focus: true,
-            fontNames: ['Arial', 'Courier New', '맑은 고딕',  '굴림체', '굴림', '돋음체', 'Montserrat', 'Nanum Gothic', 'Nanum Gothic Coding', 'NanumHimNaeRaNeunMarBoDan','NanumBaReunHiPi'],
-            fontNamesIgnoreCheck: ['Arial', 'Courier New', '맑은 고딕', '굴림체', '굴림', '돋음체','Montserrat', 'Nanum Gothic', 'Nanum Gothic Coding','NanumHimNaeRaNeunMarBoDan','NanumBaReunHiPi'],
-            fontSizes: ['8', '9', '10', '11', '12', '14', '15', '16', '18', '20', '22', '24', '28', '30', '36', '50', '72'],
+            fontNames: ['Arial', 'Courier New', '맑은 고딕', '굴림체', '굴림', '돋음체', 'Montserrat', 'Nanum Gothic', 'Nanum Gothic Coding', 'NanumHimNaeRaNeunMarBoDan', 'NanumBaReunHiPi'],
+            fontNamesIgnoreCheck: ['Arial', 'Courier New', '맑은 고딕', '굴림체', '굴림', '돋음체', 'Montserrat', 'Nanum Gothic', 'Nanum Gothic Coding', 'NanumHimNaeRaNeunMarBoDan', 'NanumBaReunHiPi'],
+            fontSizes: ['10', '11', '12', '14', '15', '16', '18', '20', '22', '24', '28', '30', '36', '50', '72'],
             callbacks: {
                 onImageUpload: function (files) {
                     that = $(this);
