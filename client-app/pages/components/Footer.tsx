@@ -47,6 +47,15 @@ const Container = styled.footer`
   .float--right {
     float: right;
   }
+
+  p{
+      margin: 0;
+      padding: 0;
+      border: 0;
+      font-size: 100%;
+      font: inherit;
+      vertical-align: baseline;
+  }
 `;
 
 const Footer = () => {
@@ -54,8 +63,8 @@ const Footer = () => {
     <Container>
       <div className="inner clearfix">
         <div className="float--left">
-          <h2>©copyright Sasim</h2> <br />
-          <h3>Powered by Next.js + .Net Core</h3>
+          <p>©copyright Sasim</p> <br />
+          <p>Powered by Next.js + .Net Core</p>
         </div>
         <ul className="site-links float--right">
           <li>

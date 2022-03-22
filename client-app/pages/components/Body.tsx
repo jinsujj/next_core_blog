@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import Editor from "./Editor";
 
 const Container = styled.div`
   margin-top: 56px;
@@ -88,7 +89,9 @@ const Body = () => {
             </div>
           </div>
           <div className="board clearfix">
-            <div className="board"></div>
+            <div className="board">
+              <Editor/>
+            </div>
           </div>
         </div>
       </div>
