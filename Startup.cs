@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace Next_Core_Blog
 {
@@ -27,7 +28,6 @@ namespace Next_Core_Blog
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
             services.AddCors(options => {
                 options.AddPolicy("Dev", builder => {
@@ -74,10 +74,16 @@ namespace Next_Core_Blog
 
             app.UseRouting();
 
-            // necessary Setting 
+            // useCors should be located between useRouting and UseAuthorization
             app.UseCors("Dev");
             app.UseAuthentication();
             app.UseAuthorization();
+
+            // Nginx Reverse Proxy Reliase
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
 
             app.UseEndpoints(endpoints =>
             {

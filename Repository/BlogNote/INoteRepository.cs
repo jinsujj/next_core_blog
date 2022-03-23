@@ -9,12 +9,12 @@ namespace Next_Core_Blog.Repository.BlogNote
     public interface INoteRepository
     {
         // Note CRUD
-        int PostNode(Note note, BoardWriteFormType formType) ;
+        int PostNote(Note note, BoardWriteFormType formType) ;
         int DeleteNode (int id);
 
         // Get Note
         Task<IEnumerable<Note>> GetNoteAll();
-        Task<IEnumerable<Note>> GetNoteByCategory(int categoryId, int subCategoryId );
+        Task<IEnumerable<Note>> GetNoteByCategory(string category, string subCategory);
         Task<IEnumerable<Note>> GetNoteBySearch(string searchQuery);
         Note GetNoteById(int id);
 
