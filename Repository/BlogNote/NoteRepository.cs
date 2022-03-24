@@ -63,17 +63,23 @@ namespace Next_Core_Blog.Repository.BlogNote
 
         public async Task<IEnumerable<Note>> GetNoteByCategory(string category, string subCategory = "")
         {
-            string sql = @"SELECT *
+            string ParamCategory = "";
+            string ParamSubCategory = "";
+
+            if(!string.IsNullOrEmpty(category)) ParamCategory = "AND b.Name = @category";
+            if(!string.IsNullOrEmpty(subCategory)) ParamSubCategory = "AND c.Name = @subCategory";
+
+            string sql = string.Format(@"SELECT *
                             FROM note a
                             WHERE a.CategoryId IN (
                                 SELECT b.CategoryId
                                 FROM category b, subcategory c
                                 WHERE b.CategoryId = c.CategoryId
-                                AND b.Name = @category
-                                AND c.Name = @subCategory
+                                {0}
+                                {1}
                             )
                             AND IsPost ='Y'
-                        ";
+                        ",ParamCategory, ParamSubCategory);
 
             using (var con = _context.CreateConnection())
             {
