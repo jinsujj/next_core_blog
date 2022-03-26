@@ -12,6 +12,7 @@ using Next_Core_Blog.Repository.Users;
 
 namespace Next_Core_Blog.Controllers
 {
+    [Route("api/User")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -86,6 +87,7 @@ namespace Next_Core_Blog.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError("error" + ex);
                 return StatusCode(500, ex.Message);
             }
         }
