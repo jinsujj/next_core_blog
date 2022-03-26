@@ -13,6 +13,9 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
+using Next_Core_Blog.Context;
+using Next_Core_Blog.Repository.BlogNote;
+using Next_Core_Blog.Repository.Users;
 
 namespace Next_Core_Blog
 {
@@ -29,6 +32,12 @@ namespace Next_Core_Blog
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            // Connect Mysql Interface as Singleton
+            services.AddSingleton<DapperContext>();
+            services.AddScoped<INoteRepository, NoteRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+
             services.AddCors(options => {
                 options.AddPolicy("Dev", builder => {
                     builder.WithMethods("GET","POST","PATCH","DELETE")
