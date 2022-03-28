@@ -1,11 +1,12 @@
 import React from "react";
 import styled from "styled-components";
+import palette from "../../../styles/palette";
 
 const Container = styled.input`
   width: 100%;
   height: 40px;
   padding: 2px 10px;
-  border: 1px solid #18a0fb;
+  border: 1px solid ${palette.blue_fb};
   border-radius: 4px;
   box-sizing: border-box;
   outline: none;
@@ -14,7 +15,7 @@ const Container = styled.input`
   line-height: 20px;
 
   &:focus {
-    border-color: #51a7e8;
+    border-color: ${palette.blue_e8};
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075),
       0 0 5px rgba(81, 167, 232, 0.5);
   }
