@@ -57,6 +57,39 @@ namespace Next_Core_Blog.Controllers
             }
         }
 
+        [HttpPost("PostCategory")]
+        public IActionResult PostCategory(string Category, string subCategory){
+            _logger.LogInformation("Category: " + Category + " SubCateghory:  " + subCategory + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+
+            try
+            {
+                var result = _noteRepo.PostCategory(Category, subCategory);
+                return Ok(result);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("error" + ex.Message);
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("{id}", Name = "NodeById")]
+        public IActionResult GetNoteById(int id)
+        {
+            _logger.LogInformation("GetNoteBySearch: " + id + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+
+            try
+            {
+                var note = _noteRepo.GetNoteById(id);
+                return Ok(note);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("error" + ex.Message);
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpDelete("{id}")]
         public IActionResult DeleteNote(int id){
             _logger.LogInformation("DeleteNote: " + id + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
@@ -121,22 +154,6 @@ namespace Next_Core_Blog.Controllers
             }
         }
 
-        [HttpGet("{id}", Name = "NodeById")]
-        public IActionResult GetNoteById(int id)
-        {
-            _logger.LogInformation("GetNoteBySearch: " + id + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
-
-            try
-            {
-                var note = _noteRepo.GetNoteById(id);
-                return Ok(note);
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError("error" + ex.Message);
-                return StatusCode(500, ex.Message);
-            }
-        }
 
         [HttpGet("noteCountAll")]
         public IActionResult GetCountAll()

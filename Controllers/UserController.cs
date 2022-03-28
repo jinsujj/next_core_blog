@@ -45,7 +45,7 @@ namespace Next_Core_Blog.Controllers
         }
 
 
-        [HttpGet]
+        [HttpGet("Login")]
         [Produces("application/json")]
         public IActionResult Login(LoginModel model)
         {
@@ -93,7 +93,7 @@ namespace Next_Core_Blog.Controllers
         }
 
 
-        [HttpGet]
+        [HttpGet("Logout")]
         [Produces("application/json")]
         public IActionResult Logout()
         {

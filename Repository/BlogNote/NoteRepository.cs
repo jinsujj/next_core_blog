@@ -116,6 +116,26 @@ namespace Next_Core_Blog.Repository.BlogNote
             }
         }
 
+        public int PostCategory(string Category, string SubCategory ="")
+        {
+            string sql = @"INSERT INTO category (Name) VALUES (@Category)";
+            string resultSql = @"SELECT CategoryId FROM category WHERE Name = @Category";
+
+            string subSql = @"INSERT INTO category (CategoryId, Name) VALUES (@CategoryId ,@SubCategory)";
+            
+            using (var con = _context.CreateConnection())
+            {
+                var CategoryId = con.QueryFirstOrDefault<int>(sql, new {Category });
+                CategoryId = con.QueryFirstOrDefault<int>(resultSql, new {Category});
+                if(!string.IsNullOrEmpty(SubCategory))
+                {
+                    con.Query<int>(subSql, new {CategoryId, SubCategory});
+                }
+
+                return CategoryId;
+            }
+        }
+
         public int PostNote(Note note, BoardWriteFormType formType)
         {
             int result = 0;
@@ -127,8 +147,8 @@ namespace Next_Core_Blog.Repository.BlogNote
             param.Add("@Content", value: note.Content, dbType: DbType.String);
             param.Add("@Password", value: note.Password, dbType: DbType.String);
             param.Add("@ThumbImage", value: note.ThumbImage, dbType: DbType.String);
-            param.Add("@IsPost", value: note.ThumbImage, dbType: DbType.String);
-            param.Add("@CategoryId", value: note.ThumbImage, dbType: DbType.String);
+            param.Add("@IsPost", value: note.IsPost, dbType: DbType.String);
+            param.Add("@CategoryId", value: note.CategoryId, dbType: DbType.String);
 
             if (formType == BoardWriteFormType.create)
             {
