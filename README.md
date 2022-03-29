@@ -20,3 +20,17 @@ npm i babel-plugin-styled-components
 프로젝트 루트에 .babelrc 파일을 추가하고, 위와 같이 작성한다.
 nextjs 에서 바벨 설정을 추가할떄는 next/babel 프리셋을 항상 추가해야함을 잊지 말자!
 ```
+
+
+에디터 히스토리
+```
+1. CKEditor 에디터
+-> typescript 지원 안됨.
+
+2. SummerNote 에디터
+-> typescript 지원 안됨. 
+-> 이전 개발블로그에 사용한 CDN 방식으로 구현 (아래 에러 발생)
+  "has been blocked by CORS policy: Cross origin requests are only supported for protocol schemes: http, data, chrome, chrome-extension, chrome-untrusted, https." 
+-> 1.UseCors 설정했음에도, CDN js module 다운 방식 때문에 위반.
+   2. ts 형식이 제공안되서 강제 js 변환해야해, babel 에러 발생
+```
