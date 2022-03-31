@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-
+import noteApi from "../../api/note";
 
 const Container = styled.div`
     blockquote {
@@ -43,7 +43,22 @@ const Editor = () => {
     const onClickButton = () => {
         $('#summernote').summernote('focus');
         setData($('#summernote').summernote('code'));
+
+        // var result = noteApi.getNoteAll().then(
+        //     (response) => {
+        //        console.log(response.data);
+        //        setData(response.data);
+        //     }
+        // )
+
+        var result = noteApi.getNoteById(3).then(
+            (response) =>{
+                setData(response);
+                console.log(response);
+            }
+        )
     }
+
 
     useEffect(() => {
         $('#summernote').summernote({
