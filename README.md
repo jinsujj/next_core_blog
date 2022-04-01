@@ -1,5 +1,17 @@
 # next_core_blog
+> ### 부엉이 개발 블로그 사이트.
+Full Stack 개발자가 되기 위해 쌓아온 그간의 경험을 모아서, 최신 기술을 합해서 리뉴얼 한 개발 블로그.
 
+<p align="left">
+<img src="https://jinsujj.github.io/github_css_study/img/next_core_blog.jpg" height="400" width="400" />
+</p>
+
+>  Front-end : Next.js  <br>
+>  Back-end  : .Net Core 5 <br>
+>  Language  : typescript , C# , SQL <br>
+>  Database  : MySQL 
+
+<br/><br/>
 Warning : Props 'className' did not match
 ```
 next로 styled-components로 스타일 적용하고, 개발 서버를 띄워서 확인해보면 첫 페이지 로딩은 문제없이 잘 작동하고, 새로고침 이후 Warning : Props 'className' did not match. Server : "블라블라" Client: :"블라블라" 경고메세지가 출력되고, 화면 스타일이 사라져버린다!
