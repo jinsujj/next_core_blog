@@ -1,9 +1,11 @@
 import React from "react";
 import styled from "styled-components";
+import colorChange from "../../../styles/colorChange";
 import palette from "../../../styles/palette";
 
 interface StyledProps {
     width: string;
+    color?: string
 }
 
 const Container = styled.button<StyledProps>`
@@ -22,7 +24,8 @@ const Container = styled.button<StyledProps>`
     text-align: center;
 
     color: ${palette.blue_fb};
-    background: white;
+    color: ${(props) => props.color === '' ? palette.blue_fb: 'white'} ;
+    background: ${(props) => props.color === '' ? 'white': props.color} ;
     font-size: 16px;
     font-weight: 500;
 
@@ -35,20 +38,20 @@ const Container = styled.button<StyledProps>`
 interface IProps {
     children : React.ReactNode;
     width?: string;
+    color?: string;
     onClick?: () => void;
 }
 
-const Button = ({children, width, ...props}: IProps) => {
+const Button = ({children, width, color, ...props}: IProps) => {
     if(width === undefined) width= "130px";
+    color = colorChange(color||'');
 
     return (
-        <Container {...props} width={width}>
+        <Container {...props} width={width} color={color}>
             {children}
         </Container>
     )
 };
-
-
 /*
   회원가입, 로그인 폼은 무수한 useState 로 인하여 인풋 변경 시마다 렌더링 발생
   가능한 컴포넌트를 분리하여 리렌더를 막을 수 있다면 좋겠지만, SignUpModal 이 모든

@@ -1,6 +1,9 @@
 import React from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import noteApi from "../../api/note";
+import palette from "../../styles/palette";
+import Input from "./common/Input";
 import Editor from "./Editor";
 
 const Container = styled.div`
@@ -15,7 +18,7 @@ const Container = styled.div`
   }
 
   .summary {
-    border-bottom: 2px solid #219653;
+    border-bottom: 2px solid ${palette.green_53};
     width: 100%;
   }
 
@@ -23,11 +26,21 @@ const Container = styled.div`
     font-weight: 600;
     font-size: 32px;
   }
+  
+  .summary__write {
+    border-bottom: 2px solid ${palette.green_53};
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  .post_info {
+    margin-top: 12px;
+  }
 
   .post_info ul {
     font-weight: 400;
     font-size: 14px;
-    line-height: 17px;
     color: black;
   }
 
@@ -35,20 +48,19 @@ const Container = styled.div`
     float: left;
     font-weight: 400;
     font-size: 14px;
-    line-height: 17px;
     color: black;
     margin-left: 5px;
-    padding-top: 4px;
+    padding-top: 12px;
   }
 
   .post_info ul li {
     float: left;
     font-weight: bold;
     font-size: 14px;
-    line-height: 17px;
     color: black;
+    line-height: 8px;
     margin-left: 5px;
-    padding-top: 4px;
+    padding-top: 12px;
   }
 
   .board {
@@ -71,27 +83,35 @@ const Container = styled.div`
 `;
 
 const Body = () => {
+  const [isWriteMode, setWriteMode] = useState(false);
 
   return (
     <Container>
       <div className="inner">
         <div className="board">
-          <div className="summary clearfix">
-            <h2 className="summary__title float--left">Title</h2>
-            <div className="post_info float--right">
-              <ul>
-                <li>작성일</li>
-                <li>2021.12.03</li>
-              </ul>
-              <ul>
-                <li>조회수</li>
-                <li>5621</li>
-              </ul>
+          {isWriteMode && (
+            <div className="summary clearfix">
+              <h2 className="summary__title float--left">Title</h2>
+              <div className="post_info float--right">
+                <ul>
+                  <li>작성일</li>
+                  <li>2021.12.03</li>
+                </ul>
+                <ul>
+                  <li>조회수</li>
+                  <li>5621</li>
+                </ul>
+              </div>
             </div>
-          </div>
+          )}
+          {!isWriteMode && (
+            <div className="summary clearfix">
+              <Input type="text" placeholder="제목" color="gray_cd" focusColor="gray_80"/>
+            </div>
+          )}
           <div className="board clearfix">
             <div className="board">
-              <Editor/>
+              <Editor />
             </div>
           </div>
         </div>

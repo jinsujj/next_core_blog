@@ -5,6 +5,8 @@
     "start": "concurrently \"dotnet watch run\" \"cd client-app && npm run dev\""
   },
   "dependencies": {
-    "concurrently": "^7.0.0"
+    "@types/react-dom": "^17.0.14",
+    "concurrently": "^7.0.0",
+    "react-dom": "^18.0.0"
   }
 }

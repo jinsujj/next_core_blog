@@ -22,9 +22,12 @@ export default {
     gray_eb: "#ebebeb",
     gray_e5: "#e5e5e5",
     gray_f7: "#f7f7f7",
+    gray_D9: "#D7D9D9",
+    gray_cd: "#cdcdcd",
     dark_cyan: "#008489",
-    green: "#008A05",
     blue_fb: "#18a0fb",
     blue_e8: "51a7e8",
+    green_8D: "#61C88D",
+    green_53: "#219653",
   };
   

@@ -14,6 +14,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <title>사심가득 블로그</title>
       </Head>
       <Component {...pageProps} />
+      <div id="root-modal"/>
     </>
   );
 }
