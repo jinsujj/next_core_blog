@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import noteApi from "../../api/note";
 import Editor from "./Editor";
 
 const Container = styled.div`
@@ -70,7 +71,7 @@ const Container = styled.div`
 `;
 
 const Body = () => {
-    
+
   return (
     <Container>
       <div className="inner">

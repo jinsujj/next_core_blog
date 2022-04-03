@@ -29,7 +29,7 @@ namespace Next_Core_Blog.Repository.BlogNote
 
             using (var con = _context.CreateConnection())
             {
-                return con.Execute(sql, new {id = id});
+                return con.Execute(sql, new { id = id });
             }
         }
 
@@ -42,32 +42,32 @@ namespace Next_Core_Blog.Repository.BlogNote
 
             using (var con = _context.CreateConnection())
             {
-                var count = await con.QuerySingleAsync<int>(sql);
-                return count;
+                var result = await con.QueryFirstOrDefaultAsync<int>(sql);
+                return result;
             }
         }
 
-        public async Task<IEnumerable<Note>> GetNoteAll()
+        public async Task<IEnumerable<GetNote>> GetNoteAll()
         {
-            string sql = @"SELECT *
+            string sql = @"SELECT noteId, title, userId, content, postDate, modifyDate, thumbImage, categoryId, readCount, postIp, modifyIp
                             FROM note
                             WHERE isPost = 'Y'
                         ";
 
             using (var con = _context.CreateConnection())
             {
-                var notes = await con.QueryAsync<Note>(sql);
+                var notes = await con.QueryAsync<GetNote>(sql);
                 return notes.ToList();
             }
         }
 
-        public async Task<IEnumerable<Note>> GetNoteByCategory(string category, string subCategory = "")
+        public async Task<IEnumerable<GetNote>> GetNoteByCategory(string category, string subCategory = "")
         {
             string ParamCategory = "";
             string ParamSubCategory = "";
 
-            if(!string.IsNullOrEmpty(category)) ParamCategory = "AND b.Name = @category";
-            if(!string.IsNullOrEmpty(subCategory)) ParamSubCategory = "AND c.Name = @subCategory";
+            if (!string.IsNullOrEmpty(category)) ParamCategory = "AND b.Name = @category";
+            if (!string.IsNullOrEmpty(subCategory)) ParamSubCategory = "AND c.Name = @subCategory";
 
             string sql = string.Format(@"SELECT *
                             FROM note a
@@ -79,28 +79,28 @@ namespace Next_Core_Blog.Repository.BlogNote
                                 {1}
                             )
                             AND IsPost ='Y'
-                        ",ParamCategory, ParamSubCategory);
+                        ", ParamCategory, ParamSubCategory);
 
             using (var con = _context.CreateConnection())
             {
-                var notes = await con.QueryAsync<Note>(sql, new { category, subCategory });
+                var notes = await con.QueryAsync<GetNote>(sql, new { category, subCategory });
                 return notes.ToList();
             }
         }
 
-        public Note GetNoteById(int id)
+        public GetNote GetNoteById(int id)
         {
-            string sql = @"SELECT *
+            string sql = @"SELECT noteId, title, userId, content, postDate, modifyDate, thumbImage, categoryId, readCount, postIp, modifyIp
                             FROM note
                             WHERE NoteId = @id
                             AND IsPost ='Y'
                         ";
 
             var con = _context.CreateConnection();
-            return con.QuerySingleOrDefault<Note>(sql, new { id });
+            return con.QuerySingleOrDefault<GetNote>(sql, new { id });
         }
 
-        public async Task<IEnumerable<Note>> GetNoteBySearch(string searchQuery)
+        public async Task<IEnumerable<GetNote>> GetNoteBySearch(string searchQuery)
         {
             string sql = @"SELECT *
                             FROM note
@@ -111,28 +111,39 @@ namespace Next_Core_Blog.Repository.BlogNote
 
             using (var con = _context.CreateConnection())
             {
-                var notes = await con.QueryAsync<Note>(sql, new { searchQuery = "%" + searchQuery + "%" });
+                var notes = await con.QueryAsync<GetNote>(sql, new { searchQuery = "%" + searchQuery + "%" });
                 return notes.ToList();
             }
         }
 
-        public int PostCategory(string Category, string SubCategory ="")
+        public int PostCategory(string Category, string SubCategory = "")
         {
-            string sql = @"INSERT INTO category (Name) VALUES (@Category)";
-            string resultSql = @"SELECT CategoryId FROM category WHERE Name = @Category";
+            // Category 유무 Check
+            string sql = @"SELECT CategoryId FROM category WHERE Name = @Category";
+            string insertCategory = @"INSERT INTO category (Name) VALUES (@Category)";
+            string insertSubCategory = @"INSERT INTO subcategory (CategoryId, Name) VALUES (@CategoryId ,@SubCategory)";
 
-            string subSql = @"INSERT INTO category (CategoryId, Name) VALUES (@CategoryId ,@SubCategory)";
-            
             using (var con = _context.CreateConnection())
             {
-                var CategoryId = con.QueryFirstOrDefault<int>(sql, new {Category });
-                CategoryId = con.QueryFirstOrDefault<int>(resultSql, new {Category});
-                if(!string.IsNullOrEmpty(SubCategory))
-                {
-                    con.Query<int>(subSql, new {CategoryId, SubCategory});
-                }
+                int isCategoryExist = con.QueryFirstOrDefault<int>(sql, new { Category });
 
-                return CategoryId;
+                // Category new create
+                if (isCategoryExist == 0)
+                {
+                    con.QueryFirstOrDefault<int>(insertCategory, new { Category });
+                    int CategoryId = con.QueryFirstOrDefault<int>(sql, new { Category });
+                    con.QueryFirstOrDefault(insertSubCategory, new { CategoryId = CategoryId , SubCategory });
+                    return 1;
+                }
+                // Category add  
+                else
+                {
+                    if (!String.IsNullOrEmpty(SubCategory)){
+                         con.QueryFirstOrDefault(insertSubCategory, new { CategoryId =isCategoryExist, SubCategory });
+                         return 1;
+                    }
+                }
+                return -1;
             }
         }
 
@@ -140,7 +151,7 @@ namespace Next_Core_Blog.Repository.BlogNote
         {
             int result = 0;
             var param = new DynamicParameters();
-            string sql ="";
+            string sql = "";
 
             param.Add("@Title", value: note.Title, dbType: DbType.String);
             param.Add("@UserId", value: note.UserId, dbType: DbType.Int32);
@@ -176,7 +187,8 @@ namespace Next_Core_Blog.Repository.BlogNote
                         ";
             }
 
-            using(var con = _context.CreateConnection()){
+            using (var con = _context.CreateConnection())
+            {
                 result = con.Execute(sql, param, commandType: CommandType.Text);
                 return result;
             }

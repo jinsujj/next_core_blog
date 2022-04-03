@@ -38,6 +38,11 @@ namespace Next_Core_Blog
             services.AddScoped<INoteRepository, NoteRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
 
+            // Controller loopHandling
+            services.AddControllers().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
+
             services.AddCors(options => {
                 options.AddPolicy("Dev", builder => {
                     builder.WithMethods("GET","POST","PATCH","DELETE")

@@ -45,18 +45,25 @@ const Editor = () => {
         setData($('#summernote').summernote('code'));
 
         // var result = noteApi.getNoteAll().then(
-        //     (response) => {
-        //        console.log(response.data);
-        //        setData(response.data);
+        //     (res) => {
+        //        console.log(res);
+        //        setData(res);
         //     }
         // )
+        //  console.log(result);
 
-        var result = noteApi.getNoteById(3).then(
-            (response) =>{
-                setData(response);
-                console.log(response);
+        var result = noteApi.getNoteCountAll().then(
+            (res) => {
+                console.log(res);
             }
         )
+
+        // var result = noteApi.getNoteById(3).then(
+        //     (response) =>{
+        //         setData(response);
+        //         console.log(response);
+        //     }
+        // )
     }
 
 
@@ -86,7 +93,7 @@ const Editor = () => {
             fontSizes: ['10', '11', '12', '14', '15', '16', '18', '20', '22', '24', '28', '30', '36', '50', '72'],
             callbacks: {
                 onImageUpload: function (files) {
-                    that = $(this);
+                    const that = $(this);
                     sendFile(files[0], that);
                 }
             },

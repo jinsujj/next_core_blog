@@ -14,10 +14,10 @@ namespace Next_Core_Blog.Repository.BlogNote
         int DeleteNode (int id);
 
         // Get Note
-        Task<IEnumerable<Note>> GetNoteAll();
-        Task<IEnumerable<Note>> GetNoteByCategory(string category, string subCategory);
-        Task<IEnumerable<Note>> GetNoteBySearch(string searchQuery);
-        Note GetNoteById(int id);
+        Task<IEnumerable<GetNote>> GetNoteAll();
+        Task<IEnumerable<GetNote>> GetNoteByCategory(string category, string subCategory);
+        Task<IEnumerable<GetNote>> GetNoteBySearch(string searchQuery);
+        GetNote GetNoteById(int id);
 
         Task<int> GetCountAll();
     }
