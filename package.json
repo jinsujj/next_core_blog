@@ -2,7 +2,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "concurrently \"dotnet watch run\" \"cd client-app && npm run dev\""
+    "caddy": "../caddy/caddy.exe reverse-proxy --from localhost:3030 --to localhost:3000",
+    "start": "concurrently \"yarn caddy\" \"dotnet watch run\" \"cd client-app && npm run dev\""
   },
   "dependencies": {
     "@types/react-dom": "^17.0.14",

@@ -172,7 +172,6 @@ const Sidebar = () => {
                 type="submit"
                 value="submit"
             />
-          {/* <input type="submit" value="submit" /> */}
         </form>
         <div className="btn-group toggle">
           <Button>Login</Button>

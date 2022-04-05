@@ -89,7 +89,7 @@ const Body = () => {
     <Container>
       <div className="inner">
         <div className="board">
-          {isWriteMode && (
+          {!isWriteMode && (
             <div className="summary clearfix">
               <h2 className="summary__title float--left">Title</h2>
               <div className="post_info float--right">
@@ -104,7 +104,7 @@ const Body = () => {
               </div>
             </div>
           )}
-          {!isWriteMode && (
+          {isWriteMode && (
             <div className="summary clearfix">
               <Input type="text" placeholder="제목" color="gray_cd" focusColor="gray_80"/>
             </div>

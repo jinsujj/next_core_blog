@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Text.Json;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -45,9 +46,9 @@ namespace Next_Core_Blog.Controllers
         }
 
 
-        [HttpGet("Login")]
+        [HttpPost("Login")]
         [Produces("application/json")]
-        public IActionResult Login(LoginModel model)
+        public IActionResult Login([FromBody] LoginViewModel model)
         {
             _logger.LogInformation("Login:" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
@@ -57,7 +58,7 @@ namespace Next_Core_Blog.Controllers
                 {
                     if (isLoginFailed(model.Email))
                     {
-                        return Ok(true);
+                         return Ok(false);
                     }
 
                     if (_userRepo.IsCorrectUser(model.Email, new Security().EncryptPassword(model.Password)))
@@ -72,7 +73,7 @@ namespace Next_Core_Blog.Controllers
 
                         var ci = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                         HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(ci)).Wait();
-                        return Ok();
+                        return Ok(userInfo.Name);
                     }
                     else
                     {

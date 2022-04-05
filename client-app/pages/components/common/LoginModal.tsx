@@ -1,6 +1,9 @@
+import { AxiosError } from "axios";
 import Router from "next/router";
 import React from "react";
+import { useState } from "react";
 import styled from "styled-components";
+import userApi from "../../../api/user";
 import useModal from "../../../hooks/useModal";
 import palette from "../../../styles/palette";
 import Button from "./Button";
@@ -55,25 +58,73 @@ const Container = styled.div`
   }
 `;
 
+interface LoginModel {
+  Email: string,
+  Password: string,
+}
+
 const LoginModal = () => {
   const { openModal, ModalPortal, closeModal } = useModal();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const Login = () => {};
+  const onChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(event.target.value);
+    setEmail(event.target.value);
+  };
+
+  const onChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(event.target.value);
+    setPassword(event.target.value);
+  };
+
+  const Login = () => {
+    const loginModel :LoginModel= {
+      Email: email,
+      Password: password,
+    };
+
+    const result = userApi.Login(loginModel).then(
+      (res) => {
+        console.log(res);
+        alert("로그인 확인");
+        closeModal();
+      }
+    ).catch(
+      (error : AxiosError) =>{
+        console.log(error);
+        alert("에러");
+      }
+    );
+  };
 
   const Register = () => {
-    <ModalPortal>
-      <SignUpModal />
-    </ModalPortal>;
+    closeModal();
+    return (
+      <ModalPortal>
+        <SignUpModal />
+      </ModalPortal>
+    );
   };
 
   return (
     <Container>
       <div className="title">Hello Dev World :D</div>
       <div className="button-group">
-        <Input type="text" color="gray_D9" placeholder="이메일" />
+        <Input
+          type="text"
+          color="gray_D9"
+          placeholder="이메일"
+          onChange={onChangeEmail}
+        />
       </div>
       <div className="button-group">
-        <Input type="password" color="gray_D9" placeholder="비밀번호" />
+        <Input
+          type="password"
+          color="gray_D9"
+          placeholder="비밀번호"
+          onChange={onChangePassword}
+        />
       </div>
       <Button width="100%" color="blue_fb" onClick={Login}>
         로그인

@@ -23,8 +23,8 @@ namespace Next_Core_Blog.Repository.Users
 
         public void AddUser(RegisterViewModel model)
         {
-            string sql = @"INSERT INTO user (Name, Email, Password)
-                            VALUES(@Name, @Email, @Password);";
+            string sql = @"INSERT INTO user (Name, Email, Password, FailedPasswordAttemptCount, Role)
+                            VALUES(@Name, @Email, @Password, 0, 'USER');";
 
             using (var con = _context.CreateConnection())
             {
@@ -37,7 +37,7 @@ namespace Next_Core_Blog.Repository.Users
 
         public RegisterViewModel GetUserByEmail(string Email)
         {
-            string sql = @"SELECT Name, Email
+            string sql = @"SELECT Name, Email, Role
                             FROM user
                             WHERE Email = @Email";
 

@@ -47,9 +47,11 @@ namespace Next_Core_Blog
                 options.AddPolicy("Dev", builder => {
                     builder.WithMethods("GET","POST","PATCH","DELETE")
                     .AllowCredentials()
+                    .AllowAnyHeader()
                     .SetIsOriginAllowed(origin => {
                         if(string.IsNullOrWhiteSpace(origin)) return false;
                         if(origin.ToLower().StartsWith("http://localhost")) return true;
+                        if(origin.ToLower().StartsWith("https://localhost")) return true;
                         return false;
                     });
                 });

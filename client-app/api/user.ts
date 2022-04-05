@@ -8,17 +8,17 @@ interface User {
     role?: string;
 }
 
-interface Login {
-    email: string,
-    password: string,
+export interface LoginModel {
+    Email: string,
+    Password: string,
 }
 
 const AddUser = (payload: User) => {
     return api.post<User>(`/api/User`, payload);
 }
 
-const Login = (loginViewModel : Login) => {
-    const result = api.get(`/api/User/Login`, { params: { loginViewModel }});
+const Login = (loginViewModel : LoginModel) => {
+    const result = api.post<LoginModel>(`/api/User/Login`, loginViewModel);
     return result;
 }
 
