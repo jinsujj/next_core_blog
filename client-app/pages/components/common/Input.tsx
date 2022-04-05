@@ -1,11 +1,14 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
+import { useSelector } from "../../../store";
 import colorChange from "../../../styles/colorChange";
 import palette from "../../../styles/palette";
 
 interface StyledProps {
   color: string;
   focusColor: string;
+  isValid : boolean;
+  useValidation : boolean;
 }
 
 const Container = styled.div<StyledProps>`
@@ -29,26 +32,62 @@ const Container = styled.div<StyledProps>`
         0 0 5px rgba(81, 167, 232, 0.5);
     }
   }
+
+  .input-error-message{
+    margin-top: 8px;
+    font-weight: 600;
+    font-size:14px;
+    color: ${palette.tawny};
+  }
+
+  ${({useValidation, isValid}) => 
+      useValidation &&
+        !isValid &&
+        css`
+          input{
+            background-color: ${palette.snow};
+            border-color: ${palette.orange};
+            & :focus {
+              border-color: ${palette.orange}
+            }
+          }
+        `}  
+   ${({useValidation, isValid}) => 
+        useValidation &&
+          isValid &&
+          css`
+            input {
+              border-color : ${palette.orange}
+            }
+          `
+    }
 `;
 
 interface IProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  type: string;
-  id?: string;
+  type?: string;
   color?: string;
   focusColor?: string;
   placeholder?: string;
   value?: string;
+  isValid?: boolean;
+  validateMode?: boolean;
+  useValidation: boolean;
+  errorMessage?: string;
 }
 
 const Input = ({
   type,
-  id,
   placeholder,
   value,
   color,
   focusColor,
+  isValid = false,
+  useValidation,
+  errorMessage,
   ...props
 }: IProps) => {
+  const validateMode = useSelector((state) => state.common.validateMode);
+
   color = colorChange(color || "");
   focusColor = colorChange(focusColor || "");
 
@@ -56,8 +95,13 @@ const Input = ({
     <Container
       color={color}
       focusColor={focusColor}
+      isValid ={isValid}
+      useValidation={validateMode && useValidation}
     >
-      <input type={type} id={id}   placeholder={placeholder} {...props} />
+      <input type={type} placeholder={placeholder} {...props} />
+      {useValidation && validateMode && !isValid && errorMessage && (
+        <p className="input-error-message">{errorMessage}</p>
+      )}
     </Container>
   );
 };

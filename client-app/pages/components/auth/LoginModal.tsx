@@ -1,16 +1,19 @@
 import { AxiosError } from "axios";
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
 import React from "react";
+import { useEffect } from "react";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import userApi from "../../../api/user";
 import useModal from "../../../hooks/useModal";
+import useValidateMode from "../../../hooks/useValidateMode";
 import palette from "../../../styles/palette";
-import Button from "./Button";
-import Input from "./Input";
+import Button from "../common/Button";
+import Input from "../common/Input";
 import SignUpModal from "./SignUpModal";
 
-const Container = styled.div`
+const Container = styled.form`
   z-index: 11;
   width: 540px;
   height: 400px;
@@ -58,63 +61,78 @@ const Container = styled.div`
   }
 `;
 
-interface LoginModel {
-  Email: string,
-  Password: string,
+interface IProps {
+  closeModal: () => void;
 }
 
-const LoginModal = () => {
-  const { openModal, ModalPortal, closeModal } = useModal();
+const LoginModal = ({closeModal}: IProps) => {
+  const { openModal, ModalPortal } = useModal();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
+  const {setValidateMode} = useValidateMode();
 
   const onChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.value);
     setEmail(event.target.value);
   };
 
   const onChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.value);
     setPassword(event.target.value);
   };
 
-  const Login = () => {
-    const loginModel :LoginModel= {
-      Email: email,
-      Password: password,
-    };
 
-    const result = userApi.Login(loginModel).then(
-      (res) => {
-        console.log(res);
-        alert("로그인 확인");
+  const onSubmitLogin = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setValidateMode(true);
+
+    if(!email || !password){
+      alert("Email 과 비밀번호를 입력해 주세요");
+    }
+    else{
+      const loginBody ={email, password};
+      try{
+        const {data} = await userApi.Login(loginBody);
+        setValidateMode(false);
         closeModal();
       }
-    ).catch(
-      (error : AxiosError) =>{
-        console.log(error);
-        alert("에러");
+      catch(e:any){
+        const errorMessage:string = e.message;
+        if(errorMessage.includes("401")){
+          alert("해당 계정이 없거나 비밀번호가 일치하지 않습니다");
+          return;
+        }
+        if(errorMessage.includes("400")){
+          alert("이메일 형식이 아닙니다");
+          return;
+        }
       }
-    );
+    }
   };
 
-  const Register = () => {
-    closeModal();
+  const Register = (e: React.MouseEvent<HTMLDivElement>) =>{
+    e.preventDefault();
     return (
       <ModalPortal>
-        <SignUpModal />
+        <SignUpModal closeModal={closeModal}/>
       </ModalPortal>
     );
   };
 
+  useEffect(() => {
+    return () =>{
+      setValidateMode(false);
+    }
+  },[]);
+
   return (
-    <Container>
+    <Container onSubmit={onSubmitLogin}>
       <div className="title">Hello Dev World :D</div>
       <div className="button-group">
         <Input
           type="text"
           color="gray_D9"
           placeholder="이메일"
+          useValidation
           onChange={onChangeEmail}
         />
       </div>
@@ -123,10 +141,11 @@ const LoginModal = () => {
           type="password"
           color="gray_D9"
           placeholder="비밀번호"
+          useValidation
           onChange={onChangePassword}
         />
       </div>
-      <Button width="100%" color="blue_fb" onClick={Login}>
+      <Button width="100%" color="blue_fb" type="submit">
         로그인
       </Button>
       <div className="route-menu">

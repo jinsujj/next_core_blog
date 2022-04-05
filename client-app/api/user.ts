@@ -9,8 +9,8 @@ interface User {
 }
 
 export interface LoginModel {
-    Email: string,
-    Password: string,
+    email: string,
+    password: string,
 }
 
 const AddUser = (payload: User) => {

@@ -61,7 +61,8 @@ namespace Next_Core_Blog.Controllers
                          return Ok(false);
                     }
 
-                    if (_userRepo.IsCorrectUser(model.Email, new Security().EncryptPassword(model.Password)))
+                    // if (_userRepo.IsCorrectUser(model.Email, new Security().EncryptPassword(model.Password)))
+                    if (_userRepo.IsCorrectUser(model.Email, model.Password))
                     {
                         RegisterViewModel userInfo = _userRepo.GetUserByEmail(model.Email);
                         var claims = new List<Claim>()
@@ -77,7 +78,8 @@ namespace Next_Core_Blog.Controllers
                     }
                     else
                     {
-                        return new UnauthorizedResult();
+                        _logger.LogError("email, password not matched");
+                        return StatusCode(401);
                     }
                 }
                 else

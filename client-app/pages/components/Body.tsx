@@ -106,7 +106,7 @@ const Body = () => {
           )}
           {isWriteMode && (
             <div className="summary clearfix">
-              <Input type="text" placeholder="제목" color="gray_cd" focusColor="gray_80"/>
+              <Input type="text" placeholder="제목" color="gray_cd" focusColor="gray_80" useValidation={false}/>
             </div>
           )}
           <div className="board clearfix">

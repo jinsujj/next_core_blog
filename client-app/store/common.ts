@@ -4,6 +4,7 @@ import {CommonState} from "../types/reduxState";
 // 초기상태
 const initialState: CommonState = {
     toggle: false,
+    validateMode: false,
 }
 
 const common = createSlice({
@@ -12,11 +13,14 @@ const common = createSlice({
     reducers: {
         setToggleMode(state, action: PayloadAction<boolean>){
             state.toggle = action.payload;
+        },
+        setValidateMode(state, action: PayloadAction<boolean>){
+            state.validateMode = action.payload;
         }
     }
 });
 
 
-export const commonState = {...common.actions};
+export const commonAction = {...common.actions};
 
 export default common;

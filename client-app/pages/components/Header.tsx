@@ -4,11 +4,11 @@ import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import useModal from "../../hooks/useModal";
 import { useSelector } from "../../store";
-import { commonState } from "../../store/common";
 import Button from "./common/Button";
-import LoginModal from "./common/LoginModal";
-import SignUpModal from "./common/SignUpModal";
+import LoginModal from "./auth/LoginModal";
 import Sidebar from "./Sidebar";
+import SignUpModal from "./auth/SignUpModal";
+import { commonAction } from "../../store/common";
 
 const Container = styled.div`
   border-bottom: 1px solid rgba(0, 0, 0, 0.15);
@@ -74,7 +74,7 @@ const Header = () => {
   const dispatch = useDispatch();
 
   const changeToggle = () => {
-    dispatch(commonState.setToggleMode(!isToggle));
+    dispatch(commonAction.setToggleMode(!isToggle));
     console.log(isToggle);
   };
 
@@ -114,10 +114,10 @@ const Header = () => {
             <Button onClick={onClickRegister}>Register</Button>
             <ModalPortal>
                 {clicklogin && (
-                    <LoginModal/>
+                    <LoginModal closeModal={closeModal}/>
                 )}
                 {!clicklogin && (
-                    <SignUpModal/>
+                    <SignUpModal closeModal={closeModal}/>
                 )}
             </ModalPortal>
           </div>
