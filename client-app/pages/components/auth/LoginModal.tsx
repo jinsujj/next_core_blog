@@ -8,6 +8,8 @@ import styled from "styled-components";
 import userApi from "../../../api/user";
 import useModal from "../../../hooks/useModal";
 import useValidateMode from "../../../hooks/useValidateMode";
+import { authAction } from "../../../store/auth";
+import { userActions } from "../../../store/user";
 import palette from "../../../styles/palette";
 import Button from "../common/Button";
 import Input from "../common/Input";
@@ -68,6 +70,7 @@ interface IProps {
 const LoginModal = ({closeModal}: IProps) => {
   const { openModal, ModalPortal } = useModal();
   const [email, setEmail] = useState("");
+  const [emailErrorMsg, setEmailErrorMsg] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const {setValidateMode} = useValidateMode();
@@ -92,31 +95,27 @@ const LoginModal = ({closeModal}: IProps) => {
       const loginBody ={email, password};
       try{
         const {data} = await userApi.Login(loginBody);
+        dispatch(userActions.setLoggedUser(data));
         setValidateMode(false);
         closeModal();
       }
       catch(e:any){
         const errorMessage:string = e.message;
         if(errorMessage.includes("401")){
-          alert("해당 계정이 없거나 비밀번호가 일치하지 않습니다");
+          setEmailErrorMsg('해당 계정이 없거나 비밀번호가 일치하지 않습니다');
           return;
         }
         if(errorMessage.includes("400")){
-          alert("이메일 형식이 아닙니다");
+          setEmailErrorMsg('이메일 형식이 아닙니다');
           return;
         }
       }
     }
   };
 
-  const Register = (e: React.MouseEvent<HTMLDivElement>) =>{
-    e.preventDefault();
-    return (
-      <ModalPortal>
-        <SignUpModal closeModal={closeModal}/>
-      </ModalPortal>
-    );
-  };
+  const changeToSignupModal = () =>{
+    dispatch(authAction.setAuthMode("signup"));
+  }
 
   useEffect(() => {
     return () =>{
@@ -132,7 +131,8 @@ const LoginModal = ({closeModal}: IProps) => {
           type="text"
           color="gray_D9"
           placeholder="이메일"
-          useValidation
+          useValidation ={emailErrorMsg.length >0}
+          errorMessage ={emailErrorMsg}
           onChange={onChangeEmail}
         />
       </div>
@@ -150,7 +150,7 @@ const LoginModal = ({closeModal}: IProps) => {
       </Button>
       <div className="route-menu">
         <div className="float--left">비밀번호 찾기</div>
-        <div className="float--right" onClick={Register}>
+        <div className="float--right" onClick={changeToSignupModal}>
           회원가입
         </div>
       </div>

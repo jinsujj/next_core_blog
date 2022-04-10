@@ -9,6 +9,9 @@ import LoginModal from "./auth/LoginModal";
 import Sidebar from "./Sidebar";
 import SignUpModal from "./auth/SignUpModal";
 import { commonAction } from "../../store/common";
+import HeaderAuths from "./HeaderAuth";
+import HeaderProfile from "./HeaderProfile";
+import AuthModal from "./auth/AuthModal";
 
 const Container = styled.div`
   border-bottom: 1px solid rgba(0, 0, 0, 0.15);
@@ -58,6 +61,7 @@ const Container = styled.div`
     font-size: 24px;
     font-weight: bold;
     line-height: 29px;
+    text-decoration: none;
   }
 
   .btn-group {
@@ -69,26 +73,17 @@ const Container = styled.div`
 `;
 
 const Header = () => {
-  const [clicklogin, setClickLogin] = useState(true);
   const isToggle = useSelector((state) => state.common.toggle);
+  const isLogged = useSelector((state) => state.user.isLogged);
+
+  const { openModal, ModalPortal, closeModal } = useModal();
   const dispatch = useDispatch();
 
   const changeToggle = () => {
     dispatch(commonAction.setToggleMode(!isToggle));
-    console.log(isToggle);
   };
 
-  const { openModal, ModalPortal, closeModal } = useModal();
 
-  const onClickLogin = () => {
-    setClickLogin(true);
-    openModal();
-  };
-
-  const onClickRegister = () =>{
-    setClickLogin(false);
-    openModal();
-  }
 
   return (
     <>
@@ -110,15 +105,10 @@ const Header = () => {
             </Link>
           </div>
           <div className="btn-group">
-            <Button onClick={onClickLogin}>Login</Button>
-            <Button onClick={onClickRegister}>Register</Button>
+            {isLogged && <HeaderProfile />}
+            {!isLogged && <HeaderAuths />}
             <ModalPortal>
-                {clicklogin && (
-                    <LoginModal closeModal={closeModal}/>
-                )}
-                {!clicklogin && (
-                    <SignUpModal closeModal={closeModal}/>
-                )}
+              <AuthModal closeModal={closeModal}/>
             </ModalPortal>
           </div>
         </div>

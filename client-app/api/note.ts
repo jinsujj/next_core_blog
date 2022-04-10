@@ -17,7 +17,7 @@ export interface Note {
     modifyIp?: string
 }
 
-type PostedNote = Omit<Note, "password">;
+export type PostedNote = Omit<Note, "password">;
 
 export interface Notes {
     NoteList : PostedNote[];
@@ -35,8 +35,7 @@ const postCategory = (category: string, subCategory: string) =>{
 
 
 const getNoteById = async (id : number) => {
-    const {data: note} = await api.get<PostedNote>(`/api/Note/${id}`);
-    return note;
+    return await api.get<PostedNote>(`/api/Note/${id}`);
 }
 
 const getNoteByCategory = async (category:string, subCategory: string) =>{

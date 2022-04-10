@@ -46,9 +46,6 @@ const useModal = () =>{
                 ref.current = dom;
             }
         },[]);
-        console.log(ref.current);
-        console.log(mounted);
-        console.log(modalOpened);
         
         if(ref.current && mounted && modalOpened) {
             return createPortal(

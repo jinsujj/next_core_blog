@@ -158,7 +158,6 @@ const Sidebar = () => {
 
   const changeToggle = () => {
     dispatch(commonAction.setToggleMode(!isToggle));
-    console.log(isToggle);
   };
 
   return (

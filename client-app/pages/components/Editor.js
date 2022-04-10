@@ -44,26 +44,11 @@ const Editor = () => {
         $('#summernote').summernote('focus');
         setData($('#summernote').summernote('code'));
 
-        // var result = noteApi.getNoteAll().then(
-        //     (res) => {
-        //        console.log(res);
-        //        setData(res);
-        //     }
-        // )
-        //  console.log(result);
-
         var result = noteApi.getNoteCountAll().then(
             (res) => {
                 console.log(res);
             }
         )
-
-        // var result = noteApi.getNoteById(3).then(
-        //     (response) =>{
-        //         setData(response);
-        //         console.log(response);
-        //     }
-        // )
     }
 
 

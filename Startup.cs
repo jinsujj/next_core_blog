@@ -1,11 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -61,7 +57,8 @@ namespace Next_Core_Blog
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>{
                 options.Cookie.Name = "UserLoginCookie";
                 options.SlidingExpiration = true;
-                options.ExpireTimeSpan = new TimeSpan(1,0,0);
+                options.SlidingExpiration = true;
+                options.ExpireTimeSpan = new TimeSpan(1,0,0);  //1 hour 0 min 0 sec
                 options.Events.OnRedirectToLogin = (context) =>{
                     context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                     return Task.CompletedTask;

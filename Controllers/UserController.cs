@@ -1,15 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
-using System.Text.Json;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Next_Core_Blog.CommonLibrary;
 using Next_Core_Blog.Model.User;
 using Next_Core_Blog.Repository.Users;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Next_Core_Blog.Controllers
 {
@@ -36,8 +40,17 @@ namespace Next_Core_Blog.Controllers
 
             if (ModelState.IsValid)
             {
-                _userRepo.AddUser(model);
-                return Ok();
+                // type convert
+                model.Name = model.Name.Trim();
+                model.Password = new Security().EncryptPassword(model.Password);
+
+                var result = _userRepo.AddUser(model);
+                if (result)
+                {
+                    return Ok(true);
+                }
+                else
+                    return StatusCode(401);
             }
             else
             {
@@ -58,11 +71,10 @@ namespace Next_Core_Blog.Controllers
                 {
                     if (isLoginFailed(model.Email))
                     {
-                         return Ok(false);
+                        return Ok(false);
                     }
 
-                    // if (_userRepo.IsCorrectUser(model.Email, new Security().EncryptPassword(model.Password)))
-                    if (_userRepo.IsCorrectUser(model.Email, model.Password))
+                    if (_userRepo.IsCorrectUser(model.Email, new Security().EncryptPassword(model.Password)))
                     {
                         RegisterViewModel userInfo = _userRepo.GetUserByEmail(model.Email);
                         var claims = new List<Claim>()
@@ -74,7 +86,7 @@ namespace Next_Core_Blog.Controllers
 
                         var ci = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                         HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(ci)).Wait();
-                        return Ok(userInfo.Name);
+                        return Ok(userInfo);
                     }
                     else
                     {
@@ -98,17 +110,47 @@ namespace Next_Core_Blog.Controllers
 
         [HttpGet("Logout")]
         [Produces("application/json")]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public IActionResult Logout()
         {
             try
             {
                 HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme).Wait();
-                return Ok();
+                return Ok("true");
             }
-            catch (Exception ex)
+            catch
             {
                 return StatusCode(500);
             }
+        }
+
+        [HttpGet("meAPI")]
+        [Produces("application/json")]
+        public RegisterViewModel meAPI()
+        {
+            
+            _logger.LogInformation("meAPI:" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+
+            // Get the encrypted cookie value
+            var opt = HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>();
+            var cookie = opt.CurrentValue.CookieManager.GetRequestCookie(HttpContext, "UserLoginCookie");
+            Dictionary<string, string> tokenInfo = new Dictionary<string, string>();
+
+            // Decrypt if found
+            if (!string.IsNullOrEmpty(cookie))
+            {
+                var dataProtector = opt.CurrentValue.DataProtectionProvider.CreateProtector("Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationMiddleware", CookieAuthenticationDefaults.AuthenticationScheme, "v2");
+                var ticketDataFormat = new TicketDataFormat(dataProtector);
+                var ticket = ticketDataFormat.Unprotect(cookie);
+                foreach(var claim in ticket.Principal.Claims)
+                {
+                    tokenInfo.Add(claim.Type, claim.Value);
+                }
+
+                RegisterViewModel userInfo = _userRepo.GetUserByEmail(tokenInfo["Email"]);
+                return userInfo;
+            }
+            return null;
         }
 
         private bool isLoginFailed(string Email)

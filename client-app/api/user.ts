@@ -18,18 +18,23 @@ const AddUser = (payload: User) => {
 }
 
 const Login = (loginViewModel : LoginModel) => {
-    const result = api.post<LoginModel>(`/api/User/Login`, loginViewModel);
+    const result = api.post<User>(`/api/User/Login`, loginViewModel);
     return result;
 }
 
 const Logout = () => {
-    return api.post(`/api/User/Logout`);
+    return api.get(`/api/User/Logout`);
+}
+
+const meAPI = async () => {
+    return  await api.get<User>(`/api/User/meAPI`);
 }
 
 const userApi = {
     AddUser,
     Login,
-    Logout
+    Logout,
+    meAPI
 }
 
 

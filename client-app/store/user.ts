@@ -4,8 +4,6 @@ import { UserState } from "../types/reduxState";
 const initialState: UserState = {
     name: '',
     email: '',
-    password: '',
-    confirmPassword: '',
     role: '',
     isLogged: false,
 };

@@ -21,17 +21,25 @@ namespace Next_Core_Blog.Repository.Users
             _logger = logger;
         }
 
-        public void AddUser(RegisterViewModel model)
+        public bool AddUser(RegisterViewModel model)
         {
+            string checkSql = "SELECT COUNT(*) FROM user WHERE Email = @Email";
+
             string sql = @"INSERT INTO user (Name, Email, Password, FailedPasswordAttemptCount, Role)
                             VALUES(@Name, @Email, @Password, 0, 'USER');";
 
             using (var con = _context.CreateConnection())
             {
+                var checkResult = con.QueryFirstOrDefault<int>(checkSql, new {Email = model.Email});
+
+                if(checkResult != 0 ){
+                    _logger.LogError("Email already exist");
+                    return false;
+                }
                 var result = con.Execute(sql, new { name = model.Name, email = model.Email, password = model.Password });
             }
 
-            return;
+            return true;
         }
 
 

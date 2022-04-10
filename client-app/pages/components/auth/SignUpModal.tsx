@@ -2,16 +2,22 @@ import { route } from "next/dist/server/router";
 import { Router } from "next/router";
 import { stringify } from "querystring";
 import React from "react";
+import { useEffect } from "react";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
+import userApi from "../../../api/user";
+import useValidateMode from "../../../hooks/useValidateMode";
+import { authAction } from "../../../store/auth";
+import user from "../../../store/user";
 import palette from "../../../styles/palette";
 import Button from "../common/Button";
 import Input from "../common/Input";
 
-const Container = styled.div`
+const Container = styled.form`
   z-index: 11;
   width: 540px;
-  height: 500px;
+  height: 520px;
   padding: 30px;
   background-color: white;
 
@@ -60,57 +66,136 @@ interface IProps {
   closeModal: () => void;
 }
 
-const SignUpModal = ({closeModal}: IProps) => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setpassword] = useState('');
-  const [passwordConfirm, setpasswordConfirm] = useState('');
+const SignUpModal = ({ closeModal }: IProps) => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [emailErrorMsg, setEmailErrorMsg] = useState("");
+  const [password, setpassword] = useState("");
+  const [passwordConfirm, setpasswordConfirm] = useState("");
+
+  const dispatch = useDispatch();
+  const {setValidateMode} = useValidateMode();
 
   const onChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
-  }
+  };
 
-  const onChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) =>{
+  const onChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
-  }
+  };
 
-  const onChangePassword = (event: React.ChangeEvent<HTMLInputElement>) =>{
+  const onChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
     setpassword(event.target.value);
-  }
+  };
 
-  const onChangePasswordConfirm = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangePasswordConfirm = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setpasswordConfirm(event.target.value);
+    if(password !== event.target.value){
+      setValidateMode(true);
+    }else{
+      setValidateMode(false);
+    }
   }
 
-  const Login = () => {};
+  const onSubmiRegister = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-  const Register = () => {
-    if(password !== passwordConfirm){
-      alert("비밀번호가 동일하지 않습니다");
+    // nickname check
+    if(name.trim().length === 0 ){
+      setValidateMode(true);
+      return;
+    }
+
+    // password check
+    if (password !== passwordConfirm) {
+      setValidateMode(true);
+      return;
+    }
+
+    try {
+      const { data } = await userApi.AddUser({
+        name: name,
+        email: email,
+        password: password,
+        confirmPassword: passwordConfirm,
+      });
+      alert("등록 되었습니다");
+      closeModal();
+    } catch (e: any) {
+      const errorMessage: string = e.message;
+      if (errorMessage.includes("401")) {
+        setEmailErrorMsg('해당 Eamil 이 존재합니다');
+      }
+      if (errorMessage.includes("400")) {
+        setEmailErrorMsg('이메일 형식이 아닙니다');
+      }
+      setValidateMode(true);
     }
   };
 
+  const changeToLoginModal = () => {
+    dispatch(authAction.setAuthMode("login"));
+  }
+
+  useEffect(() => {
+    return () =>{
+      setValidateMode(false);
+      setEmailErrorMsg('');
+    }
+  },[email]);
+
+
   return (
-    <Container>
+    <Container onSubmit={onSubmiRegister}>
       <div className="title">Hello Join My World :D</div>
       <div className="button-group">
-        <Input type="text" color="gray_D9" placeholder="닉네임" onChange={onChangeName} useValidation={false} />
+        <Input
+          type="text"
+          color="gray_D9"
+          placeholder="닉네임"
+          onChange={onChangeName}
+          useValidation ={name.trim().length === 0}
+          errorMessage={"닉네임을 입력해주세요."}
+        />
       </div>
       <div className="button-group">
-        <Input type="text" color="gray_D9" placeholder="이메일" onChange={onChangeEmail}useValidation={false}  />
+        <Input
+          type="text"
+          color="gray_D9"
+          placeholder="이메일"
+          onChange={onChangeEmail}
+          useValidation ={emailErrorMsg.length >0}
+          errorMessage = {emailErrorMsg}
+        />
       </div>
       <div className="button-group">
-        <Input type="password" color="gray_D9" placeholder="비밀번호" onChange={onChangePassword} useValidation/>
+        <Input
+          type="password"
+          color="gray_D9"
+          placeholder="비밀번호"
+          onChange={onChangePassword}
+          errorMessage={"비밀번호가 일치하지 않습니다"}
+          useValidation ={password !== passwordConfirm}
+        />
       </div>
       <div className="button-group">
-        <Input type="password" color="gray_D9" placeholder="비밀번호 확인" onChange={onChangePasswordConfirm} useValidation/>
+        <Input
+          type="password"
+          color="gray_D9"
+          placeholder="비밀번호 확인"
+          onChange={onChangePasswordConfirm}
+          errorMessage={"비밀번호가 일치하지 않습니다"}
+          useValidation
+        />
       </div>
-      <Button width="100%" color="blue_fb" onClick={Register}>
+      <Button width="100%" color="blue_fb" type="submit">
         회원가입
       </Button>
       <div className="route-menu">
         <div className="float--left">비밀번호 찾기</div>
-        <div className="float--right" onClick={Login}>
+        <div className="float--right" onClick={changeToLoginModal}>
           로그인
         </div>
       </div>
