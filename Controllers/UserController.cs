@@ -128,9 +128,6 @@ namespace Next_Core_Blog.Controllers
         [Produces("application/json")]
         public RegisterViewModel meAPI()
         {
-            
-            _logger.LogInformation("meAPI:" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
-
             // Get the encrypted cookie value
             var opt = HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>();
             var cookie = opt.CurrentValue.CookieManager.GetRequestCookie(HttpContext, "UserLoginCookie");
@@ -147,10 +144,17 @@ namespace Next_Core_Blog.Controllers
                     tokenInfo.Add(claim.Type, claim.Value);
                 }
 
-                RegisterViewModel userInfo = _userRepo.GetUserByEmail(tokenInfo["Email"]);
-                return userInfo;
+                try{
+                    RegisterViewModel userInfo = _userRepo.GetUserByEmail(tokenInfo["Email"]);
+                    return userInfo;
+                }
+                catch(Exception ex){
+                    return StatusCode(500, ex.Message);
+                }
             }
-            return null;
+            else{
+                return StatusCode(400);
+            }
         }
 
         private bool isLoginFailed(string Email)
