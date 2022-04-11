@@ -23,13 +23,15 @@ const app = ({ Component, pageProps }: AppProps) => {
 
 // Cookie Check
 app.getInitialProps = wrapper.getInitialAppProps((store) => async (context) => {
-
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
   const appInitalProps = await App.getInitialProps(context);
   const cookieObject = context.ctx.req?.headers.cookie;
   try {
     axios.defaults.headers.common["Cookie"] = context.ctx.req?.headers.cookie || "";
     const data = await userApi.meAPI();
-    store.dispatch(userActions.setLoggedUser(data.data));
+    if(data.data.name){
+      store.dispatch(userActions.setLoggedUser(data.data));  
+    }
   } catch (e: any) {
       console.log(e.message);
   }

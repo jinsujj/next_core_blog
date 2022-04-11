@@ -24,6 +24,7 @@ export default {
     gray_f7: "#f7f7f7",
     gray_D9: "#D7D9D9",
     gray_cd: "#cdcdcd",
+    gray_f5: "#f5f5f5",
     dark_cyan: "#008489",
     blue_fb: "#18a0fb",
     blue_e8: "51a7e8",

@@ -126,6 +126,7 @@ namespace Next_Core_Blog.Controllers
 
         [HttpGet("meAPI")]
         [Produces("application/json")]
+        [Authorize]
         public RegisterViewModel meAPI()
         {
             // Get the encrypted cookie value
@@ -139,21 +140,17 @@ namespace Next_Core_Blog.Controllers
                 var dataProtector = opt.CurrentValue.DataProtectionProvider.CreateProtector("Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationMiddleware", CookieAuthenticationDefaults.AuthenticationScheme, "v2");
                 var ticketDataFormat = new TicketDataFormat(dataProtector);
                 var ticket = ticketDataFormat.Unprotect(cookie);
-                foreach(var claim in ticket.Principal.Claims)
+                foreach (var claim in ticket.Principal.Claims)
                 {
                     tokenInfo.Add(claim.Type, claim.Value);
                 }
 
-                try{
-                    RegisterViewModel userInfo = _userRepo.GetUserByEmail(tokenInfo["Email"]);
-                    return userInfo;
-                }
-                catch(Exception ex){
-                    return StatusCode(500, ex.Message);
-                }
+                RegisterViewModel userInfo = _userRepo.GetUserByEmail(tokenInfo["Email"]);
+                return userInfo;
             }
-            else{
-                return StatusCode(400);
+            else
+            {
+                return null;
             }
         }
 

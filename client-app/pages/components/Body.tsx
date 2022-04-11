@@ -1,11 +1,12 @@
 import React from "react";
+import { useEffect } from "react";
 import { useState } from "react";
 import styled from "styled-components";
-import noteApi from "../../api/note";
+import noteApi, { PostedNote } from "../../api/note";
+import { useSelector } from "../../store";
 import palette from "../../styles/palette";
-import Input from "./common/Input";
-import Editor from "./Editor";
-
+import Masonry, {ResponsiveMasonry} from "react-responsive-masonry";
+import Link from "next/link";
 const Container = styled.div`
   margin-top: 56px;
 
@@ -74,6 +75,13 @@ const Container = styled.div`
     display: block;
   }
 
+  .title{
+    align-items: center;
+    border: 1px solid ${palette.gray_cd};
+    padding: 4px 4px 4px 4px;
+    background-color: ${palette.gray_f5} ;
+  }
+
   .float--left {
     float: left;
   }
@@ -83,13 +91,22 @@ const Container = styled.div`
 `;
 
 const Body = () => {
-  const [isWriteMode, setWriteMode] = useState(false);
+  const [postNotes, setPostNotes] = useState<PostedNote[]>();
+  const userInfo = useSelector((state) => state.user);
+
+  useEffect(() => {
+    const Notes = noteApi.getNoteAll().then(
+      (res) => setPostNotes(res.data)
+    );
+    console.log(postNotes);
+  }, [])
+  
 
   return (
     <Container>
       <div className="inner">
         <div className="board">
-          {!isWriteMode && (
+          {!userInfo && (
             <div className="summary clearfix">
               <h2 className="summary__title float--left">Title</h2>
               <div className="post_info float--right">
@@ -104,16 +121,33 @@ const Body = () => {
               </div>
             </div>
           )}
-          {isWriteMode && (
+          <ResponsiveMasonry columnsCountBreakPoints={{350: 1, 750: 2, 900: 3}}>
+            <Masonry columnsCount={5} gutter={20}>
+              {postNotes && postNotes.map((blog) => (
+                <>
+                <Link href={`/img/blog`}>
+                <img
+                  key={blog.noteId}
+                  src={blog.thumbImage}
+                />
+                </Link>
+                <p>{blog.title}</p>
+                </>
+              ))}
+            </Masonry>
+          </ResponsiveMasonry>
+          {/* {userInfo && (
             <div className="summary clearfix">
-              <Input type="text" placeholder="제목" color="gray_cd" focusColor="gray_80" useValidation={false}/>
+              <div className="title">
+                <Input type="text" placeholder="제목" color="gray_cd" focusColor="gray_80" useValidation={false}/>
+              </div>
             </div>
           )}
           <div className="board clearfix">
             <div className="board">
               <Editor />
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </Container>

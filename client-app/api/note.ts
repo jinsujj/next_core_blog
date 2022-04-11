@@ -19,9 +19,6 @@ export interface Note {
 
 export type PostedNote = Omit<Note, "password">;
 
-export interface Notes {
-    NoteList : PostedNote[];
-}
 
 // formType(0) : insert
 // formType(1) : update
@@ -39,23 +36,19 @@ const getNoteById = async (id : number) => {
 }
 
 const getNoteByCategory = async (category:string, subCategory: string) =>{
-    const {data: NoteList} = await api.get<Notes>(`/api/Note/category?category=${category}&subCategory=${subCategory}'`);
-    return NoteList;
+    return await api.get<PostedNote[]>(`/api/Note/category?category=${category}&subCategory=${subCategory}'`);
 }
 
 const getNoteAll = async () => {
-    const {data: NoteList} = await api.get<Notes>(`/api/Note/getNoteAll`);
-    return NoteList;
+    return await api.get<PostedNote[]>(`/api/Note/getNoteAll`);
 }
 
 const getNoteBySearch = async (content: string) => {
-    const {data: NoteList} = await api.get<Notes>(`/api/Note/search?query=${content}`);
-    return NoteList;
+    return  await api.get<PostedNote[]>(`/api/Note/search?query=${content}`);
 }
 
 const getNoteCountAll = async () => {
-    const {data: count} = await api.get(`/api/Note/noteCountAll`);
-    return count.result;
+    return await api.get(`/api/Note/noteCountAll`);
 }
 
 const deleteNoteById = (id: number) => {
