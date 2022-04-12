@@ -1,7 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -15,20 +21,23 @@ namespace Next_Core_Blog.Controllers
     [ApiController]
     public class NoteController : ControllerBase
     {
+        private IWebHostEnvironment _enviorment; 
         private readonly IConfiguration _config;
         private readonly ILogger<NoteController> _logger;
 
         private readonly INoteRepository _noteRepo;
 
 
-        public NoteController(IConfiguration config, ILogger<NoteController> logger, INoteRepository noteRepo)
+        public NoteController(IWebHostEnvironment environment, IConfiguration config, ILogger<NoteController> logger, INoteRepository noteRepo)
         {
+            _enviorment = environment;
             _config = config;
             _logger = logger;
             _noteRepo = noteRepo;
         }
 
         [HttpPost]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public IActionResult PostNote(Note note, BoardWriteFormType formType)
         {
             _logger.LogInformation("PostNote: " + note.Title + " " + formType + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
@@ -58,6 +67,7 @@ namespace Next_Core_Blog.Controllers
         }
 
         [HttpPost("PostCategory")]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public IActionResult PostCategory(string Category, string subCategory){
             _logger.LogInformation("Category: " + Category + " SubCateghory:  " + subCategory + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
@@ -91,6 +101,7 @@ namespace Next_Core_Blog.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public IActionResult DeleteNote(int id){
             _logger.LogInformation("DeleteNote: " + id + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
@@ -152,6 +163,29 @@ namespace Next_Core_Blog.Controllers
                 _logger.LogError("error" + ex.Message);
                 return StatusCode(500, ex.Message);
             }
+        }
+
+        [HttpPost("saveImage")]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+        public async Task<string> saveImage(IFormFile file)
+        {
+            string fileName = string.Empty;
+            string fileFullPath = string.Empty;
+            var uploadDir = Path.Combine(_enviorment.WebRootPath,"files");
+
+            if((file != null) && (file.Length > 0)){
+                fileFullPath = CommonLibrary.FileUtility.GetFileNameWithNumbering(uploadDir, 
+                            Path.GetFileName(ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.ToString()));
+
+                fileName = fileFullPath.Split("files\\")[1].ToString();
+                using (FileStream fileStream = new FileStream(fileFullPath, FileMode.OpenOrCreate))
+                {
+                    await file.CopyToAsync(fileStream);
+                }
+
+            }
+            
+            return fileName;
         }
 
 

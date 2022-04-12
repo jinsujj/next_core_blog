@@ -87,6 +87,9 @@ namespace Next_Core_Blog
 
             app.UseRouting();
 
+            /// static file dir use
+            app.UseStaticFiles();
+
             // useCors should be located between useRouting and UseAuthorization
             app.UseCors("Dev");
             app.UseAuthentication();

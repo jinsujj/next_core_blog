@@ -5,8 +5,12 @@ import styled from "styled-components";
 import noteApi, { PostedNote } from "../../api/note";
 import { useSelector } from "../../store";
 import palette from "../../styles/palette";
-import Masonry, {ResponsiveMasonry} from "react-responsive-masonry";
+import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import Link from "next/link";
+import Input from "./common/Input";
+import Editor from "./Editor";
+
+
 const Container = styled.div`
   margin-top: 56px;
 
@@ -27,7 +31,7 @@ const Container = styled.div`
     font-weight: 600;
     font-size: 32px;
   }
-  
+
   .summary__write {
     border-bottom: 2px solid ${palette.green_53};
     width: 100%;
@@ -74,14 +78,6 @@ const Container = styled.div`
     clear: both;
     display: block;
   }
-
-  .title{
-    align-items: center;
-    border: 1px solid ${palette.gray_cd};
-    padding: 4px 4px 4px 4px;
-    background-color: ${palette.gray_f5} ;
-  }
-
   .float--left {
     float: left;
   }
@@ -93,14 +89,12 @@ const Container = styled.div`
 const Body = () => {
   const [postNotes, setPostNotes] = useState<PostedNote[]>();
   const userInfo = useSelector((state) => state.user);
+  const postblog = useSelector((state) => state.common.postblog);
 
   useEffect(() => {
-    const Notes = noteApi.getNoteAll().then(
-      (res) => setPostNotes(res.data)
-    );
+    const Notes = noteApi.getNoteAll().then((res) => setPostNotes(res.data));
     console.log(postNotes);
-  }, [])
-  
+  }, []);
 
   return (
     <Container>
@@ -121,33 +115,32 @@ const Body = () => {
               </div>
             </div>
           )}
-          <ResponsiveMasonry columnsCountBreakPoints={{350: 1, 750: 2, 900: 3}}>
-            <Masonry columnsCount={5} gutter={20}>
-              {postNotes && postNotes.map((blog) => (
-                <>
-                <Link href={`/img/blog`}>
-                <img
-                  key={blog.noteId}
-                  src={blog.thumbImage}
-                />
-                </Link>
-                <p>{blog.title}</p>
-                </>
-              ))}
-            </Masonry>
-          </ResponsiveMasonry>
-          {/* {userInfo && (
-            <div className="summary clearfix">
-              <div className="title">
-                <Input type="text" placeholder="제목" color="gray_cd" focusColor="gray_80" useValidation={false}/>
-              </div>
-            </div>
+          {!postblog && (
+            <ResponsiveMasonry
+              columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 3 }}
+            >
+              <Masonry columnsCount={5} gutter={20}>
+                {postNotes &&
+                  postNotes.map((blog) => (
+                    <>
+                      <Link href={`/blog/${blog.noteId}`}>
+                        <img key={blog.noteId} src={blog.thumbImage} />
+                      </Link>
+                      <p>{blog.title}</p>
+                    </>
+                  ))}
+              </Masonry>
+            </ResponsiveMasonry>
           )}
-          <div className="board clearfix">
-            <div className="board">
-              <Editor />
-            </div>
-          </div> */}
+          {postblog && (
+            <>
+              <div className="board clearfix">
+                <div className="board">
+                  <Editor NoteInfo={undefined} mode={""}/>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </Container>

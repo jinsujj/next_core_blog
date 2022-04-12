@@ -70,6 +70,11 @@ const Container = styled.div`
     align-items: center;
     margin-right: 10px;
   }
+
+  a {
+    text-decoration: none;
+    color: black;
+  }
 `;
 
 const Header = () => {
@@ -82,8 +87,6 @@ const Header = () => {
   const changeToggle = () => {
     dispatch(commonAction.setToggleMode(!isToggle));
   };
-
-
 
   return (
     <>
@@ -108,7 +111,7 @@ const Header = () => {
             {isLogged && <HeaderProfile />}
             {!isLogged && <HeaderAuths />}
             <ModalPortal>
-              <AuthModal closeModal={closeModal}/>
+              <AuthModal closeModal={closeModal} />
             </ModalPortal>
           </div>
         </div>

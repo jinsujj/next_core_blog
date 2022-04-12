@@ -126,7 +126,6 @@ namespace Next_Core_Blog.Controllers
 
         [HttpGet("meAPI")]
         [Produces("application/json")]
-        [Authorize]
         public RegisterViewModel meAPI()
         {
             // Get the encrypted cookie value

@@ -5,6 +5,7 @@ import {CommonState} from "../types/reduxState";
 const initialState: CommonState = {
     toggle: false,
     validateMode: false,
+    postblog : false,
 }
 
 const common = createSlice({
@@ -16,6 +17,9 @@ const common = createSlice({
         },
         setValidateMode(state, action: PayloadAction<boolean>){
             state.validateMode = action.payload;
+        },
+        setPostBlog(state, action: PayloadAction<boolean>){
+            state.postblog = action.payload;
         }
     }
 });

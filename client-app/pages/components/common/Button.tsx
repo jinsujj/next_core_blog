@@ -14,7 +14,7 @@ const Container = styled.button<StyledProps>`
     padding: 0 16px;
     margin-right: 5px;
 
-    border: 1px solid ${palette.blue_fb};
+    border: 1px solid ${(props) => props.color === '' ? palette.blue_fb: props.color} ;
     box-sizing: border-box;
     border-radius: 4px;
 
@@ -30,8 +30,8 @@ const Container = styled.button<StyledProps>`
     font-weight: 500;
 
     &:hover{
-        background: ${palette.blue_fb};
-        color: white;
+        background: ${(props) => props.color === '' ? palette.blue_fb: 'white'} ;
+        color: ${(props) => props.color === '' ? 'white': props.color} ;
     }
 `;
 
