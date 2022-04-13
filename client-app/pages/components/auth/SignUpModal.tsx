@@ -194,7 +194,6 @@ const SignUpModal = ({ closeModal }: IProps) => {
         회원가입
       </Button>
       <div className="route-menu">
-        <div className="float--left">비밀번호 찾기</div>
         <div className="float--right" onClick={changeToLoginModal}>
           로그인
         </div>

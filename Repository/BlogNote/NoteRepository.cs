@@ -166,7 +166,7 @@ namespace Next_Core_Blog.Repository.BlogNote
                 param.Add("@PostIp", value: note.PostIp, dbType: DbType.String);
 
                 sql = @"INSERT INTO note (Title, UserId, Content, Password, ThumbImage, IsPost, PostDate, PostIp, CategoryId)
-                        VALUES (@Title, @UserId, @Content, @Password, @ThumbImage, @IsPost, Now(), @PostIp, @CategoryId)";
+                        VALUES (@Title, @UserId, @Content, @Password, @ThumbImage, 'N', Now(), @PostIp, @CategoryId)";
             }
             else if (formType == BoardWriteFormType.modify)
             {

@@ -1,7 +1,5 @@
-import { route } from "next/dist/server/router";
-import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import noteApi from "../../api/note";
 import palette from "../../styles/palette";
 import Input from "./common/Input";
@@ -57,7 +55,9 @@ const Container = styled.div`
     }
 
     .note-editor.note-airframe, .note-editor.note-frame {
-        border: 1px solid white !important;
+        ${(props) => props.mode ==="READ" && css`
+            border: 1px solid white !important;
+        `}
     }
 `;
 
@@ -87,37 +87,22 @@ const Editor = ({ NoteInfo, mode }) => {
         );
     };
 
-
-
     useEffect(() => {
         if (mode === "READ") {
             $('#summernote').summernote({
-                height: 500,
+                height: 800,
                 toolbar: [],
                 disableDragAndDrop: true,
             });
             $('#summernote').summernote('disable');
+            $('#summernote').summernote("insertText", NoteInfo.content);  
         }
         else {
             $('#summernote').summernote({
                 lang: 'ko-KR', // default: 'en-US'
                 height: 500,
                 tabsize: 3,
-                toolbar: [
-                    ['style', ['style']],
-                    ['highlight', ['highlight']],
-                    ['insert', ['gxcode']],
-                    ['fontname', ['fontname']],
-                    ['fontsize', ['fontsize']],
-                    ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
-                    ['color', ['forecolor', 'color']],
-                    ['table', ['table']],
-                    ['para', ['ul', 'ol', 'paragraph']],
-                    ['height', ['height']],
-                    ['insert', ['picture', 'link', 'video']],
-                    ['view', ['fullscreen', 'codeview']],
-                    ['help', ['help']]
-                ],
+                toolbar: toolbar,
                 focus: true,
                 fontNames: ['Arial', 'Courier New', '맑은 고딕', '굴림체', '굴림', '돋음체', 'Montserrat', 'Nanum Gothic', 'Nanum Gothic Coding', 'NanumHimNaeRaNeunMarBoDan', 'NanumBaReunHiPi'],
                 fontNamesIgnoreCheck: ['Arial', 'Courier New', '맑은 고딕', '굴림체', '굴림', '돋음체', 'Montserrat', 'Nanum Gothic', 'Nanum Gothic Coding', 'NanumHimNaeRaNeunMarBoDan', 'NanumBaReunHiPi'],
@@ -129,20 +114,17 @@ const Editor = ({ NoteInfo, mode }) => {
                     }
                 },
             });
+            $('#summernote').summernote("reset"); 
+            $('#summernote').summernote({toolbar: toolbar}); 
         }
-
-        if(NoteInfo.content){
-            $('#summernote').summernote("insertText", NoteInfo.content);    
-        }
-
-    }, []);
+    }, [mode]);
 
     return (
         <Container mode={mode}>
             {(mode === "READ") && (
                 <></>
             )}
-            {(mode !== "READ") && (
+            {(mode === "WRITE") && (
                 <div className="title_input">
                     <Input
                         type="text"
@@ -161,3 +143,20 @@ const Editor = ({ NoteInfo, mode }) => {
 };
 
 export default Editor;
+
+
+const toolbar = [
+    ['style', ['style']],
+    ['highlight', ['highlight']],
+    ['insert', ['gxcode']],
+    ['fontname', ['fontname']],
+    ['fontsize', ['fontsize']],
+    ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+    ['color', ['forecolor', 'color']],
+    ['table', ['table']],
+    ['para', ['ul', 'ol', 'paragraph']],
+    ['height', ['height']],
+    ['insert', ['picture', 'link', 'video']],
+    ['view', ['fullscreen', 'codeview']],
+    ['help', ['help']]
+]

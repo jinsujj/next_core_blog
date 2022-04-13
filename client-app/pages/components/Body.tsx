@@ -100,24 +100,9 @@ const Body = () => {
     <Container>
       <div className="inner">
         <div className="board">
-          {!userInfo && (
-            <div className="summary clearfix">
-              <h2 className="summary__title float--left">Title</h2>
-              <div className="post_info float--right">
-                <ul>
-                  <li>작성일</li>
-                  <li>2021.12.03</li>
-                </ul>
-                <ul>
-                  <li>조회수</li>
-                  <li>5621</li>
-                </ul>
-              </div>
-            </div>
-          )}
           {!postblog && (
             <ResponsiveMasonry
-              columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 3 }}
+              columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 4 }}
             >
               <Masonry columnsCount={5} gutter={20}>
                 {postNotes &&
@@ -136,7 +121,7 @@ const Body = () => {
             <>
               <div className="board clearfix">
                 <div className="board">
-                  <Editor NoteInfo={undefined} mode={""}/>
+                  <Editor NoteInfo={undefined} mode={"WRITE"}/>
                 </div>
               </div>
             </>

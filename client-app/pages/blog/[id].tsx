@@ -1,6 +1,5 @@
-import { formatDistance } from "date-fns";
 import { GetServerSideProps, GetServerSidePropsContext, NextPage } from "next";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import noteApi, { PostedNote } from "../../api/note";
@@ -52,7 +51,7 @@ const Container = styled.div`
   }
 
   .post_info ul li:first-child {
-    width:auto;
+    width: auto;
     font-weight: 400;
     font-size: 14px;
     color: black;
@@ -61,7 +60,7 @@ const Container = styled.div`
   }
 
   .post_info ul li {
-    width:auto;
+    width: auto;
     font-weight: bold;
     font-size: 14px;
     color: black;
@@ -101,8 +100,8 @@ interface IProps {
 }
 
 const blogDetail: NextPage<IProps> = ({ detailNote }) => {
-  const userInfo = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const postblog = useSelector((state) => state.common.postblog);
 
   const leftPad = (value: number) => {
     if (value >= 10) {
@@ -118,41 +117,55 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
     return [year, month, day].join(delimiter);
   };
 
-
   return (
     <>
       <Header />
       <Container>
         <div className="inner">
           <div className="board">
-            <div className="summary clearfix">
-              <h2 className="summary__title float--left">{detailNote.title}</h2>
-              <div className="post_info float--right">
-                <ul>
-                  <li>
-                    <FontAwesomeIcon
-                      icon={faCalendarCheck}
-                      style={{ fontSize: 12, color: "black" }}
-                    />
-                  </li>
-                  <li>{toStringByFormatting(new Date(detailNote.postDate))}</li>
-                </ul>
-                <ul>
-                  <li>
-                    <FontAwesomeIcon
-                      icon={faEye}
-                      style={{ fontSize: 12, color: "black" }}
-                    />
-                  </li>
-                  <li>{detailNote.readCount}</li>
-                </ul>
+            {!postblog && (
+              <div className="summary clearfix">
+                <h2 className="summary__title float--left">
+                  {detailNote.title}
+                </h2>
+                <div className="post_info float--right">
+                  <ul>
+                    <li>
+                      <FontAwesomeIcon
+                        icon={faCalendarCheck}
+                        style={{ fontSize: 12, color: "black" }}
+                      />
+                    </li>
+                    <li>
+                      {toStringByFormatting(new Date(detailNote.postDate))}
+                    </li>
+                  </ul>
+                  <ul>
+                    <li>
+                      <FontAwesomeIcon
+                        icon={faEye}
+                        style={{ fontSize: 12, color: "black" }}
+                      />
+                    </li>
+                    <li>{detailNote.readCount}</li>
+                  </ul>
+                </div>
               </div>
-            </div>
-            <div className="board clearfix">
-              <div className="board">
-                <Editor NoteInfo={detailNote} mode={"READ"} />
+            )}
+            {postblog && (
+              <div className="board clearfix">
+                <div className="board">
+                  <Editor NoteInfo={undefined} mode={"WRITE"} />
+                </div>
               </div>
-            </div>
+            )}
+            {!postblog && (
+              <div className="board clearfix">
+                <div className="board">
+                  <Editor NoteInfo={detailNote} mode={"READ"} />
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </Container>

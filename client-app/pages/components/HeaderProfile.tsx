@@ -13,13 +13,12 @@ const Container = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-right: 10px;
   }
 
   .userInfo {
     border: 1px solid ${palette.green_53};
     border-radius: 50px;
-    padding: 0 15px;
+    padding: 0 10px;
     width: auto;
     height: 30px;
 
