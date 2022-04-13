@@ -45,7 +45,7 @@ namespace Next_Core_Blog.Repository.Users
 
         public RegisterViewModel GetUserByEmail(string Email)
         {
-            string sql = @"SELECT Name, Email, Role
+            string sql = @"SELECT UserId, Name, Email, Role
                             FROM user
                             WHERE Email = @Email";
 

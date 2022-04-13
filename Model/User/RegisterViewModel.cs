@@ -8,6 +8,7 @@ namespace Next_Core_Blog.Model.User
 {
     public class RegisterViewModel
     {
+        public int userId {get;set;}
         [Required(ErrorMessage ="이름을 입력해주세요")]
         public string Name {get;set;}
         [EmailAddress(ErrorMessage ="E-mail 형식이 아닙니다")]

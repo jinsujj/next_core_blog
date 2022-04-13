@@ -1,6 +1,7 @@
 import api from "./index";
 
 interface User {
+    userId : number;
     name : string;
     email: string;
     password: string;
@@ -8,13 +9,15 @@ interface User {
     role?: string;
 }
 
+export type postUser = Omit<User, "userId">;
+
 export interface LoginModel {
     email: string,
     password: string,
 }
 
-const AddUser = (payload: User) => {
-    return api.post<User>(`/api/User`, payload);
+const AddUser = (payload: postUser) => {
+    return api.post<postUser>(`/api/User`, payload);
 }
 
 const Login = (loginViewModel : LoginModel) => {

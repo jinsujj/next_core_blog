@@ -1,11 +1,14 @@
+import { stringify } from "querystring";
 import React, { useEffect, useState } from "react";
 import styled, { css } from "styled-components";
 import noteApi from "../../api/note";
+import { useSelector } from "../../store";
 import palette from "../../styles/palette";
+import Button from "./common/Button";
 import Input from "./common/Input";
 
 
-const Container = styled.div`
+const Container = styled.form`
     .title_input {
     align-items: center;
     border: 1px solid ${palette.gray_cd};
@@ -55,47 +58,87 @@ const Container = styled.div`
     }
 
     .note-editor.note-airframe, .note-editor.note-frame {
-        ${(props) => props.mode ==="READ" && css`
+        ${(props) => props.mode === "READ" && css`
             border: 1px solid white !important;
         `}
     }
+
+    .save-button {
+        position: relative;
+    }
+
+    .float--left {
+        float: left;
+    }
+    .float--right{
+        float: right;
+    }
+    
 `;
 
 
 const Editor = ({ NoteInfo, mode }) => {
+    // front backend 동일 서버에서 사용.
+    const host = "https://" + window.location.hostname + ':' + process.env.NEXT_PUBLIC_BACKEND_PORT;
+
     const [imageBuff, setImageBuff] = useState();
-    const [data, setData] = useState();
+    const [title, setTitle] = useState();
+    const postblog = useSelector((state) => state.common.postblog);
+    const userId = useSelector((state) => state.user.userId);
 
-
-    const onClickButton = () => {
-        $('#summernote').summernote('focus');
-        setData($('#summernote').summernote('code'));
-
+    const onChangeTitle = (event) => {
+        setTitle(event.target.value);
+    }
+    
+    const setThumbFile = (event) => {
+        var data = new FormData();
+        const file = event.target.files[0];
+        data.append("file", file);
+        sendFile(data, "thumb");
     }
 
     const sendFile = (file, editor) => {
         var data = new FormData();
         data.append("file", file);
-        // front backend 동일 서버에서 사용.
-        const host = "https://" + window.location.hostname + ':' + process.env.NEXT_PUBLIC_BACKEND_PORT;
 
-        const result = noteApi.saveImage(data).then(
+        noteApi.saveImage(data).then(
             (res) => {
-                console.log(host + '/files/' + res.data + '');
-                $(editor).summernote('insertImage', host + '/files/' + res.data + ' ');
+                if(editor ==="thumb")
+                    setImageBuff(res.data)
+                else 
+                    $(editor).summernote('insertImage', host + '/files/' + res.data + ' ');
             }
         );
     };
 
+    const onSubmitLogin = async (event) => {
+        event.preventDefault();
+
+        let content = $('#summernote').summernote('code');
+        let image = '';
+        if(imageBuff) image = host + '/files/' +  imageBuff ;
+        
+        var result = noteApi.postNote(0, {
+            title: title,
+            userId : userId,
+            content: content,
+            thumbImage: image,
+            categoryId: 0,
+            password: 0,
+        })
+        console.log(result);
+    }
+
     useEffect(() => {
         if (mode === "READ") {
             $('#summernote').summernote({
+                lang: 'ko-KR', // default: 'en-US'
                 height: 800,
                 toolbar: [],
                 disableDragAndDrop: true,
             });
+            $('#summernote').summernote('insertText', NoteInfo.content);
             $('#summernote').summernote('disable');
-            $('#summernote').summernote("insertText", NoteInfo.content);  
         }
         else {
             $('#summernote').summernote({
@@ -114,13 +157,13 @@ const Editor = ({ NoteInfo, mode }) => {
                     }
                 },
             });
-            $('#summernote').summernote("reset"); 
-            $('#summernote').summernote({toolbar: toolbar}); 
+            $('#summernote').summernote("reset");
+            $('#summernote').summernote('focus');
         }
-    }, [mode]);
+    }, []);
 
     return (
-        <Container mode={mode}>
+        <Container onSubmit={onSubmitLogin}>
             {(mode === "READ") && (
                 <></>
             )}
@@ -132,12 +175,23 @@ const Editor = ({ NoteInfo, mode }) => {
                         color="gray_cd"
                         focusColor="gray_80"
                         useValidation={false}
+                        value={title}
+                        onChange={onChangeTitle}
                     />
                 </div>
             )}
-            <Container id="summernote" />
-            <button onClick={onClickButton}>Button</button>
-            {JSON.stringify(data)}
+            <div id="summernote" />
+            {postblog && (
+                <div className="save-button clearfix">
+                    <div className="float--left">
+                        <input type="file" onChange={setThumbFile.bind(this)} />
+                    </div>
+                    <div className="float--right">
+                        <Button type="submit">저장하기</Button>
+                    </div>
+                </div>
+            )}
+            {JSON.stringify(imageBuff)}
         </Container>
     )
 };

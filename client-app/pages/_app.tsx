@@ -34,8 +34,7 @@ app.getInitialProps = wrapper.getInitialAppProps((store) => async (context) => {
   try {
     axios.defaults.headers.common["Cookie"] = context.ctx.req?.headers.cookie || "";
     const data = await userApi.meAPI();
-
-    if(data.data.name){
+    if(data.data.userId){
       store.dispatch(userActions.setLoggedUser(data.data));  
     }
     else{

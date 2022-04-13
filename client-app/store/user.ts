@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { UserState } from "../types/reduxState";
 
 const initialState: UserState = {
+    userId: 0,
     name: '',
     email: '',
     role: '',
