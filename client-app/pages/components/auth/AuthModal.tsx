@@ -14,7 +14,6 @@ interface IProps {
 
 const AuthModal = ({closeModal}:IProps) => {
     const authMode = useSelector((state) => state.auth.authMode);
-    console.log(authMode);
     return (
         <Container>
             {authMode === "signup" && <SignUpModal closeModal={closeModal}/>}

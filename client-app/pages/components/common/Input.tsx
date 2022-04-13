@@ -98,7 +98,7 @@ const Input = ({
       isValid ={isValid}
       useValidation={validateMode && useValidation}
     >
-      <input type={type} placeholder={placeholder} {...props} />
+      <input type={type} placeholder={placeholder} value={value} {...props} />
       {useValidation && validateMode && !isValid && errorMessage && (
         <p className="input-error-message">{errorMessage}</p>
       )}

@@ -37,6 +37,18 @@ const Container = styled.form`
     margin-bottom: 18px;
   }
 
+  .stay-login {
+    display: flex;
+    margin-bottom: 10px;
+    color: ${palette.blue_fb};
+    font-size: 14px;
+    font-weight: 400;
+
+    input {
+      margin-right: 10px;
+    }
+  }
+
   .route-menu {
     color: ${palette.blue_fb};
     position: relative;
@@ -67,13 +79,14 @@ interface IProps {
   closeModal: () => void;
 }
 
-const LoginModal = ({closeModal}: IProps) => {
+const LoginModal = ({ closeModal }: IProps) => {
+  const [stayLogin, setStayLogin] = useState<boolean>(false);
   const { openModal, ModalPortal } = useModal();
   const [email, setEmail] = useState("");
   const [emailErrorMsg, setEmailErrorMsg] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
-  const {setValidateMode} = useValidateMode();
+  const { setValidateMode } = useValidateMode();
 
   const onChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
@@ -83,45 +96,54 @@ const LoginModal = ({closeModal}: IProps) => {
     setPassword(event.target.value);
   };
 
+  const onChangeStayLogin = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setStayLogin(event.target.checked);
+  };
 
   const onSubmitLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setValidateMode(true);
 
-    if(!email || !password){
-      alert("Email 과 비밀번호를 입력해 주세요");
+    if (stayLogin) {
+      localStorage.setItem("Email", email);
     }
-    else{
-      const loginBody ={email, password};
-      try{
-        const {data} = await userApi.Login(loginBody);
+
+    if (!email || !password) {
+      alert("Email 과 비밀번호를 입력해 주세요");
+    } else {
+      const loginBody = { email, password };
+      try {
+        const { data } = await userApi.Login(loginBody);
         dispatch(userActions.setLoggedUser(data));
         setValidateMode(false);
         closeModal();
-      }
-      catch(e:any){
-        const errorMessage:string = e.message;
-        if(errorMessage.includes("401")){
-          setEmailErrorMsg('해당 계정이 없거나 비밀번호가 일치하지 않습니다');
+      } catch (e: any) {
+        const errorMessage: string = e.message;
+        if (errorMessage.includes("401")) {
+          setEmailErrorMsg("해당 계정이 없거나 비밀번호가 일치하지 않습니다");
           return;
         }
-        if(errorMessage.includes("400")){
-          setEmailErrorMsg('이메일 형식이 아닙니다');
+        if (errorMessage.includes("400")) {
+          setEmailErrorMsg("이메일 형식이 아닙니다");
           return;
         }
       }
     }
   };
 
-  const changeToSignupModal = () =>{
+  const changeToSignupModal = () => {
     dispatch(authAction.setAuthMode("signup"));
-  }
+  };
 
   useEffect(() => {
-    return () =>{
-      setValidateMode(false);
+    setValidateMode(false);
+
+    const email = localStorage.getItem("Email");
+    if (email) {
+      setEmail(email);
+      setStayLogin(true);
     }
-  },[]);
+  }, []);
 
   return (
     <Container onSubmit={onSubmitLogin}>
@@ -131,9 +153,10 @@ const LoginModal = ({closeModal}: IProps) => {
           type="text"
           color="gray_D9"
           placeholder="이메일"
-          useValidation ={emailErrorMsg.length >0}
-          errorMessage ={emailErrorMsg}
+          useValidation={emailErrorMsg.length > 0}
+          errorMessage={emailErrorMsg}
           onChange={onChangeEmail}
+          value={email}
         />
       </div>
       <div className="button-group">
@@ -144,6 +167,14 @@ const LoginModal = ({closeModal}: IProps) => {
           useValidation
           onChange={onChangePassword}
         />
+      </div>
+      <div className="stay-login">
+        <input
+          type="checkbox"
+          checked={stayLogin}
+          onChange={onChangeStayLogin}
+        />
+        <div>Email 기억하기</div>
       </div>
       <Button width="100%" color="blue_fb" type="submit">
         로그인
