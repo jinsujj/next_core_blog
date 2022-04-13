@@ -24,7 +24,7 @@ const Container = styled.div`
         padding: 10px 20px;
         margin : 0 0 20px;
         font-size: 17.5px;
-        border-left: 5px solid #eee;
+        border-left: 5px solid ${palette.blockQuote};
     }
 
     ul li  {
@@ -129,6 +129,11 @@ const Editor = ({ NoteInfo, mode }) => {
                 },
             });
         }
+
+        if(NoteInfo.content){
+            $('#summernote').summernote("insertText", NoteInfo.content);    
+        }
+
     }, []);
 
     return (

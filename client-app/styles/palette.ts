@@ -1,6 +1,7 @@
 export default {
     cardinal: "#a41850",
     davidson_orange: "#c13515",
+    blockQuote: "#f86466",
     tawny: "#d93900",
     amaranth: "#E51E53",
     orange: "#fc642d",
