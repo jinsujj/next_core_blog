@@ -94,6 +94,7 @@ const Editor = ({ NoteInfo, mode }) => {
             $('#summernote').summernote({
                 height: 500,
                 toolbar: [],
+                disableDragAndDrop: true,
             });
             $('#summernote').summernote('disable');
         }
