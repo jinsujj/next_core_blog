@@ -69,18 +69,51 @@ const Container = styled.form`
 
     .float--left {
         float: left;
+
+        .upload-name {
+            display: inline-block;
+            height: 40px;
+            padding: 0 10px;
+            vertical-align: middle;
+            border: 1px solid #dddddd;
+            color: #999999;
+        }
+
+        label {
+            display: inline-block;
+            padding: 10px 20px;
+            color: white;
+            vertical-align: middle;
+            background-color: #cdcdcd;
+            cursor: pointer;
+            height: 40px;
+            margin-left:10px;
+        }
+
+        input[type="file"]{
+            position: absolute;
+            width: 0;
+            height: 0;
+            padding: 0;
+            overflow: hidden;
+            border:0;
+        }
     }
     .float--right{
         float: right;
     }
     
+    .save-button {
+        position: relative;
+    }
+
+
 `;
 
 
 const Editor = ({ NoteInfo, mode }) => {
     // front backend 동일 서버에서 사용.
-    const host = "https://" + window.location.hostname + ':' + process.env.NEXT_PUBLIC_BACKEND_PORT;
-
+    let host ='';
     const [imageBuff, setImageBuff] = useState();
     const [title, setTitle] = useState();
     const postblog = useSelector((state) => state.common.postblog);
@@ -91,10 +124,8 @@ const Editor = ({ NoteInfo, mode }) => {
     }
     
     const setThumbFile = (event) => {
-        var data = new FormData();
         const file = event.target.files[0];
-        data.append("file", file);
-        sendFile(data, "thumb");
+        sendFile(file, "thumb");
     }
 
     const sendFile = (file, editor) => {
@@ -107,6 +138,10 @@ const Editor = ({ NoteInfo, mode }) => {
                     setImageBuff(res.data)
                 else 
                     $(editor).summernote('insertImage', host + '/files/' + res.data + ' ');
+            }
+        ).catch(
+            (err)=> {
+                console.log(err);
             }
         );
     };
@@ -130,6 +165,8 @@ const Editor = ({ NoteInfo, mode }) => {
     }
 
     useEffect(() => {
+        host = "https://" + window.location.hostname + ':' + process.env.NEXT_PUBLIC_BACKEND_PORT;
+
         if (mode === "READ") {
             $('#summernote').summernote({
                 lang: 'ko-KR', // default: 'en-US'
@@ -184,14 +221,20 @@ const Editor = ({ NoteInfo, mode }) => {
             {postblog && (
                 <div className="save-button clearfix">
                     <div className="float--left">
-                        <input type="file" onChange={setThumbFile.bind(this)} />
+                        <input className="upload-name" value={imageBuff} placeholder="Thumbnail"/>
+                        <label htmlFor="file">파일찾기</label>
+                        <input type="file" id="file"
+                                className="upload-name"
+                                onChange={setThumbFile.bind(this)} 
+                                placeholder="첨부파일"
+                                accept="image/jpg, image/png, image/jpeg"
+                        />
                     </div>
                     <div className="float--right">
                         <Button type="submit">저장하기</Button>
                     </div>
                 </div>
             )}
-            {JSON.stringify(imageBuff)}
         </Container>
     )
 };

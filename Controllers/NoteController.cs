@@ -21,7 +21,7 @@ namespace Next_Core_Blog.Controllers
     [ApiController]
     public class NoteController : ControllerBase
     {
-        private IWebHostEnvironment _enviorment; 
+        private IWebHostEnvironment _enviorment;
         private readonly IConfiguration _config;
         private readonly ILogger<NoteController> _logger;
 
@@ -68,7 +68,8 @@ namespace Next_Core_Blog.Controllers
 
         [HttpPost("PostCategory")]
         [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
-        public IActionResult PostCategory(string Category, string subCategory){
+        public IActionResult PostCategory(string Category, string subCategory)
+        {
             _logger.LogInformation("Category: " + Category + " SubCateghory:  " + subCategory + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
             try
@@ -76,7 +77,7 @@ namespace Next_Core_Blog.Controllers
                 var result = _noteRepo.PostCategory(Category, subCategory);
                 return Ok(result);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError("error" + ex.Message);
                 return StatusCode(500, ex.Message);
@@ -93,7 +94,7 @@ namespace Next_Core_Blog.Controllers
                 var note = _noteRepo.GetNoteById(id);
                 return Ok(note);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError("error" + ex.Message);
                 return StatusCode(500, ex.Message);
@@ -102,14 +103,16 @@ namespace Next_Core_Blog.Controllers
 
         [HttpDelete("{id}")]
         [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
-        public IActionResult DeleteNote(int id){
+        public IActionResult DeleteNote(int id)
+        {
             _logger.LogInformation("DeleteNote: " + id + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
-            try{
+            try
+            {
                 var result = _noteRepo.DeleteNode(id);
                 return Ok(result);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError("error" + ex.Message);
                 return StatusCode(500, ex.Message);
@@ -121,11 +124,12 @@ namespace Next_Core_Blog.Controllers
         {
             _logger.LogInformation("GetNoteAll: " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
-            try{
+            try
+            {
                 var results = await _noteRepo.GetNoteAll();
                 return Ok(results);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError("error" + ex.Message);
                 return StatusCode(500, ex.Message);
@@ -135,13 +139,14 @@ namespace Next_Core_Blog.Controllers
         [HttpGet("category")]
         public async Task<IActionResult> GetNoteByCategory(string category, string subCategory)
         {
-            _logger.LogInformation("GetNoteByCategory: " + category+ "|" + subCategory + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+            _logger.LogInformation("GetNoteByCategory: " + category + "|" + subCategory + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
-            try{
+            try
+            {
                 var notes = await _noteRepo.GetNoteByCategory(category, subCategory);
                 return Ok(notes.ToList());
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError("error" + ex.Message);
                 return StatusCode(500, ex.Message);
@@ -157,8 +162,8 @@ namespace Next_Core_Blog.Controllers
             {
                 var notes = await _noteRepo.GetNoteBySearch(query);
                 return Ok(notes.ToList());
-            }   
-            catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 _logger.LogError("error" + ex.Message);
                 return StatusCode(500, ex.Message);
@@ -169,23 +174,35 @@ namespace Next_Core_Blog.Controllers
         [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public async Task<string> saveImage(IFormFile file)
         {
-            string fileName = string.Empty;
-            string fileFullPath = string.Empty;
-            var uploadDir = Path.Combine(_enviorment.WebRootPath,"files");
-
-            if((file != null) && (file.Length > 0)){
-                fileFullPath = CommonLibrary.FileUtility.GetFileNameWithNumbering(uploadDir, 
-                            Path.GetFileName(ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.ToString()));
-
-                fileName = fileFullPath.Split("files\\")[1].ToString();
-                using (FileStream fileStream = new FileStream(fileFullPath, FileMode.OpenOrCreate))
-                {
-                    await file.CopyToAsync(fileStream);
+            try
+            {
+                // file Extension Check
+                if(extType.Where(t => t == Path.GetExtension(file.FileName)).FirstOrDefault().Length <1){
+                    return "Err.. Check file Type";
                 }
 
+                string fileName = string.Empty;
+                string fileFullPath = string.Empty;
+                var uploadDir = Path.Combine(_enviorment.WebRootPath, "files");
+
+                if ((file != null) && (file.Length > 0))
+                {
+                    fileFullPath = CommonLibrary.FileUtility.GetFileNameWithNumbering(uploadDir,
+                                Path.GetFileName(ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.ToString()));
+
+                    fileName = fileFullPath.Split("files\\")[1].ToString();
+                    using (FileStream fileStream = new FileStream(fileFullPath, FileMode.OpenOrCreate))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    }
+                }
+                return fileName;
             }
-            
-            return fileName;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return "Err.. Check file Type";
+            }
         }
 
 
@@ -194,15 +211,20 @@ namespace Next_Core_Blog.Controllers
         {
             _logger.LogInformation("GetCountAll: " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
-            try{
+            try
+            {
                 var result = _noteRepo.GetCountAll();
                 return Ok(result);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError("error" + ex.Message);
                 return StatusCode(500, ex.Message);
             }
         }
+
+        public IEnumerable<string> extType = new List<string>{
+            ".jpg",".jpeg",".png"
+        };
     }
 }
