@@ -5,9 +5,9 @@ import styled from "styled-components";
 import userApi from "../../api/user";
 import useModal from "../../hooks/useModal";
 import { authAction } from "../../store/auth";
-import AuthModal from "./auth/AuthModal";
-import LoginModal from "./auth/LoginModal";
-import SignUpModal from "./auth/SignUpModal";
+import AuthModal from "./authModal/AuthModal";
+import LoginModal from "./authModal/LoginModal";
+import SignUpModal from "./authModal/SignUpModal";
 import Button from "./common/Button";
 
 const Container = styled.div`

@@ -20,6 +20,9 @@ const colorChange = (color: string) => {
     else if (color === "gray_cd") {
         color = palette.gray_cd;
     }
+    else if (color === "gray_eb"){
+        color = palette.gray_eb;
+    }
     else if (color === "gray_48"){
         color = palette.gray_48;
     }
@@ -34,6 +37,9 @@ const colorChange = (color: string) => {
     }
     else if (color === "gray_85"){
         color = palette.gray_85;
+    }
+    else if(color === "dark_cran"){
+        color = palette.dark_cyan;
     }
     return color;
 };

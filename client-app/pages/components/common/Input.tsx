@@ -9,11 +9,12 @@ interface StyledProps {
   focusColor: string;
   isValid : boolean;
   useValidation : boolean;
+  width?: string;
 }
 
 const Container = styled.div<StyledProps>`
   input {
-    width: 100%;
+    width: ${(props) => (props.width === undefined ? "100%": props.width)};
     height: 40px;
     padding: 2px 10px;
     border: 1px solid
@@ -73,6 +74,7 @@ interface IProps extends React.InputHTMLAttributes<HTMLInputElement> {
   validateMode?: boolean;
   useValidation: boolean;
   errorMessage?: string;
+  width?: string;
 }
 
 const Input = ({
@@ -84,6 +86,7 @@ const Input = ({
   isValid = false,
   useValidation,
   errorMessage,
+  width,
   ...props
 }: IProps) => {
   const validateMode = useSelector((state) => state.common.validateMode);
@@ -96,6 +99,7 @@ const Input = ({
       color={color}
       focusColor={focusColor}
       isValid ={isValid}
+      width={width}
       useValidation={validateMode && useValidation}
     >
       <input type={type} placeholder={placeholder} value={value} {...props} />

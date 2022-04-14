@@ -1,9 +1,10 @@
-import { stringify } from "querystring";
 import React, { useEffect, useState } from "react";
 import styled, { css } from "styled-components";
 import noteApi from "../../api/note";
+import useModal from "../../hooks/useModal";
 import { useSelector } from "../../store";
 import palette from "../../styles/palette";
+import CategoryModal from "./categoryModal/CategoryModal";
 import Button from "./common/Button";
 import Input from "./common/Input";
 
@@ -119,6 +120,8 @@ const Editor = ({ NoteInfo, mode }) => {
     const postblog = useSelector((state) => state.common.postblog);
     const userId = useSelector((state) => state.user.userId);
 
+    const { openModal, ModalPortal, closeModal } = useModal();
+
     const onChangeTitle = (event) => {
         setTitle(event.target.value);
     }
@@ -145,6 +148,11 @@ const Editor = ({ NoteInfo, mode }) => {
             }
         );
     };
+
+    const onSubmitblog = (event) =>{
+        event.preventDefault();
+        openModal();
+    }
 
     const onSubmitLogin = async (event) => {
         event.preventDefault();
@@ -200,7 +208,7 @@ const Editor = ({ NoteInfo, mode }) => {
     }, []);
 
     return (
-        <Container onSubmit={onSubmitLogin}>
+        <Container onSubmit={onSubmitblog}>
             {(mode === "READ") && (
                 <></>
             )}
@@ -235,6 +243,9 @@ const Editor = ({ NoteInfo, mode }) => {
                     </div>
                 </div>
             )}
+            <ModalPortal>
+                <CategoryModal closeModal={closeModal}/>
+            </ModalPortal>
         </Container>
     )
 };

@@ -5,13 +5,13 @@ import styled from "styled-components";
 import useModal from "../../hooks/useModal";
 import { useSelector } from "../../store";
 import Button from "./common/Button";
-import LoginModal from "./auth/LoginModal";
+import LoginModal from "./authModal/LoginModal";
 import Sidebar from "./Sidebar";
-import SignUpModal from "./auth/SignUpModal";
+import SignUpModal from "./authModal/SignUpModal";
 import { commonAction } from "../../store/common";
 import HeaderAuths from "./HeaderAuth";
 import HeaderProfile from "./HeaderProfile";
-import AuthModal from "./auth/AuthModal";
+import AuthModal from "./authModal/AuthModal";
 
 const Container = styled.div`
   border-bottom: 1px solid rgba(0, 0, 0, 0.15);

@@ -13,3 +13,10 @@ export type UserState = {
     role?: string;
     isLogged?: boolean;
 }
+
+export type CategoryState = {
+    category: string;
+    subCategory: string;
+    categoryAdd: boolean;
+    subCategoryAdd: boolean;
+}
