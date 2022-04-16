@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS `next_core_blog`.`user` (
   `LastLoggined` DATE NULL,
   `FailedPasswordAttemptCount` INT NULL,
   `FailedPasswordAttemptTime` DATE NULL,
+  `Role` VARCHAR(10)
   PRIMARY KEY (`UserId`))
 ENGINE = InnoDB;
 
@@ -80,13 +81,8 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `next_core_blog`.`subcategory` (
   `CategoryId` INT NOT NULL,
   `Name` VARCHAR(45) NULL,
-  `Count` INT NULL,
-  UNIQUE INDEX `CategoryId_UNIQUE` (`CategoryId` ASC),
-  CONSTRAINT `fk_subcategory_category1`
-    FOREIGN KEY (`CategoryId`)
-    REFERENCES `next_core_blog`.`category` (`CategoryId`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  `Count` INT NULL
+ )
 ENGINE = InnoDB;
 
 

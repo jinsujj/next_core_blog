@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, Dictionary, PayloadAction } from "@reduxjs/toolkit";
 import { CategoryState } from "../types/reduxState";
 
 // 초기상태
@@ -7,6 +7,7 @@ const initialState: CategoryState = {
     subCategory: '',
     categoryAdd: false,
     subCategoryAdd: false,
+    postAllReady: false,
 }
 
 
@@ -28,6 +29,10 @@ const category = createSlice({
         },
         setAddSubCategory(state, action: PayloadAction<boolean>){
             state.subCategoryAdd = action.payload;
+            return state;
+        },
+        setPostAllReady(state, action: PayloadAction<boolean>){
+            state.postAllReady == action.payload;
             return state;
         },
         initCategory(state){

@@ -122,15 +122,18 @@ const Editor = ({ NoteInfo, mode }) => {
 
     const { openModal, ModalPortal, closeModal } = useModal();
 
+    // Title
     const onChangeTitle = (event) => {
         setTitle(event.target.value);
     }
     
+    // Thumbnail
     const setThumbFile = (event) => {
         const file = event.target.files[0];
         sendFile(file, "thumb");
     }
 
+    // file
     const sendFile = (file, editor) => {
         var data = new FormData();
         data.append("file", file);

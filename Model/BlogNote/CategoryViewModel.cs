@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 
 namespace Next_Core_Blog.Model.BlogNote
 {
-    public class SubCategory
+    public class CategoryViewModel
     {
-        public int CategoryId {get;set;}
-        public string Name {get;set;}
-        public int Count {get;set;}
+        public string category {get;set;}
+        public string subCategory {get;set;}
     }
 }

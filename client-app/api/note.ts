@@ -20,6 +20,11 @@ export interface Note {
 
 export type PostedNote = Omit<Note, "password">;
 
+export type CategoryView ={
+    category : string;
+    subCategory: string;
+}
+
 
 // formType(0) : insert
 // formType(1) : update
@@ -27,8 +32,8 @@ const postNote = (formType: number, payload: Note) => {
     return api.post<Note>(`/api/Note?formType=${formType}`, payload);
 }
 
-const postCategory = (category: string, subCategory: string) => {
-    return api.post(`/api/Note/PostCategory?Category=${category}&subCategory=${subCategory}`);
+const postCategory = (category: CategoryView) => {
+    return api.post(`/api/Note/PostCategory`, category);
 }
 
 
@@ -56,6 +61,10 @@ const deleteNoteById = (id: number) => {
     return api.delete(`/api/Note/${id}`);
 }
 
+const getCategoryList = () => {
+    return api.get<CategoryView[]>(`/api/Note/getCategoryList`);
+}
+
 const saveImage = (file: FormData) => {
     const fileName = api.post(`/api/Note/saveImage`, file, {
         headers: {
@@ -74,6 +83,7 @@ const noteApi = {
     getNoteBySearch,
     getNoteCountAll,
     deleteNoteById,
+    getCategoryList,
     saveImage
 };
 

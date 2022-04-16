@@ -116,6 +116,19 @@ namespace Next_Core_Blog.Repository.BlogNote
             }
         }
 
+        public async Task<IEnumerable<CategoryViewModel>> getNoteCategoryList()
+        {
+            string sql = @"SELECT a.name as category , b.name as subCategory
+                            FROM category a LEFT OUTER JOIN subcategory b
+                            ON a.categoryID = b.categoryId    ";
+            
+            using ( var con = _context.CreateConnection())
+            {
+                var categoryList = await con.QueryAsync<CategoryViewModel>(sql);
+                return categoryList;
+            }
+        }
+
         public int PostCategory(string Category, string SubCategory = "")
         {
             // Category 유무 Check
@@ -126,7 +139,6 @@ namespace Next_Core_Blog.Repository.BlogNote
             using (var con = _context.CreateConnection())
             {
                 int isCategoryExist = con.QueryFirstOrDefault<int>(sql, new { Category });
-
                 // Category new create
                 if (isCategoryExist == 0)
                 {

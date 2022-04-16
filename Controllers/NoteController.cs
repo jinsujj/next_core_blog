@@ -68,13 +68,13 @@ namespace Next_Core_Blog.Controllers
 
         [HttpPost("PostCategory")]
         [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
-        public IActionResult PostCategory(string Category, string subCategory)
+        public IActionResult PostCategory([FromBody] CategoryViewModel categoryView)
         {
-            _logger.LogInformation("Category: " + Category + " SubCateghory:  " + subCategory + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+            _logger.LogInformation("Category: " + categoryView.category + " SubCateghory:  " + categoryView.subCategory + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
             try
             {
-                var result = _noteRepo.PostCategory(Category, subCategory);
+                var result = _noteRepo.PostCategory(categoryView.category, categoryView.subCategory);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -164,6 +164,24 @@ namespace Next_Core_Blog.Controllers
                 return Ok(notes.ToList());
             }
             catch (Exception ex)
+            {
+                _logger.LogError("error" + ex.Message);
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("getCategoryList")]
+        [Produces("application/json")]
+
+        public async Task<IActionResult> getCategoryList() 
+        {
+            _logger.LogInformation("getCategoryList" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+            try
+            {
+                var categoryList = await _noteRepo.getNoteCategoryList();
+                return Ok(categoryList);
+            }
+            catch(Exception ex)
             {
                 _logger.LogError("error" + ex.Message);
                 return StatusCode(500, ex.Message);

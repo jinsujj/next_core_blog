@@ -19,4 +19,5 @@ export type CategoryState = {
     subCategory: string;
     categoryAdd: boolean;
     subCategoryAdd: boolean;
+    postAllReady: boolean;
 }

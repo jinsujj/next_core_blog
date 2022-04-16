@@ -1,6 +1,8 @@
-import React, { useEffect } from "react";
+import el from "date-fns/esm/locale/el/index.js";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
+import noteApi from "../../../api/note";
 import { useSelector } from "../../../store";
 import { categoryAction } from "../../../store/category";
 import palette from "../../../styles/palette";
@@ -11,7 +13,7 @@ import Selector from "../common/Selector";
 const Container = styled.div`
   z-index: 11;
   width: 540px;
-  height: 300px;
+  height: 280px;
   padding: 30px;
   background-color: white;
 
@@ -58,12 +60,110 @@ interface IProps {
 
 const CategoryModal = ({ closeModal }: IProps) => {
   const dispatch = useDispatch();
+  const [dictionary, setDictionary] = useState<Map<string, string[]>>();
+
+  // 카테고리 추가
+  const [newCategory, setNewCategory] = useState("");
+  const [newSubCategory, setNewSubCategory] = useState("");
+
+  // 카테고리 입력
   const selectedCategory = useSelector((state) => state.category.category);
-  const categoryAdd = useSelector((state) => state.category.categoryAdd);
+  const selectedSubCategory = useSelector((state) => state.category.subCategory);
+  const addCategoryInput = useSelector((state) => state.category.categoryAdd);
+  const addSubCategoryInput = useSelector((state) => state.category.subCategoryAdd);
+
+  // 카테고리 리스트
+  const [options, setOptions] = useState<string[]>([]);
+  const [subOptions, setSubOptions] = useState<string[]>([]);
+  
+  // 카테고리 추가
+  const onClickAddCategory = async () => {
+    let category = "";
+    let subCategory = "";
+    if(selectedCategory === ""){
+      category = newCategory.trim();
+    }
+    else{
+      category = selectedCategory.trim();
+      subCategory = newSubCategory.trim();
+    }
+
+    // 중복 체크
+    if(options.some((t) => t ===  category)){
+      alert("category가 중복 됩니다");
+      return;
+    }
+    if(subOptions.some((t) => t === subCategory)){
+      alert("subCategory가 중복 됩니다");
+      return;
+    }
+
+    const categoryList = {category, subCategory};
+    const {data} = await noteApi.postCategory(categoryList);
+    alert("저장 되었습니다");
+    closeModal();
+  }
+
+  // 카테고리 입력
+  const onChangeInsertNewCategory = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if(selectedCategory){
+      setNewCategory("");
+      setNewSubCategory(event.target.value);
+    }
+    else{
+      setNewSubCategory("");
+      setNewCategory(event.target.value);
+    }
+  }
+
+  // 카테고리 조회
+  const getCategoryList = async () => {
+    let {data} = await noteApi.getCategoryList();
+    let category: string[] =[];
+    let dictionary = new Map<string, string[]>();
+    data.map((t) => {
+      // key set
+      if(!category.some((data)=> data === t.category)){
+        category.push(t.category);
+        dictionary.set(t.category, []);
+      }
+      // value set
+      var buff = dictionary.get(t.category);
+      if(!!buff){
+        buff.push(t.subCategory);
+        dictionary.set(t.category, buff);
+      }
+    });
+
+    setOptions(category);
+    setDictionary(dictionary);
+  }
+
+  // 최종 포스팅 저장
+  const saveCategory = () => {
+    console.log(selectedCategory);
+    console.log(selectedSubCategory);
+    dispatch(categoryAction.setPostAllReady(true));
+  }
+
+  // subCategory 초가화
+  useEffect(() => {
+    // subCategory index init
+    var ele = document.getElementById("test") as HTMLSelectElement;
+    if(!!ele) ele.selectedIndex= 0;
+
+    // subCategory renew
+    if(!!dictionary){
+      var subCategyList = dictionary.get(selectedCategory)?.filter((t) => t !== '');
+      !!subCategyList ? setSubOptions(subCategyList): undefined;
+    }
+  },[selectedCategory]);
 
   useEffect(() => {
     dispatch(categoryAction.initCategory());
+    getCategoryList();
   }, []);
+
 
   return (
     <Container>
@@ -72,19 +172,21 @@ const CategoryModal = ({ closeModal }: IProps) => {
         <Selector
           label="category"
           disabledOption={["Category를 선택하세요"]}
-          functionOption={functionOption}
-          options={optionList}
+          functionOption={["추가"]}
+          options={options}
+          disabled={addSubCategoryInput}
         />
         {selectedCategory && (
           <Selector
+            id="test"
             label="subCategory"
             disabledOption={["(생략가능)"]}
-            functionOption={functionOption}
-            options={[]}
+            functionOption={["추가"]}
+            options={subOptions}
           />
         )}
       </div>
-      {categoryAdd && (
+      {(addCategoryInput || addSubCategoryInput) && (
         <div className="add-new-category">
           <div className="float--left">
             <Input
@@ -92,16 +194,18 @@ const CategoryModal = ({ closeModal }: IProps) => {
               placeholder={"Category 명을 추가해주세요"}
               width="300px"
               color={"dark_cran"}
+              value = {addCategoryInput === true ? newCategory : newSubCategory}
+              onChange={onChangeInsertNewCategory}
             />
           </div>
           <div className="float--right">
-            <Button>추가</Button>
+            <Button onClick={onClickAddCategory}>추가</Button>
           </div>
         </div>
       )}
-      {selectedCategory && (
+      {selectedCategory && (!addCategoryInput && !addSubCategoryInput) && (
         <div className="save-button">
-          <Button>저장</Button>
+          <Button onClick={saveCategory}>저장</Button>
         </div>
       )}
     </Container>
@@ -110,6 +214,3 @@ const CategoryModal = ({ closeModal }: IProps) => {
 
 export default CategoryModal;
 
-export const functionOption = ["추가"];
-
-export const optionList = ["Project", "Database", "Nginx"];

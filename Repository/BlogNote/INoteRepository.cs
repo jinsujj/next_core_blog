@@ -19,6 +19,8 @@ namespace Next_Core_Blog.Repository.BlogNote
         Task<IEnumerable<GetNote>> GetNoteBySearch(string searchQuery);
         GetNote GetNoteById(int id);
 
+        Task<IEnumerable<CategoryViewModel>> getNoteCategoryList();
+
         Task<int> GetCountAll();
     }
 }

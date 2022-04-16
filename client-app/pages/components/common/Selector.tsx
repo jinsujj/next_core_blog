@@ -1,6 +1,7 @@
 import React, { ChangeEvent } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
+import { useSelector } from "../../../store";
 import { categoryAction } from "../../../store/category";
 import palette from "../../../styles/palette";
 
@@ -57,6 +58,7 @@ const Selector = ({
   const clickValue = (event: ChangeEvent<HTMLSelectElement>) => {
     const selected = event.target.value;
     const disableValue = disabledOption[0];
+    console.log(event.target.selectedIndex);
 
     if (label === "category") {
       if (selected === "추가") {
@@ -68,15 +70,24 @@ const Selector = ({
         dispatch(categoryAction.setCategory(""));
       } 
       else {
-        dispatch(categoryAction.setCategory(selected));
         dispatch(categoryAction.setAddCategory(false));
+        dispatch(categoryAction.setCategory(selected));
+        dispatch(categoryAction.setSubCategory(''));
       }
     } 
     else if (label === "subCategory") {
       if (selected === "추가") {
         dispatch(categoryAction.setAddSubCategory(true));
+        dispatch(categoryAction.setSubCategory(""));
       } 
-      else dispatch(categoryAction.setSubCategory(selected));
+      else if(selected === disableValue){
+        dispatch(categoryAction.setAddSubCategory(false));
+        dispatch(categoryAction.setSubCategory(""));
+      }
+      else{
+        dispatch(categoryAction.setSubCategory(selected));
+        dispatch(categoryAction.setAddSubCategory(false));
+      } 
     }
   };
 
