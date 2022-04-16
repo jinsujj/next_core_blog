@@ -1,6 +1,3 @@
-import { route } from "next/dist/server/router";
-import { Router } from "next/router";
-import { stringify } from "querystring";
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -9,7 +6,6 @@ import styled from "styled-components";
 import userApi from "../../../api/user";
 import useValidateMode from "../../../hooks/useValidateMode";
 import { authAction } from "../../../store/auth";
-import user from "../../../store/user";
 import palette from "../../../styles/palette";
 import Button from "../common/Button";
 import Input from "../common/Input";

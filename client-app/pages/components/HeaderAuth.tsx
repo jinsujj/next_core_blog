@@ -1,13 +1,9 @@
 import react from "react";
-import { useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
-import userApi from "../../api/user";
 import useModal from "../../hooks/useModal";
 import { authAction } from "../../store/auth";
 import AuthModal from "./authModal/AuthModal";
-import LoginModal from "./authModal/LoginModal";
-import SignUpModal from "./authModal/SignUpModal";
 import Button from "./common/Button";
 
 const Container = styled.div`

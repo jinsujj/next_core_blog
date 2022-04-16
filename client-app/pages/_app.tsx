@@ -1,6 +1,6 @@
 import "../styles/globals.css";
-import App, { AppContext, AppProps } from "next/app";
-import { useSelector, wrapper } from "../store";
+import App, { AppProps } from "next/app";
+import { wrapper } from "../store";
 import Head from "next/head";
 import "@fortawesome/fontawesome-svg-core/styles.css"; // import Font Awesome CSS
 import { config } from "@fortawesome/fontawesome-svg-core";

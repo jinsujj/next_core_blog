@@ -18,10 +18,9 @@ USE `next_core_blog` ;
 -- Table `next_core_blog`.`category`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `next_core_blog`.`category` (
-  `CategoryId` INT NOT NULL AUTO_INCREMENT,
-  `Name` VARCHAR(45) NULL,
+  `Name` VARCHAR(45) NOT NULL,
   `Count` INT NULL,
-  PRIMARY KEY (`CategoryId`))
+  PRIMARY KEY (`Name`))
 ENGINE = InnoDB;
 
 
@@ -37,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `next_core_blog`.`user` (
   `LastLoggined` DATE NULL,
   `FailedPasswordAttemptCount` INT NULL,
   `FailedPasswordAttemptTime` DATE NULL,
-  `Role` VARCHAR(10)
+  `Role` VARCHAR(10),
   PRIMARY KEY (`UserId`))
 ENGINE = InnoDB;
 
@@ -54,17 +53,18 @@ CREATE TABLE IF NOT EXISTS `next_core_blog`.`note` (
   `PostDate` VARCHAR(45) NULL,
   `ModifyDate` VARCHAR(45) NULL,
   `ThumbImage` VARCHAR(255) NULL,
-  `CategoryId` INT NULL,
+  `Category`  VARCHAR(45) NULL,
+  `SubCategory` VARCHAR(45) NULL,
   `ReadCount` INT NULL,
   `IsPost` CHAR NULL,
   `PostIP` VARCHAR(45) NULL,
   `ModifyIp` VARCHAR(45) NULL,
   PRIMARY KEY (`NoteId`),
-  INDEX `fk_note_category_idx` (`CategoryId` ASC) VISIBLE,
+  INDEX `fk_note_category_idx` (`Name` ASC) VISIBLE,
   INDEX `fk_note_user1_idx` (UserId ASC) VISIBLE,
   CONSTRAINT `fk_note_category`
-    FOREIGN KEY (`CategoryId`)
-    REFERENCES `next_core_blog`.`category` (`CategoryId`)
+    FOREIGN KEY (`Category`)
+    REFERENCES `next_core_blog`.`category` (`Name`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_note_user1`
@@ -79,8 +79,8 @@ ENGINE = InnoDB;
 -- Table `next_core_blog`.`subcategory`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `next_core_blog`.`subcategory` (
-  `CategoryId` INT NOT NULL,
-  `Name` VARCHAR(45) NULL,
+  `Name` INT NOT NULL,
+  `SubName` VARCHAR(45) NOT NULL,
   `Count` INT NULL
  )
 ENGINE = InnoDB;

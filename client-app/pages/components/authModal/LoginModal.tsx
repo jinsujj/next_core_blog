@@ -1,5 +1,3 @@
-import { AxiosError } from "axios";
-import Router, { useRouter } from "next/router";
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -13,7 +11,6 @@ import { userActions } from "../../../store/user";
 import palette from "../../../styles/palette";
 import Button from "../common/Button";
 import Input from "../common/Input";
-import SignUpModal from "./SignUpModal";
 
 const Container = styled.form`
   z-index: 11;

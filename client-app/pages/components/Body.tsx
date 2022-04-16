@@ -7,7 +7,6 @@ import { useSelector } from "../../store";
 import palette from "../../styles/palette";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import Link from "next/link";
-import Input from "./common/Input";
 import Editor from "./Editor";
 
 
@@ -106,9 +105,9 @@ const Body = () => {
             >
               <Masonry columnsCount={5} gutter={20}>
                 {postNotes &&
-                  postNotes.map((blog) => (
+                  postNotes.map((blog, index) => (
                     <>
-                      <Link href={`/blog/${blog.noteId}`}>
+                      <Link href={`/blog/${blog.noteId}`} key={blog.noteId} >
                         <img key={blog.noteId} src={blog.thumbImage} />
                       </Link>
                       <p>{blog.title}</p>

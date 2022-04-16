@@ -1,7 +1,6 @@
 import React, { ChangeEvent } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
-import { useSelector } from "../../../store";
 import { categoryAction } from "../../../store/category";
 import palette from "../../../styles/palette";
 
@@ -58,7 +57,6 @@ const Selector = ({
   const clickValue = (event: ChangeEvent<HTMLSelectElement>) => {
     const selected = event.target.value;
     const disableValue = disabledOption[0];
-    console.log(event.target.selectedIndex);
 
     if (label === "category") {
       if (selected === "추가") {
@@ -95,7 +93,7 @@ const Selector = ({
     <Container>
       <select {...props} onChange={clickValue}>
         {disabledOption.map((option, index) => (
-          <option key={index} value={option} className="disableOption">
+          <option key={index} value={option} className="disableOption" disabled={label==="subCategory"}>
             {option}
           </option>
         ))}

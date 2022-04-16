@@ -1,4 +1,3 @@
-import el from "date-fns/esm/locale/el/index.js";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
@@ -82,20 +81,18 @@ const CategoryModal = ({ closeModal }: IProps) => {
     let subCategory = "";
     if(selectedCategory === ""){
       category = newCategory.trim();
+      if(options.some((t) => t ===  category) || category === ""){
+        alert("category 명을 확인 해주세요");
+        return;
+      }
     }
     else{
       category = selectedCategory.trim();
       subCategory = newSubCategory.trim();
-    }
-
-    // 중복 체크
-    if(options.some((t) => t ===  category)){
-      alert("category가 중복 됩니다");
-      return;
-    }
-    if(subOptions.some((t) => t === subCategory)){
-      alert("subCategory가 중복 됩니다");
-      return;
+      if(subOptions.some((t) => t === subCategory) || subCategory === ""){
+        alert("subCategory 명을 확인 해주세요");
+        return;
+      }
     }
 
     const categoryList = {category, subCategory};
@@ -154,6 +151,7 @@ const CategoryModal = ({ closeModal }: IProps) => {
 
     // subCategory renew
     if(!!dictionary){
+      console.log(dictionary);
       var subCategyList = dictionary.get(selectedCategory)?.filter((t) => t !== '');
       !!subCategyList ? setSubOptions(subCategyList): undefined;
     }
