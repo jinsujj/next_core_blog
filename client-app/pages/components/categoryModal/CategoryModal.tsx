@@ -149,8 +149,8 @@ const CategoryModal = ({ closeModal }: IProps) => {
   // subCategory 초가화
   useEffect(() => {
     // subCategory index init
-    var ele = document.getElementById("test") as HTMLSelectElement;
-    if(!!ele) ele.selectedIndex= 0;
+    var Element = document.getElementById("subCategory") as HTMLSelectElement;
+    if(!!Element) Element.selectedIndex = 0;
 
     // subCategory renew
     if(!!dictionary){
@@ -178,7 +178,7 @@ const CategoryModal = ({ closeModal }: IProps) => {
         />
         {selectedCategory && (
           <Selector
-            id="test"
+            id="subCategory"
             label="subCategory"
             disabledOption={["(생략가능)"]}
             functionOption={["추가"]}
