@@ -11,7 +11,8 @@ export interface Note {
     postDate: string,
     modifyDate?: string,
     thumbImage?: string,
-    categoryId: number,
+    category: string,
+    subCategory?: string,
     readCount?: number,
     isPost: string,
     postIp: string,
@@ -19,6 +20,18 @@ export interface Note {
 }
 
 export type PostedNote = Omit<Note, "password">;
+
+export interface PostNote {
+    noteId? : number,
+    title: string,
+    userId: number,
+    content: string,
+    thumbImage?: string,
+    category: string,
+    subCategory?: string,
+    isPost?: string,
+    password?: string,
+}
 
 export type CategoryView ={
     category : string;
@@ -28,8 +41,8 @@ export type CategoryView ={
 
 // formType(0) : insert
 // formType(1) : update
-const postNote = (formType: number, payload: Note) => {
-    return api.post<Note>(`/api/Note?formType=${formType}`, payload);
+const postNote = (formType: number, payload: PostNote) => {
+    return api.post<Number>(`/api/Note?formType=${formType}`, payload);
 }
 
 const postCategory = (category: CategoryView) => {

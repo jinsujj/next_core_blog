@@ -114,9 +114,10 @@ const Container = styled.form`
 
 const Editor = ({ NoteInfo, mode }) => {
     // front backend 동일 서버에서 사용.
-    let host ='';
+    let host = '';
     const [imageBuff, setImageBuff] = useState();
     const [title, setTitle] = useState();
+    const [postNoteForm, setPostNoteForm] = useState();
     const postblog = useSelector((state) => state.common.postblog);
     const userId = useSelector((state) => state.user.userId);
 
@@ -126,7 +127,7 @@ const Editor = ({ NoteInfo, mode }) => {
     const onChangeTitle = (event) => {
         setTitle(event.target.value);
     }
-    
+
     // Thumbnail
     const setThumbFile = (event) => {
         const file = event.target.files[0];
@@ -140,40 +141,23 @@ const Editor = ({ NoteInfo, mode }) => {
 
         noteApi.saveImage(data).then(
             (res) => {
-                if(editor ==="thumb")
+                if (editor === "thumb")
                     setImageBuff(res.data)
-                else 
+                else
                     $(editor).summernote('insertImage', host + '/files/' + res.data + ' ');
             }
         ).catch(
-            (err)=> {
+            (err) => {
                 console.log(err);
             }
         );
     };
 
-    const onSubmitblog = (event) =>{
+    const openCategoryModal = (event) => {
         event.preventDefault();
         openModal();
     }
 
-    const onSubmitLogin = async (event) => {
-        event.preventDefault();
-
-        let content = $('#summernote').summernote('code');
-        let image = '';
-        if(imageBuff) image = host + '/files/' +  imageBuff ;
-        
-        var result = noteApi.postNote(0, {
-            title: title,
-            userId : userId,
-            content: content,
-            thumbImage: image,
-            categoryId: 0,
-            password: 0,
-        })
-        console.log(result);
-    }
 
     useEffect(() => {
         host = "https://" + window.location.hostname + ':' + process.env.NEXT_PUBLIC_BACKEND_PORT;
@@ -185,7 +169,7 @@ const Editor = ({ NoteInfo, mode }) => {
                 toolbar: [],
                 disableDragAndDrop: true,
             });
-            $('#summernote').summernote('insertText', NoteInfo.content);
+            $('#summernote').summernote('code', NoteInfo.content);
             $('#summernote').summernote('disable');
         }
         else {
@@ -211,7 +195,7 @@ const Editor = ({ NoteInfo, mode }) => {
     }, []);
 
     return (
-        <Container onSubmit={onSubmitblog}>
+        <Container onSubmit={openCategoryModal}>
             {(mode === "READ") && (
                 <></>
             )}
@@ -232,13 +216,13 @@ const Editor = ({ NoteInfo, mode }) => {
             {postblog && (
                 <div className="save-button clearfix">
                     <div className="float--left">
-                        <input className="upload-name" value={imageBuff} placeholder="Thumbnail"/>
+                        <input className="upload-name" value={imageBuff} placeholder="Thumbnail" />
                         <label htmlFor="file">파일찾기</label>
                         <input type="file" id="file"
-                                className="upload-name"
-                                onChange={setThumbFile.bind(this)} 
-                                placeholder="첨부파일"
-                                accept="image/jpg, image/png, image/jpeg"
+                            className="upload-name"
+                            onChange={setThumbFile.bind(this)}
+                            placeholder="첨부파일"
+                            accept="image/jpg, image/png, image/jpeg"
                         />
                     </div>
                     <div className="float--right">
@@ -247,7 +231,12 @@ const Editor = ({ NoteInfo, mode }) => {
                 </div>
             )}
             <ModalPortal>
-                <CategoryModal closeModal={closeModal}/>
+                <CategoryModal postNoteForm={{
+                    title: title,
+                    userId: userId,
+                    content: $('#summernote').summernote('code'),
+                    thumbImage: imageBuff,
+                }} closeModal={closeModal} />
             </ModalPortal>
         </Container>
     )

@@ -49,7 +49,7 @@ namespace Next_Core_Blog.Repository.BlogNote
 
         public async Task<IEnumerable<GetNote>> GetNoteAll()
         {
-            string sql = @"SELECT noteId, title, userId, content, postDate, modifyDate, thumbImage, categoryId, readCount, postIp, modifyIp
+            string sql = @"SELECT noteId, title, userId, content, postDate, modifyDate, thumbImage, category, subCategory, readCount, postIp, modifyIp
                             FROM note
                             WHERE isPost = 'Y'
                         ";
@@ -61,25 +61,18 @@ namespace Next_Core_Blog.Repository.BlogNote
             }
         }
 
-        public async Task<IEnumerable<GetNote>> GetNoteByCategory(string category, string subCategory = "")
+        public async Task<IEnumerable<GetNote>> GetNoteByCategory(string category, string subCategory)
         {
-            string ParamCategory = "";
             string ParamSubCategory = "";
 
-            if (!string.IsNullOrEmpty(category)) ParamCategory = "AND b.Name = @category";
-            if (!string.IsNullOrEmpty(subCategory)) ParamSubCategory = "AND c.Name = @subCategory";
+            if (!string.IsNullOrEmpty(subCategory)) ParamSubCategory = "AND a.subName = @subCategory";
 
             string sql = string.Format(@"SELECT *
                             FROM note a
-                            WHERE a.CategoryId IN (
-                                SELECT b.CategoryId
-                                FROM category b, subcategory c
-                                WHERE b.CategoryId = c.CategoryId
-                                {0}
-                                {1}
-                            )
+                            WHERE a.name = @category
+                            {0}
                             AND IsPost ='Y'
-                        ", ParamCategory, ParamSubCategory);
+                        ",  ParamSubCategory);
 
             using (var con = _context.CreateConnection())
             {
@@ -90,7 +83,7 @@ namespace Next_Core_Blog.Repository.BlogNote
 
         public GetNote GetNoteById(int id)
         {
-            string sql = @"SELECT noteId, title, userId, content, postDate, modifyDate, thumbImage, categoryId, readCount, postIp, modifyIp
+            string sql = @"SELECT noteId, title, userId, content, postDate, modifyDate, thumbImage, category, subCategory, readCount, postIp, modifyIp
                             FROM note
                             WHERE NoteId = @id
                             AND IsPost ='Y'
@@ -118,74 +111,83 @@ namespace Next_Core_Blog.Repository.BlogNote
 
         public async Task<IEnumerable<CategoryViewModel>> getNoteCategoryList()
         {
-            string sql = @"SELECT a.name as category , b.name as subCategory
+            string sql = @"SELECT a.name as category , NVL(b.subName,'') as subCategory
                             FROM category a LEFT OUTER JOIN subcategory b
-                            ON a.categoryID = b.categoryId    ";
-            
-            using ( var con = _context.CreateConnection())
+                            ON a.name = b.name";
+
+            using (var con = _context.CreateConnection())
             {
                 var categoryList = await con.QueryAsync<CategoryViewModel>(sql);
                 return categoryList;
             }
         }
 
-        public int PostCategory(string Category, string SubCategory = "")
+        public int PostCategory(string Category, string SubCategory)
         {
+            _logger.LogInformation("categort: " + Category + " " + "subcategory: " + SubCategory);
             // Category 유무 Check
-            string sql = @"SELECT CategoryId FROM category WHERE Name = @Category";
+            string sql = @"SELECT Name FROM category WHERE Name = @Category";
             string insertCategory = @"INSERT INTO category (Name) VALUES (@Category)";
-            string insertSubCategory = @"INSERT INTO subcategory (CategoryId, Name) VALUES (@CategoryId ,@SubCategory)";
+            string insertSubCategory = @"INSERT INTO subcategory (Name, subName) VALUES (@Category ,@SubCategory)";
 
             using (var con = _context.CreateConnection())
             {
-                int isCategoryExist = con.QueryFirstOrDefault<int>(sql, new { Category });
+                string isCategoryExist = con.QueryFirstOrDefault<string>(sql, new { Category });
+                 _logger.LogInformation("isCategoryExist" + isCategoryExist);
                 // Category new create
-                if (isCategoryExist == 0)
+                if (string.IsNullOrEmpty(isCategoryExist))
                 {
                     con.QueryFirstOrDefault<int>(insertCategory, new { Category });
-                    int CategoryId = con.QueryFirstOrDefault<int>(sql, new { Category });
-                    con.QueryFirstOrDefault(insertSubCategory, new { CategoryId = CategoryId , SubCategory });
+                    if (!string.IsNullOrEmpty(SubCategory)) con.QueryFirstOrDefault(insertSubCategory, new { Category, SubCategory });
                     return 1;
                 }
                 // Category add  
                 else
                 {
-                    if (!String.IsNullOrEmpty(SubCategory)){
-                         con.QueryFirstOrDefault(insertSubCategory, new { CategoryId =isCategoryExist, SubCategory });
-                         return 1;
+                    if (!String.IsNullOrEmpty(SubCategory))
+                    {
+                        con.QueryFirstOrDefault(insertSubCategory, new { Category, SubCategory });
+                        return 1;
                     }
                 }
                 return -1;
             }
         }
 
-        public int PostNote(Note note, BoardWriteFormType formType)
+        public int PostNote(PostNoteView note, BoardWriteFormType formType)
         {
-            int result = 0;
             var param = new DynamicParameters();
             string sql = "";
+            string userPasswordSql = @"SELECT password FROM user WHERE userId = @UserId";
 
-            param.Add("@Title", value: note.Title, dbType: DbType.String);
-            param.Add("@UserId", value: note.UserId, dbType: DbType.Int32);
-            param.Add("@Content", value: note.Content, dbType: DbType.String);
-            param.Add("@Password", value: note.Password, dbType: DbType.String);
-            param.Add("@ThumbImage", value: note.ThumbImage, dbType: DbType.String);
-            param.Add("@IsPost", value: note.IsPost, dbType: DbType.String);
-            param.Add("@CategoryId", value: note.CategoryId, dbType: DbType.String);
+            param.Add("@Title", value: note.title, dbType: DbType.String);
+            param.Add("@UserId", value: note.userId, dbType: DbType.Int32);
+            param.Add("@Content", value: note.content, dbType: DbType.String);
+            param.Add("@ThumbImage", value: note.thumbImage, dbType: DbType.String);
+            param.Add("@IsPost", value: note.isPost, dbType: DbType.String);
+            param.Add("@Category", value: note.category, dbType: DbType.String);
+            param.Add("@SubCategory", value: note.subCategory, dbType: DbType.String);
 
-            if (formType == BoardWriteFormType.create)
+            using (var con = _context.CreateConnection())
             {
-                param.Add("@PostIp", value: note.PostIp, dbType: DbType.String);
+                string password = con.QueryFirstOrDefault<string>(userPasswordSql, new {UserId = note.userId});
 
-                sql = @"INSERT INTO note (Title, UserId, Content, Password, ThumbImage, IsPost, PostDate, PostIp, CategoryId)
-                        VALUES (@Title, @UserId, @Content, @Password, @ThumbImage, 'N', Now(), @PostIp, @CategoryId)";
-            }
-            else if (formType == BoardWriteFormType.modify)
-            {
-                param.Add("@NoteId", value: note.NoteId, dbType: DbType.Int32);
-                param.Add("@ModifyIp", value: note.ModifyIp, dbType: DbType.String);
+                if (formType == BoardWriteFormType.create)
+                {
+                    param.Add("@PostIp", value: note.postIp, dbType: DbType.String);
+                    param.Add("@Password", value: password, dbType: DbType.String);
 
-                sql = @"UPDATE note
+                    sql = @"INSERT INTO note (Title, UserId, Content, Password, ThumbImage, IsPost, PostDate, PostIp,  Category, SubCategory)
+                        VALUES (@Title, @UserId, @Content, @Password, @ThumbImage, 'Y', Now(), @PostIp, @Category, @SubCategory)";
+                }
+                else if (formType == BoardWriteFormType.modify)
+                {
+                    if(note.password != password) return -1;
+
+                    param.Add("@ModifyIp", value: note.modifyIp, dbType: DbType.String);
+                    param.Add("@NoteId", value: note.noteId, dbType: DbType.Int32);
+
+                    sql = @"UPDATE note
                         SET title = @Title,
                             UserId = @UserId,
                             Content = @Content,
@@ -194,15 +196,13 @@ namespace Next_Core_Blog.Repository.BlogNote
                             IsPost = @IsPost,
                             ModifyDate = NOW(),
                             ModifyIp = @ModifyIp,
-                            CategoryId = @CategoryId
+                            Category = @Category,
+                            SubCategory = @SubCategory
                         WHERE noteId = @NoteId
                         ";
-            }
-
-            using (var con = _context.CreateConnection())
-            {
-                result = con.Execute(sql, param, commandType: CommandType.Text);
-                return result;
+                }
+                con.Execute(sql, param, commandType: CommandType.Text);
+                return 1;
             }
         }
     }

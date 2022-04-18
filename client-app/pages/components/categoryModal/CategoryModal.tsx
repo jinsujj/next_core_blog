@@ -53,11 +53,20 @@ const Container = styled.div`
   }
 `;
 
+type postNoteForm = {
+  title: string,
+  userId: number,
+  content: string,
+  category: string,
+  subCategory?: string,
+}
+
 interface IProps {
+  postNoteForm: postNoteForm,
   closeModal: () => void;
 }
 
-const CategoryModal = ({ closeModal }: IProps) => {
+const CategoryModal = ({postNoteForm, closeModal }: IProps) => {
   const dispatch = useDispatch();
   const [dictionary, setDictionary] = useState<Map<string, string[]>>();
 
@@ -122,7 +131,7 @@ const CategoryModal = ({ closeModal }: IProps) => {
       // key set
       if(!category.some((data)=> data === t.category)){
         category.push(t.category);
-        dictionary.set(t.category, []);
+        dictionary.set(t.category, ['']);
       }
       // value set
       var buff = dictionary.get(t.category);
@@ -137,10 +146,15 @@ const CategoryModal = ({ closeModal }: IProps) => {
   }
 
   // 최종 포스팅 저장
-  const saveCategory = () => {
-    console.log(selectedCategory);
-    console.log(selectedSubCategory);
-    dispatch(categoryAction.setPostAllReady(true));
+  const saveCategory = async () => {
+    postNoteForm.category = selectedCategory;
+    postNoteForm.subCategory = selectedSubCategory;
+    var {data} = await noteApi.postNote(0, postNoteForm);
+    if(data === 1){
+      alert("저장 되었습니다");
+      closeModal();
+      location.href= '../';
+    }
   }
 
   // subCategory 초가화
@@ -151,10 +165,10 @@ const CategoryModal = ({ closeModal }: IProps) => {
 
     // subCategory renew
     if(!!dictionary){
-      console.log(dictionary);
       var subCategyList = dictionary.get(selectedCategory)?.filter((t) => t !== '');
       !!subCategyList ? setSubOptions(subCategyList): undefined;
     }
+    
   },[selectedCategory]);
 
   useEffect(() => {

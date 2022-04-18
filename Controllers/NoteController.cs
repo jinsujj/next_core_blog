@@ -38,22 +38,21 @@ namespace Next_Core_Blog.Controllers
 
         [HttpPost]
         [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
-        public IActionResult PostNote(Note note, BoardWriteFormType formType)
+        public IActionResult PostNote(PostNoteView note, BoardWriteFormType formType)
         {
-            _logger.LogInformation("PostNote: " + note.Title + " " + formType + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+            _logger.LogInformation("PostNote: " + note.title + " " + formType + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
             try
             {
                 var result = 0;
-
-                note.Password = new Security().EncryptPassword(note.Password);
-
                 if (formType == BoardWriteFormType.create)
                 {
+                    note.postIp = HttpContext.Connection.RemoteIpAddress.ToString();
                     result = _noteRepo.PostNote(note, BoardWriteFormType.create);
                 }
                 else if (formType == BoardWriteFormType.modify)
                 {
+                    note.modifyIp = HttpContext.Connection.RemoteIpAddress.ToString();
                     result = _noteRepo.PostNote(note, BoardWriteFormType.modify);
                 }
 
@@ -172,7 +171,6 @@ namespace Next_Core_Blog.Controllers
 
         [HttpGet("getCategoryList")]
         [Produces("application/json")]
-
         public async Task<IActionResult> getCategoryList() 
         {
             _logger.LogInformation("getCategoryList" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));

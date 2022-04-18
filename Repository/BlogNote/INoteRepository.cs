@@ -9,7 +9,7 @@ namespace Next_Core_Blog.Repository.BlogNote
     public interface INoteRepository
     {
         // Note CRUD
-        int PostNote(Note note, BoardWriteFormType formType) ;
+        int PostNote(PostNoteView note, BoardWriteFormType formType) ;
         int PostCategory(string Category, string SubCateghory);
         int DeleteNode (int id);
 

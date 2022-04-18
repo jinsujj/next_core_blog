@@ -86,13 +86,13 @@ const Container = styled.div`
 `;
 
 const Body = () => {
+  const host = process.env.NEXT_PUBLIC_API_URL + "/files/";
   const [postNotes, setPostNotes] = useState<PostedNote[]>();
   const userInfo = useSelector((state) => state.user);
   const postblog = useSelector((state) => state.common.postblog);
 
   useEffect(() => {
     const Notes = noteApi.getNoteAll().then((res) => setPostNotes(res.data));
-    console.log(postNotes);
   }, []);
 
   return (
@@ -108,7 +108,7 @@ const Body = () => {
                   postNotes.map((blog, index) => (
                     <>
                       <Link href={`/blog/${blog.noteId}`} key={blog.noteId} >
-                        <img key={blog.noteId} src={blog.thumbImage} />
+                        <img key={blog.noteId} src={`${host}${blog.thumbImage}`} />
                       </Link>
                       <p>{blog.title}</p>
                     </>

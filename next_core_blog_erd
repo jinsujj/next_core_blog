@@ -56,12 +56,11 @@ DROP TABLE IF EXISTS `next_core_blog`.`subcategory` ;
 CREATE TABLE IF NOT EXISTS `next_core_blog`.`subcategory` (
   `Name` VARCHAR(45) NOT NULL,
   `subName` VARCHAR(45) NOT NULL,
-  `Count` INT NULL,
-  PRIMARY KEY (`subName`))
+  `Count` INT NULL)
 ENGINE = InnoDB;
 
 ALTER TABLE subcategory ADD FOREIGN KEY (`Name`) REFERENCES category (`Name`);
-
+ALTER TABLE subcategory ADD UNIQUE KEY category_group (`Name`, `subName`);
 
 -- -----------------------------------------------------
 -- Table `next_core_blog`.`note`
@@ -76,12 +75,12 @@ CREATE TABLE IF NOT EXISTS `next_core_blog`.`note` (
   `Password` VARCHAR(255) NOT NULL,
   `PostDate` VARCHAR(45) NULL,
   `ModifyDate` VARCHAR(45) NULL,
-  `TumbImage` VARCHAR(255) NULL,
+  `ThumbImage` VARCHAR(255) NULL,
   `Category` VARCHAR(45) NOT NULL,
   `SubCategory` VARCHAR(45) NOT NULL,
   `ReadCount` INT NULL,
   `IsPost` CHAR NULL,
-  `PosIP` VARCHAR(45) NULL,
+  `PostIP` VARCHAR(45) NULL,
   `ModifyIp` VARCHAR(45) NULL,
   PRIMARY KEY (`NoteId`))
 ENGINE = InnoDB;
@@ -93,8 +92,6 @@ ALTER TABLE note ADD INDEX fk_note_category1_idx (Category ASC);
 ALTER TABLE note ADD INDEX fk_note_subcategory1_idx (SubCategory ASC);
 
 ALTER TABLE note ADD FOREIGN KEY (`Category`) REFERENCES category (`Name`);
-
-ALTER TABLE note ADD FOREIGN KEY (`SubCategory`) REFERENCES category (`Name`);
 
 
 -- -----------------------------------------------------

@@ -19,7 +19,8 @@ namespace Next_Core_Blog.Model.BlogNote
         public string PostDate { get; set; }
         public string ModifyDate { get; set; }
         public string ThumbImage { get; set; }
-        public int CategoryId { get; set; }
+        public string Category { get; set; }
+        public string SubCategory { get; set; }
         public int ReadCount { get; set; }
         public string PostIp { get; set; }
         public string ModifyIp { get; set; }
