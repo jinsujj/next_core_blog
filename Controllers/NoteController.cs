@@ -84,13 +84,13 @@ namespace Next_Core_Blog.Controllers
         }
 
         [HttpGet("{id}", Name = "NodeById")]
-        public IActionResult GetNoteById(int id)
+        public async Task<IActionResult> GetNoteById(int id)
         {
-            _logger.LogInformation("GetNoteBySearch: " + id + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+            _logger.LogInformation("GetNoteById: " + id + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
             try
             {
-                var note = _noteRepo.GetNoteById(id);
+                var note = await _noteRepo.GetNoteById(id);
                 return Ok(note);
             }
             catch (Exception ex)

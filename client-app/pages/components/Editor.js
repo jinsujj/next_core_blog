@@ -117,6 +117,7 @@ const Editor = ({ NoteInfo, mode }) => {
     let host = '';
     const [imageBuff, setImageBuff] = useState();
     const [title, setTitle] = useState();
+    const [content, setContent] = useState();
     const [postNoteForm, setPostNoteForm] = useState();
     const postblog = useSelector((state) => state.common.postblog);
     const userId = useSelector((state) => state.user.userId);
@@ -154,6 +155,7 @@ const Editor = ({ NoteInfo, mode }) => {
     };
 
     const openCategoryModal = (event) => {
+        setContent($('#summernote').summernote('code'));
         event.preventDefault();
         openModal();
     }
@@ -234,7 +236,7 @@ const Editor = ({ NoteInfo, mode }) => {
                 <CategoryModal postNoteForm={{
                     title: title,
                     userId: userId,
-                    content: $('#summernote').summernote('code'),
+                    content: content,
                     thumbImage: imageBuff,
                 }} closeModal={closeModal} />
             </ModalPortal>

@@ -81,16 +81,22 @@ namespace Next_Core_Blog.Repository.BlogNote
             }
         }
 
-        public GetNote GetNoteById(int id)
+        public async Task<GetNote> GetNoteById(int id)
         {
+            string updataCount = @"UPDATE note SET ReadCount = ReadCount+1 
+                                    WHERE noteId =@id ";
+
             string sql = @"SELECT noteId, title, userId, content, postDate, modifyDate, thumbImage, category, subCategory, readCount, postIp, modifyIp
                             FROM note
                             WHERE NoteId = @id
                             AND IsPost ='Y'
                         ";
 
-            var con = _context.CreateConnection();
-            return con.QuerySingleOrDefault<GetNote>(sql, new { id });
+
+            using (var con = _context.CreateConnection()){
+                await con.QueryAsync(updataCount, new {id});
+                return con.QuerySingleOrDefault<GetNote>(sql, new {id});
+            }
         }
 
         public async Task<IEnumerable<GetNote>> GetNoteBySearch(string searchQuery)
@@ -177,8 +183,8 @@ namespace Next_Core_Blog.Repository.BlogNote
                     param.Add("@PostIp", value: note.postIp, dbType: DbType.String);
                     param.Add("@Password", value: password, dbType: DbType.String);
 
-                    sql = @"INSERT INTO note (Title, UserId, Content, Password, ThumbImage, IsPost, PostDate, PostIp,  Category, SubCategory)
-                        VALUES (@Title, @UserId, @Content, @Password, @ThumbImage, 'Y', Now(), @PostIp, @Category, @SubCategory)";
+                    sql = @"INSERT INTO note (Title, UserId, Content, Password, ThumbImage, IsPost, PostDate, PostIp,  Category, SubCategory, ReadCount)
+                        VALUES (@Title, @UserId, @Content, @Password, @ThumbImage, 'Y', Now(), @PostIp, @Category, @SubCategory, 0)";
                 }
                 else if (formType == BoardWriteFormType.modify)
                 {
