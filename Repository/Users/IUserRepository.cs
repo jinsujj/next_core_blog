@@ -9,7 +9,7 @@ namespace Next_Core_Blog.Repository.Users
     public interface IUserRepository
     {
         bool AddUser(RegisterViewModel model);
-        RegisterViewModel GetUserByEmail(string EMail);
+        Task<RegisterViewModel> GetUserByEmail(string EMail);
         bool IsCorrectUser(string Email, string password);
         void ModifyUser(RegisterViewModel model);
         bool IsAdmin(string Email);

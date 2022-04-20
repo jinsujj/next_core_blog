@@ -1,4 +1,6 @@
-import React from "react";
+import { copyFileSync } from "fs";
+import Router from "next/router";
+import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import userApi from "../../api/user";
@@ -35,31 +37,50 @@ const Container = styled.div`
 
 const HeaderProfile = () => {
   const dispatch = useDispatch();
-  const userName = useSelector((state) => state.user.name);
-  const postBlog = useSelector((state) => state.common.postblog);
-
+  const userInfo = useSelector((state) => state.user);
+  const postState = useSelector((state) => state.common.postState);
+  const userIfofNote = useSelector((state) => state.common.userIdOfNote);
+ 
   const onClickLogout = () => {
     try {
       userApi.Logout();
       dispatch(userActions.initUser());
+      Router.push("../");
     } catch (e: any) {
       console.log(e.message);
     }
   };
 
   const onClickPostBlog = () => {
-    postBlog == true ? dispatch(commonAction.setPostBlog(false)): dispatch(commonAction.setPostBlog(true));
+      if(postState === 'read' && userIfofNote === userInfo.userId){
+        dispatch(commonAction.setPostState('modify'));
+        return;
+      }
+      if(postState !== 'write' && userIfofNote === 0){
+        dispatch(commonAction.setPostState('write'));
+        return;
+      }
+      if(postState === 'write' || postState === 'modify'){
+        dispatch(commonAction.setPostState("read"));
+        Router.push("../");
+      }
   };
 
   return (
     <Container>
       <div className="btn-group">
-        {!postBlog && (
+        {postState === 'read' && (userIfofNote === userInfo.userId) && (
+          <Button onClick={onClickPostBlog} width="110px" color ="green_8D">
+           수정하기
+          </Button>
+        )
+        }
+        {postState !== 'write' && (userIfofNote !== userInfo.userId) && (
           <Button onClick={onClickPostBlog} width="110px" color ="green_8D">
             글쓰기
           </Button>
         )}
-        {postBlog && (
+        {postState !== 'read' && (userInfo.name.length> 0) && (
           <Button onClick={onClickPostBlog} width="110px" color="green_8D">
             뒤로가기
           </Button>
@@ -67,7 +88,7 @@ const HeaderProfile = () => {
         <Button onClick={onClickLogout} width="110px">
           Logout
         </Button>
-        <div className="userInfo">{userName}</div>
+        <div className="userInfo">{userInfo.name}</div>
       </div>
     </Container>
   );

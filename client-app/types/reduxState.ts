@@ -3,7 +3,8 @@
 export type CommonState = {
     toggle: boolean;
     validateMode: boolean;
-    postblog: boolean;
+    postState: "write" | "modify" | "read";
+    userIdOfNote: number;
 }
 
 export type UserState = {

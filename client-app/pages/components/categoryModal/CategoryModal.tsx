@@ -54,21 +54,23 @@ const Container = styled.div`
 `;
 
 type postNoteForm = {
-  title: string,
-  userId: number,
-  content: string,
-  category: string,
-  subCategory?: string,
-}
+  noteId: number;
+  title: string;
+  userId: number;
+  content: string;
+  category: string;
+  subCategory?: string;
+};
 
 interface IProps {
-  postNoteForm: postNoteForm,
+  postNoteForm: postNoteForm;
   closeModal: () => void;
 }
 
-const CategoryModal = ({postNoteForm, closeModal }: IProps) => {
+const CategoryModal = ({ postNoteForm, closeModal }: IProps) => {
   const dispatch = useDispatch();
   const [dictionary, setDictionary] = useState<Map<string, string[]>>();
+  const postState = useSelector((state) => state.common.postState);
 
   // 카테고리 추가
   const [newCategory, setNewCategory] = useState("");
@@ -76,66 +78,70 @@ const CategoryModal = ({postNoteForm, closeModal }: IProps) => {
 
   // 카테고리 입력
   const selectedCategory = useSelector((state) => state.category.category);
-  const selectedSubCategory = useSelector((state) => state.category.subCategory);
+  const selectedSubCategory = useSelector(
+    (state) => state.category.subCategory
+  );
   const addCategoryInput = useSelector((state) => state.category.categoryAdd);
-  const addSubCategoryInput = useSelector((state) => state.category.subCategoryAdd);
+  const addSubCategoryInput = useSelector(
+    (state) => state.category.subCategoryAdd
+  );
 
   // 카테고리 리스트
   const [options, setOptions] = useState<string[]>([]);
   const [subOptions, setSubOptions] = useState<string[]>([]);
-  
+
   // 카테고리 추가
   const onClickAddCategory = async () => {
     let category = "";
     let subCategory = "";
-    if(selectedCategory === ""){
+    if (selectedCategory === "") {
       category = newCategory.trim();
-      if(options.some((t) => t ===  category) || category === ""){
+      if (options.some((t) => t === category) || category === "") {
         alert("category 명을 확인 해주세요");
         return;
       }
-    }
-    else{
+    } else {
       category = selectedCategory.trim();
       subCategory = newSubCategory.trim();
-      if(subOptions.some((t) => t === subCategory) || subCategory === ""){
+      if (subOptions.some((t) => t === subCategory) || subCategory === "") {
         alert("subCategory 명을 확인 해주세요");
         return;
       }
     }
 
-    const categoryList = {category, subCategory};
-    const {data} = await noteApi.postCategory(categoryList);
+    const categoryList = { category, subCategory };
+    const { data } = await noteApi.postCategory(categoryList);
     alert("저장 되었습니다");
     closeModal();
-  }
+  };
 
   // 카테고리 입력
-  const onChangeInsertNewCategory = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if(selectedCategory){
+  const onChangeInsertNewCategory = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (selectedCategory) {
       setNewCategory("");
       setNewSubCategory(event.target.value);
-    }
-    else{
+    } else {
       setNewSubCategory("");
       setNewCategory(event.target.value);
     }
-  }
+  };
 
   // 카테고리 조회
   const getCategoryList = async () => {
-    let {data} = await noteApi.getCategoryList();
-    let category: string[] =[];
+    let { data } = await noteApi.getCategoryList();
+    let category: string[] = [];
     let dictionary = new Map<string, string[]>();
     data.map((t) => {
       // key set
-      if(!category.some((data)=> data === t.category)){
+      if (!category.some((data) => data === t.category)) {
         category.push(t.category);
-        dictionary.set(t.category, ['']);
+        dictionary.set(t.category, [""]);
       }
       // value set
       var buff = dictionary.get(t.category);
-      if(!!buff){
+      if (!!buff) {
         buff.push(t.subCategory);
         dictionary.set(t.category, buff);
       }
@@ -143,45 +149,55 @@ const CategoryModal = ({postNoteForm, closeModal }: IProps) => {
 
     setOptions(category);
     setDictionary(dictionary);
-  }
+  };
 
   // 최종 포스팅 저장
   const saveCategory = async () => {
     postNoteForm.category = selectedCategory;
     postNoteForm.subCategory = selectedSubCategory;
-    var {data} = await noteApi.postNote(0, postNoteForm);
-    if(data === 1){
+
+    if (postState === "write") {
+      var { data } = await noteApi.postNote(0, postNoteForm);
+    } else if (postState === "modify") {
+      var { data } = await noteApi.postNote(1, postNoteForm);
+    }
+    console.log(data);
+    if (data === 1) {
       alert("저장 되었습니다");
       closeModal();
-      location.href= '../';
+      location.href = "../";
+    } else {
+      alert("오류가 발생했습니다");
+      closeModal();
     }
-  }
+  };
 
   // subCategory 초가화
   useEffect(() => {
     // subCategory index init
     var Element = document.getElementById("subCategory") as HTMLSelectElement;
-    if(!!Element) Element.selectedIndex = 0;
+    if (!!Element) Element.selectedIndex = 0;
 
     // subCategory renew
-    if(!!dictionary){
-      var subCategyList = dictionary.get(selectedCategory)?.filter((t) => t !== '');
-      !!subCategyList ? setSubOptions(subCategyList): undefined;
+    if (!!dictionary) {
+      var subCategyList = dictionary
+        .get(selectedCategory)
+        ?.filter((t) => t !== "");
+      !!subCategyList ? setSubOptions(subCategyList) : undefined;
     }
-    
-  },[selectedCategory]);
+  }, [selectedCategory]);
 
   useEffect(() => {
     dispatch(categoryAction.initCategory());
     getCategoryList();
   }, []);
 
-
   return (
     <Container>
       <div className="title">Category!</div>
       <div className="button-group">
         <Selector
+          id="Category"
           label="category"
           disabledOption={["Category를 선택하세요"]}
           functionOption={["추가"]}
@@ -206,7 +222,7 @@ const CategoryModal = ({postNoteForm, closeModal }: IProps) => {
               placeholder={"Category 명을 추가해주세요"}
               width="300px"
               color={"dark_cran"}
-              value = {addCategoryInput === true ? newCategory : newSubCategory}
+              value={addCategoryInput === true ? newCategory : newSubCategory}
               onChange={onChangeInsertNewCategory}
             />
           </div>
@@ -215,7 +231,7 @@ const CategoryModal = ({postNoteForm, closeModal }: IProps) => {
           </div>
         </div>
       )}
-      {selectedCategory && (!addCategoryInput && !addSubCategoryInput) && (
+      {selectedCategory && !addCategoryInput && !addSubCategoryInput && (
         <div className="save-button">
           <Button onClick={saveCategory}>저장</Button>
         </div>
@@ -225,4 +241,3 @@ const CategoryModal = ({postNoteForm, closeModal }: IProps) => {
 };
 
 export default CategoryModal;
-

@@ -112,24 +112,23 @@ const Container = styled.form`
 `;
 
 
-const Editor = ({ NoteInfo, mode }) => {
+const Editor = ({ NoteInfo }) => {
     // front backend 동일 서버에서 사용.
     let host = '';
     const [imageBuff, setImageBuff] = useState();
     const [title, setTitle] = useState();
     const [content, setContent] = useState();
-    const [postNoteForm, setPostNoteForm] = useState();
-    const postblog = useSelector((state) => state.common.postblog);
+    const postState = useSelector((state) => state.common.postState);
     const userId = useSelector((state) => state.user.userId);
 
     const { openModal, ModalPortal, closeModal } = useModal();
 
-    // Title
+    // title
     const onChangeTitle = (event) => {
         setTitle(event.target.value);
     }
 
-    // Thumbnail
+    // thumbnail
     const setThumbFile = (event) => {
         const file = event.target.files[0];
         sendFile(file, "thumb");
@@ -154,9 +153,10 @@ const Editor = ({ NoteInfo, mode }) => {
         );
     };
 
+    // open modal
     const openCategoryModal = (event) => {
-        setContent($('#summernote').summernote('code'));
         event.preventDefault();
+        setContent($('#summernote').summernote('code'));
         openModal();
     }
 
@@ -164,7 +164,7 @@ const Editor = ({ NoteInfo, mode }) => {
     useEffect(() => {
         host = "https://" + window.location.hostname + ':' + process.env.NEXT_PUBLIC_BACKEND_PORT;
 
-        if (mode === "READ") {
+        if (postState === "read") {
             $('#summernote').summernote({
                 lang: 'ko-KR', // default: 'en-US'
                 height: 800,
@@ -173,6 +173,27 @@ const Editor = ({ NoteInfo, mode }) => {
             });
             $('#summernote').summernote('code', NoteInfo.content);
             $('#summernote').summernote('disable');
+        }
+        else if (postState === "modify"){
+            setTitle(NoteInfo.title);
+            $('#summernote').summernote({
+                lang: 'ko-KR', // default: 'en-US'
+                height: 500,
+                tabsize: 3,
+                toolbar: toolbar,
+                focus: true,
+                fontNames: ['Arial', 'Courier New', '맑은 고딕', '굴림체', '굴림', '돋음체', 'Montserrat', 'Nanum Gothic', 'Nanum Gothic Coding', 'NanumHimNaeRaNeunMarBoDan', 'NanumBaReunHiPi'],
+                fontNamesIgnoreCheck: ['Arial', 'Courier New', '맑은 고딕', '굴림체', '굴림', '돋음체', 'Montserrat', 'Nanum Gothic', 'Nanum Gothic Coding', 'NanumHimNaeRaNeunMarBoDan', 'NanumBaReunHiPi'],
+                fontSizes: ['10', '11', '12', '14', '15', '16', '18', '20', '22', '24', '28', '30', '36', '50', '72'],
+                callbacks: {
+                    onImageUpload: function (files) {
+                        const that = $(this);
+                        sendFile(files[0], that);
+                    }
+                },
+            });
+            $('#summernote').summernote("reset");
+            $('#summernote').summernote('code', NoteInfo.content);
         }
         else {
             $('#summernote').summernote({
@@ -198,10 +219,7 @@ const Editor = ({ NoteInfo, mode }) => {
 
     return (
         <Container onSubmit={openCategoryModal}>
-            {(mode === "READ") && (
-                <></>
-            )}
-            {(mode === "WRITE") && (
+            {(postState !== "read") && (
                 <div className="title_input">
                     <Input
                         type="text"
@@ -215,7 +233,7 @@ const Editor = ({ NoteInfo, mode }) => {
                 </div>
             )}
             <div id="summernote" />
-            {postblog && (
+            {postState !== 'read' && (
                 <div className="save-button clearfix">
                     <div className="float--left">
                         <input className="upload-name" value={imageBuff} placeholder="Thumbnail" />
@@ -234,10 +252,13 @@ const Editor = ({ NoteInfo, mode }) => {
             )}
             <ModalPortal>
                 <CategoryModal postNoteForm={{
+                    noteId : NoteInfo.noteId,
                     title: title,
                     userId: userId,
                     content: content,
                     thumbImage: imageBuff,
+                    category : postState === 'modify' ? NoteInfo.category : '',
+                    subCategory: postState === 'modify' ? NoteInfo.subCategory : '',
                 }} closeModal={closeModal} />
             </ModalPortal>
         </Container>

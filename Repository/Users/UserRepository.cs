@@ -43,7 +43,7 @@ namespace Next_Core_Blog.Repository.Users
         }
 
 
-        public RegisterViewModel GetUserByEmail(string Email)
+        public async Task<RegisterViewModel> GetUserByEmail(string Email)
         {
             string sql = @"SELECT UserId, Name, Email, Role
                             FROM user
@@ -51,7 +51,7 @@ namespace Next_Core_Blog.Repository.Users
 
             using (var con = _context.CreateConnection())
             {
-                var result = con.QuerySingleOrDefault<RegisterViewModel>(sql, new { Email });
+                var result = await con.QueryFirstAsync<RegisterViewModel>(sql, new { Email });
                 return result;
             }
         }

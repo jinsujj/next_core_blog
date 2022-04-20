@@ -10,6 +10,8 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarCheck, faEye } from "@fortawesome/free-solid-svg-icons";
+import { commonAction } from "../../store/common";
+import { write } from "fs";
 
 const Container = styled.div`
   margin-top: 56px;
@@ -100,8 +102,11 @@ interface IProps {
 }
 
 const blogDetail: NextPage<IProps> = ({ detailNote }) => {
+  const postState = useSelector((state) => state.common.postState);
+  const userInfo = useSelector((state) => state.user);
+
   const dispatch = useDispatch();
-  const postblog = useSelector((state) => state.common.postblog);
+  dispatch(commonAction.setPostUserIdOfNote(detailNote.userId));
 
   const leftPad = (value: number) => {
     if (value >= 10) {
@@ -123,7 +128,7 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
       <Container>
         <div className="inner">
           <div className="board">
-            {!postblog && (
+            {postState === "read" && (
               <div className="summary clearfix">
                 <h2 className="summary__title float--left">
                   {detailNote.title}
@@ -152,17 +157,24 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
                 </div>
               </div>
             )}
-            {postblog && (
+            {postState === "write" && (
               <div className="board clearfix">
                 <div className="board">
-                  <Editor NoteInfo={undefined} mode={"WRITE"} />
+                  <Editor NoteInfo={undefined}/>
                 </div>
               </div>
             )}
-            {!postblog && (
+            {postState === "modify" && (
               <div className="board clearfix">
                 <div className="board">
-                  <Editor NoteInfo={detailNote} mode={"READ"} />
+                  <Editor NoteInfo={detailNote}/>
+                </div>
+              </div>
+            )}
+            {postState === "read" && (
+              <div className="board clearfix">
+                <div className="board">
+                  <Editor NoteInfo={detailNote} />
                 </div>
               </div>
             )}

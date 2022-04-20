@@ -8,6 +8,8 @@ import palette from "../../styles/palette";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import Link from "next/link";
 import Editor from "./Editor";
+import { useDispatch } from "react-redux";
+import { commonAction } from "../../store/common";
 
 
 const Container = styled.div`
@@ -88,8 +90,11 @@ const Container = styled.div`
 const Body = () => {
   const host = process.env.NEXT_PUBLIC_API_URL + "/files/";
   const [postNotes, setPostNotes] = useState<PostedNote[]>();
-  const userInfo = useSelector((state) => state.user);
-  const postblog = useSelector((state) => state.common.postblog);
+  const postState = useSelector((state) => state.common.postState);
+
+  const dispatch = useDispatch();
+  dispatch(commonAction.setPostUserIdOfNote(0));
+
 
   useEffect(() => {
     const Notes = noteApi.getNoteAll().then((res) => setPostNotes(res.data));
@@ -99,7 +104,7 @@ const Body = () => {
     <Container>
       <div className="inner">
         <div className="board">
-          {!postblog && (
+          {postState == "read" && (
             <ResponsiveMasonry
               columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 4 }}
             >
@@ -116,11 +121,11 @@ const Body = () => {
               </Masonry>
             </ResponsiveMasonry>
           )}
-          {postblog && (
+          {postState =="write" && (
             <>
               <div className="board clearfix">
                 <div className="board">
-                  <Editor NoteInfo={undefined} mode={"WRITE"}/>
+                  <Editor NoteInfo={undefined}/>
                 </div>
               </div>
             </>

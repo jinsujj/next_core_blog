@@ -16,6 +16,7 @@ namespace Next_Core_Blog.Model.BlogNote
         [Display(Name = "내용")]
         [Required(ErrorMessage = "* 내용을 작성해 주세요")]
         public string Content { get; set; }
+        public int userId {get;set;}
         public string PostDate { get; set; }
         public string ModifyDate { get; set; }
         public string ThumbImage { get; set; }

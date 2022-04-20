@@ -164,13 +164,13 @@ namespace Next_Core_Blog.Repository.BlogNote
         {
             var param = new DynamicParameters();
             string sql = "";
+            string thumbImageBuff = "";
             string userPasswordSql = @"SELECT password FROM user WHERE userId = @UserId";
 
             param.Add("@Title", value: note.title, dbType: DbType.String);
             param.Add("@UserId", value: note.userId, dbType: DbType.Int32);
             param.Add("@Content", value: note.content, dbType: DbType.String);
-            param.Add("@ThumbImage", value: note.thumbImage, dbType: DbType.String);
-            param.Add("@IsPost", value: note.isPost, dbType: DbType.String);
+            // param.Add("@IsPost", value: note.isPost, dbType: DbType.String);
             param.Add("@Category", value: note.category, dbType: DbType.String);
             param.Add("@SubCategory", value: note.subCategory, dbType: DbType.String);
 
@@ -182,30 +182,32 @@ namespace Next_Core_Blog.Repository.BlogNote
                 {
                     param.Add("@PostIp", value: note.postIp, dbType: DbType.String);
                     param.Add("@Password", value: password, dbType: DbType.String);
+                    param.Add("@ThumbImage", value: note.thumbImage, dbType: DbType.String);
 
                     sql = @"INSERT INTO note (Title, UserId, Content, Password, ThumbImage, IsPost, PostDate, PostIp,  Category, SubCategory, ReadCount)
                         VALUES (@Title, @UserId, @Content, @Password, @ThumbImage, 'Y', Now(), @PostIp, @Category, @SubCategory, 0)";
                 }
                 else if (formType == BoardWriteFormType.modify)
                 {
-                    if(note.password != password) return -1;
-
                     param.Add("@ModifyIp", value: note.modifyIp, dbType: DbType.String);
                     param.Add("@NoteId", value: note.noteId, dbType: DbType.Int32);
+                    if (note.thumbImage != null && note.thumbImage.Length > 1)
+                    {
+                        param.Add("@ThumbImage", value: note.thumbImage, dbType: DbType.String);
+                        thumbImageBuff = "ThumbImage = @ThumbImage,";
+                    }
 
-                    sql = @"UPDATE note
+                    sql = string.Format(@"UPDATE note
                         SET title = @Title,
-                            UserId = @UserId,
                             Content = @Content,
-                            Password = @Password,
-                            ThumbImage = @ThumbImage,
-                            IsPost = @IsPost,
+                            Userid = @UserId,
+                            {0}
                             ModifyDate = NOW(),
                             ModifyIp = @ModifyIp,
                             Category = @Category,
                             SubCategory = @SubCategory
                         WHERE noteId = @NoteId
-                        ";
+                        ", thumbImageBuff);
                 }
                 con.Execute(sql, param, commandType: CommandType.Text);
                 return 1;

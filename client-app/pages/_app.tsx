@@ -13,7 +13,7 @@ config.autoAddCss = false; // Tell Font Awesome to skip adding the CSS automatic
 
 const app = ({ Component, pageProps }: AppProps) => {
   const dispatch = useDispatch();
-  dispatch(commonAction.setPostBlog(false));
+  dispatch(commonAction.setPostState("read"));
   
   return (
     <>

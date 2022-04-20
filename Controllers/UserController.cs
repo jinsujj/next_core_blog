@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Tasks;
 
 namespace Next_Core_Blog.Controllers
 {
@@ -61,7 +62,7 @@ namespace Next_Core_Blog.Controllers
 
         [HttpPost("Login")]
         [Produces("application/json")]
-        public IActionResult Login([FromBody] LoginViewModel model)
+        public async Task<IActionResult> LoginAsync([FromBody] LoginViewModel model)
         {
             _logger.LogInformation("Login:" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
@@ -76,7 +77,7 @@ namespace Next_Core_Blog.Controllers
 
                     if (_userRepo.IsCorrectUser(model.Email, new Security().EncryptPassword(model.Password)))
                     {
-                        RegisterViewModel userInfo = _userRepo.GetUserByEmail(model.Email);
+                        RegisterViewModel userInfo = await _userRepo.GetUserByEmail(model.Email);
                         var claims = new List<Claim>()
                         {
                             new Claim("name", userInfo.Name),
@@ -126,7 +127,7 @@ namespace Next_Core_Blog.Controllers
 
         [HttpGet("meAPI")]
         [Produces("application/json")]
-        public RegisterViewModel meAPI()
+        public async Task<RegisterViewModel> meAPIAsync()
         {
             // Get the encrypted cookie value
             var opt = HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>();
@@ -144,7 +145,7 @@ namespace Next_Core_Blog.Controllers
                     tokenInfo.Add(claim.Type, claim.Value);
                 }
 
-                RegisterViewModel userInfo = _userRepo.GetUserByEmail(tokenInfo["Email"]);
+                RegisterViewModel userInfo = await _userRepo.GetUserByEmail(tokenInfo["Email"]);
                 return userInfo;
             }
             else
