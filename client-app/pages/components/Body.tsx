@@ -10,6 +10,7 @@ import Link from "next/link";
 import Editor from "./Editor";
 import { useDispatch } from "react-redux";
 import { commonAction } from "../../store/common";
+import BlogCard from "./BlogCard";
 
 
 const Container = styled.div`
@@ -89,7 +90,7 @@ const Container = styled.div`
 
 const Body = () => {
   const host = process.env.NEXT_PUBLIC_API_URL + "/files/";
-  const [postNotes, setPostNotes] = useState<PostedNote[]>();
+  const [postNotes, setPostNotes] = useState<PostedNote[]>([]);
   const postState = useSelector((state) => state.common.postState);
 
   const dispatch = useDispatch();
@@ -97,7 +98,7 @@ const Body = () => {
 
 
   useEffect(() => {
-    const Notes = noteApi.getNoteAll().then((res) => setPostNotes(res.data));
+    const Notes = noteApi.getNoteAll().then((res) => setPostNotes(res.data||[]));
   }, []);
 
   return (
@@ -106,17 +107,11 @@ const Body = () => {
         <div className="board">
           {postState == "read" && (
             <ResponsiveMasonry
-              columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 4 }}
+              columnsCountBreakPoints={{ 350: 1, 450: 2, 650:3, 900: 4 }}
             >
               <Masonry columnsCount={5} gutter={20}>
-                {postNotes &&
-                  postNotes.map((blog, index) => (
-                    <>
-                      <Link href={`/blog/${blog.noteId}`} key={blog.noteId} >
-                        <img key={blog.noteId} src={`${host}${blog.thumbImage}`} />
-                      </Link>
-                      <p>{blog.title}</p>
-                    </>
+                {postNotes.map((blog, index) => (
+                      <BlogCard blog={blog} key={index}/>
                   ))}
               </Masonry>
             </ResponsiveMasonry>

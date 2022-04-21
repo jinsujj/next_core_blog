@@ -59,7 +59,7 @@ const Container = styled.form`
     }
 
     .note-editor.note-airframe, .note-editor.note-frame {
-        ${(props) => props.mode === "READ" && css`
+        ${(props) => props.postState === "read" && css`
             border: 1px solid white !important;
         `}
     }
@@ -167,7 +167,7 @@ const Editor = ({ NoteInfo }) => {
         if (postState === "read") {
             $('#summernote').summernote({
                 lang: 'ko-KR', // default: 'en-US'
-                height: 800,
+                height: $(document).height() - ($("#Maintable").height() + $("#TblTop").height() + 60),
                 toolbar: [],
                 disableDragAndDrop: true,
             });
@@ -218,7 +218,7 @@ const Editor = ({ NoteInfo }) => {
     }, []);
 
     return (
-        <Container onSubmit={openCategoryModal}>
+        <Container onSubmit={openCategoryModal} postState={postState}>
             {(postState !== "read") && (
                 <div className="title_input">
                     <Input

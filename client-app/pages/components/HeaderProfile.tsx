@@ -56,7 +56,7 @@ const HeaderProfile = () => {
         dispatch(commonAction.setPostState('modify'));
         return;
       }
-      if(postState !== 'write' && userIfofNote === 0){
+      if(postState === 'read' && userIfofNote !== userInfo.userId){
         dispatch(commonAction.setPostState('write'));
         return;
       }

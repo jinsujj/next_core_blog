@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarCheck, faEye } from "@fortawesome/free-solid-svg-icons";
 import { commonAction } from "../../store/common";
 import { write } from "fs";
+import dateFormat from "../../lib/dateFormat";
 
 const Container = styled.div`
   margin-top: 56px;
@@ -108,20 +109,6 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
   const dispatch = useDispatch();
   dispatch(commonAction.setPostUserIdOfNote(detailNote.userId));
 
-  const leftPad = (value: number) => {
-    if (value >= 10) {
-      return value;
-    }
-    return `0${value}`;
-  };
-
-  const toStringByFormatting = (source: Date, delimiter = "-") => {
-    const year = source.getFullYear();
-    const month = leftPad(source.getMonth() + 1);
-    const day = leftPad(source.getDate());
-    return [year, month, day].join(delimiter);
-  };
-
   return (
     <>
       <Header />
@@ -142,7 +129,7 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
                       />
                     </li>
                     <li>
-                      {toStringByFormatting(new Date(detailNote.postDate))}
+                      {dateFormat.toStringByFormatting(new Date(detailNote.postDate))}
                     </li>
                   </ul>
                   <ul>
