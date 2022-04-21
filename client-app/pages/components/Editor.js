@@ -252,7 +252,7 @@ const Editor = ({ NoteInfo }) => {
             )}
             <ModalPortal>
                 <CategoryModal postNoteForm={{
-                    noteId : NoteInfo.noteId,
+                    noteId : postState === 'modify' ? NoteInfo.noteId : '0',
                     title: title,
                     userId: userId,
                     content: content,

@@ -25,8 +25,8 @@ namespace Next_Core_Blog.Repository.Users
         {
             string checkSql = "SELECT COUNT(*) FROM user WHERE Email = @Email";
 
-            string sql = @"INSERT INTO user (Name, Email, Password, FailedPasswordAttemptCount, Role)
-                            VALUES(@Name, @Email, @Password, 0, 'USER');";
+            string sql = @"INSERT INTO user (Name, Email, Password, FailedPasswordAttemptCount, Role, CreatedDate)
+                            VALUES(@Name, @Email, @Password, 0, 'USER', NOW());";
 
             using (var con = _context.CreateConnection())
             {
@@ -90,10 +90,19 @@ namespace Next_Core_Blog.Repository.Users
                            WHERE Email = @Email
                            AND Password = @Password
                            ";
+            
+            string lastLoginSql = @"UPDATE user SET LastLoggined = NOW() 
+                                    WHERE Email = @Email";
 
             using (var con = _context.CreateConnection())
             {
                 result = con.QueryFirstOrDefault<bool>(sql, new { Email, Password });
+
+                if(result){
+                    sql = @"UPDATE user SET LastLoggined = NOW() 
+                            WHERE Email = @Email";
+                    con.Execute(lastLoginSql, new {Email});
+                }
                 return result;
             }
         }
@@ -106,7 +115,7 @@ namespace Next_Core_Blog.Repository.Users
             
             using (var con = _context.CreateConnection()){
                 int count = con.QueryFirstOrDefault<int>(sql, new {Email});
-                if(count > 5){
+                if(count >= 5){
                     return true;
                 }
             }
@@ -153,9 +162,10 @@ namespace Next_Core_Blog.Repository.Users
 
         public void TryLogin(string Email)
         {
-            string sql = @"UPDATE user
-                            SET FailedPasswordAttemptCount +1,
-                                FailedPasswordAttemptTime = NOW()
+            string sql = @" UPDATE user
+                            SET FailedPasswordAttemptCount = FailedPasswordAttemptCount +1 ,
+                                FailedPasswordAttemptTime = NOW(),
+                                LastLoggined = NOW()
                             WHERE Email = @Email
                             ";
 

@@ -4,13 +4,17 @@ using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Next_Core_Blog.CommonLibrary;
 using Next_Core_Blog.Model.BlogNote;
 using Next_Core_Blog.Repository.BlogNote;
@@ -41,6 +45,25 @@ namespace Next_Core_Blog.Controllers
         public IActionResult PostNote(PostNoteView note, BoardWriteFormType formType)
         {
             _logger.LogInformation("PostNote: " + note.title + " " + formType + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+
+            // parameter modulation check
+            if (note.userId != 0)
+            {
+                // Get the encrypted cookie value
+                var opt = HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>();
+                var cookie = opt.CurrentValue.CookieManager.GetRequestCookie(HttpContext, "UserLoginCookie");
+                Dictionary<string, string> tokenInfo = new Dictionary<string, string>();
+
+                var dataProtector = opt.CurrentValue.DataProtectionProvider.CreateProtector("Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationMiddleware", CookieAuthenticationDefaults.AuthenticationScheme, "v2");
+                var ticketDataFormat = new TicketDataFormat(dataProtector);
+                var ticket = ticketDataFormat.Unprotect(cookie);
+                foreach (var claim in ticket.Principal.Claims)
+                {
+                    tokenInfo.Add(claim.Type, claim.Value);
+                }
+                if (note.userId != Convert.ToInt32(tokenInfo["userId"])) 
+                    return BadRequest();
+            }
 
             try
             {

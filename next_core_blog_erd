@@ -28,10 +28,10 @@ CREATE TABLE IF NOT EXISTS `next_core_blog`.`user` (
   `Name` VARCHAR(45) NOT NULL,
   `Email` VARCHAR(125) NOT NULL,
   `Password` VARCHAR(255) NOT NULL,
-  `CreatedDate` DATE NULL,
-  `LastLoggined` DATE NULL,
+  `CreatedDate` DATETIME NULL,
+  `LastLoggined` DATETIME NULL,
   `FailedPasswordAttemptCount` INT NULL,
-  `FailedPasswordAttemptTime` DATE NULL,
+  `FailedPasswordAttemptTime` DATETIME NULL,
   `Role` VARCHAR(10) NULL,
   PRIMARY KEY (`UserId`))
 ENGINE = InnoDB;
@@ -102,7 +102,7 @@ DROP TABLE IF EXISTS `next_core_blog`.`userlog` ;
 CREATE TABLE IF NOT EXISTS `next_core_blog`.`userlog` (
   `Ip` VARCHAR(45) NOT NULL,
   `Content` VARCHAR(125) NULL,
-  `Date` DATE NULL)
+  `Date` DATETIME NULL)
 ENGINE = InnoDB;
 
 

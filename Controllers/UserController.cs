@@ -72,7 +72,8 @@ namespace Next_Core_Blog.Controllers
                 {
                     if (isLoginFailed(model.Email))
                     {
-                        return Ok(false);
+                        // 403 Forbidden  10분 이내 5번 로그인 시도
+                        return StatusCode(403);
                     }
 
                     if (_userRepo.IsCorrectUser(model.Email, new Security().EncryptPassword(model.Password)))
@@ -80,6 +81,7 @@ namespace Next_Core_Blog.Controllers
                         RegisterViewModel userInfo = await _userRepo.GetUserByEmail(model.Email);
                         var claims = new List<Claim>()
                         {
+                            new Claim("userId", userInfo.userId.ToString()),
                             new Claim("name", userInfo.Name),
                             new Claim("Email", userInfo.Email),
                             new Claim("Role", userInfo.Role)
@@ -92,12 +94,12 @@ namespace Next_Core_Blog.Controllers
                     else
                     {
                         _logger.LogError("email, password not matched");
+                        _userRepo.TryLogin(model.Email);
                         return StatusCode(401);
                     }
                 }
                 else
                 {
-                    _userRepo.TryLogin(model.Email);
                     return BadRequest();
                 }
             }
@@ -164,7 +166,6 @@ namespace Next_Core_Blog.Controllers
                 {
                     return true;
                 }
-                return false;
             }
             return false;
         }

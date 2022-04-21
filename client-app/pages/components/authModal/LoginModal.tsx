@@ -124,6 +124,10 @@ const LoginModal = ({ closeModal }: IProps) => {
           setEmailErrorMsg("이메일 형식이 아닙니다");
           return;
         }
+        if (errorMessage.includes("403")){
+          setEmailErrorMsg("5회 이상 틀렸습니다. 10분 뒤에 재 로그인 바랍니다.");
+          return;
+        }
       }
     }
   };
