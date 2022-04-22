@@ -46,8 +46,14 @@ namespace Next_Core_Blog.Controllers
         {
             _logger.LogInformation("PostNote: " + note.title + " " + formType + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
-            // parameter modulation check
-            if (note.userId != 0)
+            #region [XSS Script Check]
+            if(XSS_Check(note.content)){
+                return StatusCode(403);
+            }
+            #endregion
+
+            #region [Parameter Modulation Check]
+            if (formType == BoardWriteFormType.modify)
             {
                 // Get the encrypted cookie value
                 var opt = HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>();
@@ -62,8 +68,9 @@ namespace Next_Core_Blog.Controllers
                     tokenInfo.Add(claim.Type, claim.Value);
                 }
                 if (note.userId != Convert.ToInt32(tokenInfo["userId"])) 
-                    return BadRequest();
+                    return BadRequest(403);
             }
+            #endregion
 
             try
             {
@@ -265,5 +272,30 @@ namespace Next_Core_Blog.Controllers
         public IEnumerable<string> extType = new List<string>{
             ".jpg",".jpeg",".png"
         };
+
+        public Boolean XSS_Check(string content){
+            int openTagIndex = -1, closeTagIndex = -1;
+
+            var arrayValue = content.ToArray();
+            int i =0;
+            foreach(var t in arrayValue){
+                if(t == '<' && openTagIndex == -1){
+                    openTagIndex = i;
+                }
+                else if(t == '>' && closeTagIndex == -1){
+                    closeTagIndex = i;
+                }
+                if(openTagIndex != -1 && closeTagIndex != -1){
+                    var buff = content.Substring(openTagIndex, (closeTagIndex-openTagIndex+1)).ToLower();
+                    if(buff.Contains("script"))
+                        return true;
+                    
+                    openTagIndex = -1;
+                    closeTagIndex = -1;
+                }
+                i++;
+            }
+            return false;
+        }
     }
 }

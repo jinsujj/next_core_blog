@@ -156,11 +156,43 @@ const Editor = ({ NoteInfo }) => {
     // open modal
     const openCategoryModal = (event) => {
         event.preventDefault();
+
+        var result = $('#summernote').summernote('code');
+        if(XSS_Check(result)){
+            alert("XSS Checked..!!");
+            setContent('');
+            return;
+        }
         setContent($('#summernote').summernote('code'));
         openModal();
     }
 
+    const XSS_Check =(content)=>{
+        let openTagIndex = -1, closeTagIndex = -1;
+        let isScriptTagExist = false;
 
+        let arrayValue = Array.from(content);
+        arrayValue?.forEach((char, index) => {
+            if(char === "<" && openTagIndex === -1){
+                openTagIndex = index;
+            }
+            else if(char === ">" && closeTagIndex === -1){
+                closeTagIndex = index;
+            }
+            
+            if(openTagIndex !== -1 && closeTagIndex !== -1) {
+                var buff = content.substring(openTagIndex, closeTagIndex+1);
+                buff.toLowerCase().includes("script") ? isScriptTagExist = true : isScriptTagExist = false;
+                openTagIndex = -1 ; closeTagIndex = -1;
+
+                if(isScriptTagExist) return true;
+            }
+        });
+        return isScriptTagExist;
+    }
+
+
+    // summernote Editor init
     useEffect(() => {
         host = "https://" + window.location.hostname + ':' + process.env.NEXT_PUBLIC_BACKEND_PORT;
 
@@ -178,7 +210,7 @@ const Editor = ({ NoteInfo }) => {
             setTitle(NoteInfo.title);
             $('#summernote').summernote({
                 lang: 'ko-KR', // default: 'en-US'
-                height: 500,
+                height: $(document).height() - ($("#Maintable").height() + $("#TblTop").height() + 60),
                 tabsize: 3,
                 toolbar: toolbar,
                 focus: true,
@@ -193,12 +225,12 @@ const Editor = ({ NoteInfo }) => {
                 },
             });
             $('#summernote').summernote("reset");
-            $('#summernote').summernote('code', NoteInfo.content);
+            $('#summernote').summernote('code', NoteInfo.content.escape());
         }
         else {
             $('#summernote').summernote({
                 lang: 'ko-KR', // default: 'en-US'
-                height: 500,
+                height: 800,
                 tabsize: 3,
                 toolbar: toolbar,
                 focus: true,
