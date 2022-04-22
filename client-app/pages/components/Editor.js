@@ -225,7 +225,7 @@ const Editor = ({ NoteInfo }) => {
                 },
             });
             $('#summernote').summernote("reset");
-            $('#summernote').summernote('code', NoteInfo.content.escape());
+            $('#summernote').summernote('code', NoteInfo.content);
         }
         else {
             $('#summernote').summernote({
