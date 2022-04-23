@@ -4,6 +4,7 @@ import {
   faEye,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { formatDistance } from "date-fns";
 import Link from "next/link";
 import React, { Children } from "react";
 import styled from "styled-components";
@@ -56,7 +57,16 @@ export interface IProps {
 
 const host = process.env.NEXT_PUBLIC_API_URL + "/files/";
 const BlogCard = ({ blog }: IProps) => {
-  let postDate = new Date(blog.postDate);
+
+  if(blog.thumbImage === null){
+    blog.thumbImage = "default.svg";
+  }
+
+  var postdate = formatDistance(
+    new Date(),
+    new Date(blog.postDate),
+    { addSuffix: true }
+  ) 
 
   return (
     <Container>
@@ -89,7 +99,7 @@ const BlogCard = ({ blog }: IProps) => {
               icon={faCalendarCheck}
               style={{ fontSize: 14, color: `${palette.gray_bb}` }}
             />
-            <p>{dateFormat.toStringByFormatting(postDate)}</p>
+            <p>{postdate}</p>
           </div>
         </div>
       </div>

@@ -13,6 +13,7 @@ import { faCalendarCheck, faEye } from "@fortawesome/free-solid-svg-icons";
 import { commonAction } from "../../store/common";
 import { write } from "fs";
 import dateFormat from "../../lib/dateFormat";
+import useUtterances from "../../hooks/useUtterances";
 
 const Container = styled.div`
   margin-top: 56px;
@@ -23,6 +24,7 @@ const Container = styled.div`
     box-sizing: border-box;
     position: relative;
     padding: 0 20px;
+    padding-bottom: 10px;
   }
 
   .summary {
@@ -73,7 +75,7 @@ const Container = styled.div`
   }
 
   .board {
-    min-height: 800px;
+    min-height: 500px;
   }
 
   /* FLOAT CLEARFIX */
@@ -96,6 +98,11 @@ const Container = styled.div`
   .float--right {
     float: right;
   }
+
+  .utterances {
+    width:100%;
+    max-width: 1200px !important;
+  }
 `;
 
 interface IProps {
@@ -108,6 +115,8 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
 
   const dispatch = useDispatch();
   dispatch(commonAction.setPostUserIdOfNote(detailNote.userId));
+
+  useUtterances(detailNote.noteId.toString());
 
   return (
     <>
@@ -166,6 +175,7 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
               </div>
             )}
           </div>
+          <div className="utterances" id={detailNote.noteId.toString()}></div>
         </div>
       </Container>
       <Footer />

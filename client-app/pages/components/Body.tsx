@@ -24,6 +24,10 @@ const Container = styled.div`
     padding: 0 20px;
   }
 
+  .board {
+    padding-bottom: 10px;
+  }
+
   .summary {
     border-bottom: 2px solid ${palette.green_53};
     width: 100%;

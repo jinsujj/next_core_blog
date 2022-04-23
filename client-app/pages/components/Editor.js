@@ -1,3 +1,4 @@
+import { he } from "date-fns/locale";
 import React, { useEffect, useState } from "react";
 import styled, { css } from "styled-components";
 import noteApi from "../../api/note";
@@ -62,6 +63,19 @@ const Container = styled.form`
         ${(props) => props.postState === "read" && css`
             border: 1px solid white !important;
         `}
+    }
+
+    .note-editable{
+        min-height: 500px;
+    }
+
+    .note-statusbar {
+        border-top: 0 !important;
+        .note-resizebar {
+            height: 0px !important;
+            .note-icon-bar{
+            }
+        }   
     }
 
     .save-button {

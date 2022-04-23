@@ -273,7 +273,7 @@ namespace Next_Core_Blog.Controllers
             ".jpg",".jpeg",".png"
         };
 
-        public Boolean XSS_Check(string content){
+        private Boolean XSS_Check(string content){
             int openTagIndex = -1, closeTagIndex = -1;
 
             var arrayValue = content.ToArray();
