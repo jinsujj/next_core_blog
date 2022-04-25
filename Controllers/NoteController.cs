@@ -121,13 +121,16 @@ namespace Next_Core_Blog.Controllers
 
             #region [Parameter Modulation Check]
             // Get the encrypted cookie value
-            Dictionary<string, string> tokenInfo = DecryptTokenInfo(HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>());
-            if (userId != Convert.ToInt32(tokenInfo["userId"])) return StatusCode(403);
+            if(userId != 0){
+                Dictionary<string, string> tokenInfo = DecryptTokenInfo(HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>());
+                if (userId != Convert.ToInt32(tokenInfo["userId"])) return StatusCode(403);
+            }
             #endregion
 
             try
             {
-                var note = await _noteRepo.GetNoteById(id, userId);
+                string ip = HttpContext.Connection.RemoteIpAddress.ToString();
+                var note = await _noteRepo.GetNoteById(id, userId, ip);
                 return Ok(note);
             }
             catch (Exception ex)
@@ -223,6 +226,20 @@ namespace Next_Core_Blog.Controllers
             }
         }
 
+        [HttpGet("getSidebarCategoryList")]
+        public async Task<IActionResult> getSidebarCategoryList() 
+        {
+             _logger.LogInformation("getSidebarCategoryList" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+             try{
+                 var categoryList = await _noteRepo.GetSidebarCategoryList();
+                 return Ok(categoryList);
+             }
+             catch(Exception ex){
+                 _logger.LogError("error" + ex.Message);
+                 return StatusCode(500, ex.Message);
+             }
+        }
+
         [HttpPost("saveImage")]
         [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public async Task<string> saveImage(IFormFile file)
@@ -272,6 +289,34 @@ namespace Next_Core_Blog.Controllers
             catch (Exception ex)
             {
                 _logger.LogError("error" + ex.Message);
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("totalReadCount")]
+        public async Task<IActionResult> getTotalReadCount() 
+        {
+            try{
+                var result = await _noteRepo.getTotalReadCount();
+                return Ok(result);
+            }
+            catch(Exception ex)
+            {
+                  _logger.LogError("error" + ex.Message);
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("todayReadCount")]
+        public async Task<IActionResult> getTodayReadCount()
+        {
+            try{
+                var result = await _noteRepo.getTodayReadCount();
+                return Ok(result);
+            }
+            catch(Exception ex)
+            {
+                  _logger.LogError("error" + ex.Message);
                 return StatusCode(500, ex.Message);
             }
         }

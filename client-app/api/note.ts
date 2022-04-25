@@ -39,6 +39,13 @@ export type CategoryView ={
     subCategory: string;
 }
 
+export type SidebarCategoryView ={
+    name : string;
+    mainCount: number;
+    subName : string;
+    subCount: number;
+}
+
 
 // formType(0) : insert
 // formType(1) : update
@@ -79,6 +86,18 @@ const getCategoryList = () => {
     return api.get<CategoryView[]>(`/api/Note/getCategoryList`);
 }
 
+const getSidebarCategoryList = ()=>{
+    return api.get<SidebarCategoryView[]>(`/api/Note/getSidebarCategoryList`);
+}
+
+const getTotalReadCount = () =>{
+    return api.get<number>(`/api/Note/totalReadCount`);
+}
+
+const getTodayReadCount = () =>{
+    return api.get<number>(`/api/Note/todayReadCount`);
+}
+
 const saveImage = (file: FormData) => {
     const fileName = api.post(`/api/Note/saveImage`, file, {
         headers: {
@@ -93,11 +112,14 @@ const noteApi = {
     postCategory,
     getNoteById,
     getNoteByCategory,
+    getSidebarCategoryList,
     getNoteAll,
     getNoteBySearch,
     getNoteCountAll,
     deleteNoteById,
     getCategoryList,
+    getTotalReadCount,
+    getTodayReadCount,
     saveImage
 };
 

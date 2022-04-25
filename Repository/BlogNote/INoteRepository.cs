@@ -17,10 +17,13 @@ namespace Next_Core_Blog.Repository.BlogNote
         Task<IEnumerable<GetNote>> GetNoteAll(int userId);
         Task<IEnumerable<GetNote>> GetNoteByCategory(string category, string subCategory);
         Task<IEnumerable<GetNote>> GetNoteBySearch(string searchQuery);
-        Task<GetNote> GetNoteById(int id, int userId);
+        Task<GetNote> GetNoteById(int id, int userId, string ip);
 
         Task<IEnumerable<CategoryViewModel>> getNoteCategoryList();
+        Task<IEnumerable<SidebarCategoryViewModel>> GetSidebarCategoryList();
 
         Task<int> GetCountAll();
+        Task<int> getTotalReadCount();
+        Task<int> getTodayReadCount();
     }
 }

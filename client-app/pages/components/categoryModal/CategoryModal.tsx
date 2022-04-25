@@ -250,9 +250,7 @@ const CategoryModal = ({ postNoteForm, closeModal }: IProps) => {
       )}
       {selectedCategory && !addCategoryInput && !addSubCategoryInput && (
         <div className="save-button">
-          {postState === 'write' && (
-            <Button onClick={() =>saveCategory('temp')} color="green_8D" width="110px">임시 저장</Button>
-          )}
+          <Button onClick={() =>saveCategory('temp')} color="green_8D" width="110px">임시 저장</Button>
           <Button onClick={() =>saveCategory('save')} width="110px">저장</Button>
         </div>
       )}

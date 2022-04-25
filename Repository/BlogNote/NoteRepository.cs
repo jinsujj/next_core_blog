@@ -82,8 +82,9 @@ namespace Next_Core_Blog.Repository.BlogNote
             }
         }
 
-        public async Task<GetNote> GetNoteById(int id, int userId)
+        public async Task<GetNote> GetNoteById(int id, int userId, string ip)
         {
+            Log("page: " + id, ip);
             string updataCount = @"UPDATE note SET ReadCount = ReadCount+1 
                                     WHERE noteId =@id 
                                     AND isPost ='Y'";
@@ -129,6 +130,19 @@ namespace Next_Core_Blog.Repository.BlogNote
                 return categoryList;
             }
         }
+
+        public async Task<IEnumerable<SidebarCategoryViewModel>> GetSidebarCategoryList()
+        {
+           string sql = @"SELECT a.Name, a.Count as MainCount, b.subName, b.Count as SubCount
+                            FROM category a left OUTER JOIN subcategory b
+                            ON a.Name = b.name";
+
+            using (var con = _context.CreateConnection()){
+                var categoryList = await con.QueryAsync<SidebarCategoryViewModel>(sql);
+                 return categoryList;
+            }
+        }
+
 
         public int PostCategory(string Category, string SubCategory)
         {
@@ -254,6 +268,36 @@ namespace Next_Core_Blog.Repository.BlogNote
                 }
                 con.Execute(postNotesql, param, commandType: CommandType.Text);
                 return 1;
+            }
+        }
+
+        public async Task<int> getTotalReadCount()
+        {
+            string sql = @"SELECT SUM(readCount) FROM note";
+
+            using (var con = _context.CreateConnection()){
+                int count = await con.QueryFirstOrDefaultAsync<int>(sql);
+                return count;
+            }
+        }
+
+        public async Task<int> getTodayReadCount()
+        {
+            string sql = @"SELECT COUNT(*)
+                            FROM userlog
+                            Where date_format(Date,'%Y%m%d') = date_format(NOW(),'%Y%m%d')";
+            
+            using (var con  = _context.CreateConnection()){
+                 int count = await con.QueryFirstOrDefaultAsync<int>(sql);
+                return count;
+            }
+        }
+
+        public void Log(string Content, string Ip)
+        {
+            using (var con = _context.CreateConnection())
+            {
+                con.Execute(@"INSERT INTO userlog SET Content=@Content, Ip =@Ip, Date =NOW()", new { Content, Ip });
             }
         }
     }
