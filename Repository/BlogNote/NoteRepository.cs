@@ -47,16 +47,17 @@ namespace Next_Core_Blog.Repository.BlogNote
             }
         }
 
-        public async Task<IEnumerable<GetNote>> GetNoteAll()
+        public async Task<IEnumerable<GetNote>> GetNoteAll(int userId)
         {
-            string sql = @"SELECT noteId, title, userId, content, postDate, modifyDate, thumbImage, category, subCategory, readCount, postIp, modifyIp
+            string sql = @"SELECT noteId, title, userId, content, postDate, modifyDate, thumbImage, category, subCategory, readCount, postIp, modifyIp, isPost
                             FROM note
                             WHERE isPost = 'Y'
+                            OR (userId = @UserId AND isPost ='N')
                         ";
 
             using (var con = _context.CreateConnection())
             {
-                var notes = await con.QueryAsync<GetNote>(sql);
+                var notes = await con.QueryAsync<GetNote>(sql, new {UserId = userId});
                 return notes.ToList();
             }
         }
@@ -81,21 +82,22 @@ namespace Next_Core_Blog.Repository.BlogNote
             }
         }
 
-        public async Task<GetNote> GetNoteById(int id)
+        public async Task<GetNote> GetNoteById(int id, int userId)
         {
             string updataCount = @"UPDATE note SET ReadCount = ReadCount+1 
-                                    WHERE noteId =@id ";
+                                    WHERE noteId =@id 
+                                    AND isPost ='Y'";
 
             string sql = @"SELECT noteId, title, userId, content, postDate, modifyDate, thumbImage, category, subCategory, readCount, postIp, modifyIp
                             FROM note
                             WHERE NoteId = @id
-                            AND IsPost ='Y'
+                            AND (IsPost ='Y' OR (userId = @userId AND IsPost ='N'))
                         ";
 
 
             using (var con = _context.CreateConnection()){
                 await con.QueryAsync(updataCount, new {id});
-                return con.QuerySingleOrDefault<GetNote>(sql, new {id});
+                return con.QuerySingleOrDefault<GetNote>(sql, new {id, userId});
             }
         }
 
@@ -133,8 +135,8 @@ namespace Next_Core_Blog.Repository.BlogNote
             _logger.LogInformation("categort: " + Category + " " + "subcategory: " + SubCategory);
             // Category 유무 Check
             string sql = @"SELECT Name FROM category WHERE Name = @Category";
-            string insertCategory = @"INSERT INTO category (Name) VALUES (@Category)";
-            string insertSubCategory = @"INSERT INTO subcategory (Name, subName) VALUES (@Category ,@SubCategory)";
+            string insertCategory = @"INSERT INTO category (Name, Count) VALUES (@Category, 0)";
+            string insertSubCategory = @"INSERT INTO subcategory (Name, subName, Count) VALUES (@Category ,@SubCategory, 0)";
 
             using (var con = _context.CreateConnection())
             {
@@ -163,16 +165,18 @@ namespace Next_Core_Blog.Repository.BlogNote
         public int PostNote(PostNoteView note, BoardWriteFormType formType)
         {
             var param = new DynamicParameters();
-            string sql = "";
-            string thumbImageBuff = "";
             string userPasswordSql = @"SELECT password FROM user WHERE userId = @UserId";
+            string postNotesql = "";
+            string categoryUpdateSql ="";
+            string subCategoryUpdateSql ="";
+            string thumbImageBuff = "";
 
             param.Add("@Title", value: note.title, dbType: DbType.String);
             param.Add("@UserId", value: note.userId, dbType: DbType.Int32);
             param.Add("@Content", value: note.content, dbType: DbType.String);
-            // param.Add("@IsPost", value: note.isPost, dbType: DbType.String);
             param.Add("@Category", value: note.category, dbType: DbType.String);
             param.Add("@SubCategory", value: note.subCategory, dbType: DbType.String);
+            param.Add("@IsPost", value: note.isPost, dbType: DbType.String);
 
             using (var con = _context.CreateConnection())
             {
@@ -184,8 +188,20 @@ namespace Next_Core_Blog.Repository.BlogNote
                     param.Add("@Password", value: password, dbType: DbType.String);
                     param.Add("@ThumbImage", value: note.thumbImage, dbType: DbType.String);
 
-                    sql = @"INSERT INTO note (Title, UserId, Content, Password, ThumbImage, IsPost, PostDate, PostIp,  Category, SubCategory, ReadCount)
-                        VALUES (@Title, @UserId, @Content, @Password, @ThumbImage, 'Y', Now(), @PostIp, @Category, @SubCategory, 0)";
+                    // Insert Note
+                    postNotesql = @"INSERT INTO note (Title, UserId, Content, Password, ThumbImage, IsPost, PostDate, PostIp, Category, SubCategory, ReadCount)
+                        VALUES (@Title, @UserId, @Content, @Password, @ThumbImage, @IsPost, Now(), @PostIp, @Category, @SubCategory, 0)";
+
+
+                    // Update Category
+                    categoryUpdateSql = @"UPDATE category SET Count = Count + 1 WHERE name = @Category";
+                    subCategoryUpdateSql = @"UPDATE subcategory SET Count = Count +1
+                                             WHERE Name = @Category
+                                             AND subName = @SubCategory;
+                                             ";
+
+                    con.Execute(categoryUpdateSql, new {Category = note.category});
+                    con.Execute(subCategoryUpdateSql, new {Category = note.category , SubCategory = note.subCategory});
                 }
                 else if (formType == BoardWriteFormType.modify)
                 {
@@ -197,7 +213,33 @@ namespace Next_Core_Blog.Repository.BlogNote
                         thumbImageBuff = "ThumbImage = @ThumbImage,";
                     }
 
-                    sql = string.Format(@"UPDATE note
+                    // Select Note 
+                    string noteSql = @"SELECT noteID, title, userId, category, subCategory 
+                                        FROM note
+                                        WHERE noteId = @id
+                                        AND (IsPost ='Y' OR (userId = @userId AND IsPost ='N'))";
+                    var noteInfo = con.QuerySingleOrDefault<GetNote>(noteSql, new {userId = note.userId,  id = note.noteId});
+
+                    // Update Category
+                    if(noteInfo.Category != note.category){
+                        categoryUpdateSql = @"UPDATE category SET Count = Count + 1 WHERE name = @Category";
+                        con.Execute(categoryUpdateSql, new {Category = note.category});
+                        categoryUpdateSql = @"UPDATE category SET Count = Count -1 WHERE name = @Category";
+                        con.Execute(categoryUpdateSql, new {Category = noteInfo.Category});
+                    }
+                    if(noteInfo.SubCategory != note.subCategory && note.subCategory.Length >0 ){
+                        subCategoryUpdateSql = @"UPDATE subcategory SET Count = Count +1 
+                                                 WHERE name = @Category
+                                                 AND subName = @SubCategory";
+                        con.Execute(subCategoryUpdateSql, new {Category = note.category , SubCategory = note.subCategory});
+                        subCategoryUpdateSql = @"UPDATE subcategory SET Count = Count -1 
+                                                 WHERE name = @Category
+                                                 AND subName = @SubCategory";
+                        con.Execute(subCategoryUpdateSql, new {Category = noteInfo.Category, SubCategory = noteInfo.SubCategory});                                                
+                    }
+
+                    // Update Note
+                    postNotesql = string.Format(@"UPDATE note
                         SET title = @Title,
                             Content = @Content,
                             Userid = @UserId,
@@ -205,11 +247,12 @@ namespace Next_Core_Blog.Repository.BlogNote
                             ModifyDate = NOW(),
                             ModifyIp = @ModifyIp,
                             Category = @Category,
-                            SubCategory = @SubCategory
+                            SubCategory = @SubCategory,
+                            IsPost = @IsPost
                         WHERE noteId = @NoteId
                         ", thumbImageBuff);
                 }
-                con.Execute(sql, param, commandType: CommandType.Text);
+                con.Execute(postNotesql, param, commandType: CommandType.Text);
                 return 1;
             }
         }

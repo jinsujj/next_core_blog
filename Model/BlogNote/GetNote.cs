@@ -25,5 +25,6 @@ namespace Next_Core_Blog.Model.BlogNote
         public int ReadCount { get; set; }
         public string PostIp { get; set; }
         public string ModifyIp { get; set; }
+        public string isPost {get;set;}
     }
 }

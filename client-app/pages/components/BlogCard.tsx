@@ -7,21 +7,34 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { formatDistance } from "date-fns";
 import Link from "next/link";
 import React, { Children } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { PostedNote } from "../../api/note";
 import dateFormat from "../../lib/dateFormat";
+import { useSelector } from "../../store";
 import palette from "../../styles/palette";
 
-const Container = styled.div`
+interface StyledProps {
+  isPost: string;
+}
+
+const Container = styled.div<StyledProps>`
   .imageWrapper {
     display: block;
     border-radius: 4px;
     position: relative;
+
+    ${(props) => props.isPost === 'N' && css`
+      border: 1px solid ${palette.gray_f5};
+      background-color: ${palette.gray_f5};
+    `}
   }
 
   img {
     width: 100%;
     height: 100%;
+    ${(props) => props.isPost === 'N' && css`
+        opacity: 0.2;
+    `}
   }
   img:hover {
     background-color: white;
@@ -31,7 +44,7 @@ const Container = styled.div`
   .blogTitle {
     text-align: center;
     font-weight: bold;
-    color: ${palette.gray_7d};
+    color: ${(props) => props.isPost === 'N' ? `${palette.gray_7d}` : `${palette.black}`};
     margin: 4px 0;
   }
 
@@ -57,7 +70,7 @@ export interface IProps {
 
 const host = process.env.NEXT_PUBLIC_API_URL + "/files/";
 const BlogCard = ({ blog }: IProps) => {
-
+  const userId = useSelector((state) => state.user.userId);
   if(blog.thumbImage === null){
     blog.thumbImage = "default.svg";
   }
@@ -67,11 +80,10 @@ const BlogCard = ({ blog }: IProps) => {
     new Date(blog.postDate),
     { addSuffix: true }
   ) 
-
   return (
-    <Container>
+    <Container isPost={blog.isPost}>
       <div className="imageWrapper">
-        <Link href={`/blog/${blog.noteId}`} key={blog.noteId}>
+        <Link href={`/blog/${blog.noteId}?me=${userId}`} key={blog.noteId}>
           <img key={blog.noteId} src={`${host}${blog.thumbImage}`} />
         </Link>
         <div className="blogTitle">
@@ -90,7 +102,6 @@ const BlogCard = ({ blog }: IProps) => {
               icon={faComment}
               style={{ fontSize: 14, color: `${palette.gray_bb}` }}
             />
-            <p>{}</p>
           </div>
         </div>
         <div className="blogData">

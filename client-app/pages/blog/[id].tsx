@@ -111,11 +111,9 @@ interface IProps {
 
 const blogDetail: NextPage<IProps> = ({ detailNote }) => {
   const postState = useSelector((state) => state.common.postState);
-  const userInfo = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
   dispatch(commonAction.setPostUserIdOfNote(detailNote.userId));
-
   useUtterances(detailNote.noteId.toString());
 
   return (
@@ -188,9 +186,9 @@ export default blogDetail;
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  const { id } = context.query;
-
-  const { data: detailNote } = await noteApi.getNoteById(Number(id as string));
+  const userId = context.query.hasOwnProperty('me')? context.query.me: 0;
+  const id = context.query.id;
+  const { data: detailNote } = await noteApi.getNoteById(Number(id as string) ,Number(userId as string));
   return {
     props: {
       detailNote,

@@ -50,16 +50,16 @@ const postCategory = (category: CategoryView) => {
 }
 
 
-const getNoteById = async (id: number) => {
-    return await api.get<PostedNote>(`/api/Note/${id}`);
+const getNoteById = async (id: number, userId: number) => {
+    return await api.get<PostedNote>(`/api/Note/NoteById?id=${id}&userId=${userId}`);
 }
 
 const getNoteByCategory = async (category: string, subCategory: string) => {
     return await api.get<PostedNote[]>(`/api/Note/category?category=${category}&subCategory=${subCategory}'`);
 }
 
-const getNoteAll = async () => {
-    return await api.get<PostedNote[]>(`/api/Note/getNoteAll`);
+const getNoteAll = async (userId: number) => {
+    return await api.get<PostedNote[]>(`/api/Note/getNoteAll?userId=${userId}`);
 }
 
 const getNoteBySearch = async (content: string) => {

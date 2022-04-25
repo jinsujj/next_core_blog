@@ -35,6 +35,7 @@ const Container = styled.div`
   }
 
   .save-button {
+    display: flex;
     float: right;
     margin-right: 10px;
   }
@@ -60,6 +61,7 @@ type postNoteForm = {
   content: string;
   category: string;
   subCategory?: string;
+  isPost: string;
 };
 
 interface IProps {
@@ -152,10 +154,11 @@ const CategoryModal = ({ postNoteForm, closeModal }: IProps) => {
   };
 
   // 최종 포스팅 저장
-  const saveCategory = async () => {
+  const saveCategory = async (mode: string) => {
     postNoteForm.category = selectedCategory;
     postNoteForm.subCategory = selectedSubCategory;
 
+    mode === 'save' ? postNoteForm.isPost ='Y' : postNoteForm.isPost ='N';
     if (postState === "write") {
       var { data } = await noteApi.postNote(0, postNoteForm);
     } else if (postState === "modify") {
@@ -163,7 +166,12 @@ const CategoryModal = ({ postNoteForm, closeModal }: IProps) => {
     }
     console.log(data);
     if (data === 1) {
-      alert("저장 되었습니다");
+      if(mode === 'save'){
+        alert("저장 되었습니다");  
+      }
+      else if(mode ==='temp'){
+        alert("임시저장 되었습니다");
+      }
       closeModal();
       location.href = "../";
     } else {
@@ -233,7 +241,10 @@ const CategoryModal = ({ postNoteForm, closeModal }: IProps) => {
       )}
       {selectedCategory && !addCategoryInput && !addSubCategoryInput && (
         <div className="save-button">
-          <Button onClick={saveCategory}>저장</Button>
+          {postState === 'write' && (
+            <Button onClick={() =>saveCategory('temp')} color="green_8D" width="110px">임시 저장</Button>
+          )}
+          <Button onClick={() =>saveCategory('save')} width="110px">저장</Button>
         </div>
       )}
     </Container>

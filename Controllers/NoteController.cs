@@ -86,7 +86,7 @@ namespace Next_Core_Blog.Controllers
                     result = _noteRepo.PostNote(note, BoardWriteFormType.modify);
                 }
 
-                return CreatedAtRoute("NodeById", new { id = result }, result);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -113,14 +113,14 @@ namespace Next_Core_Blog.Controllers
             }
         }
 
-        [HttpGet("{id}", Name = "NodeById")]
-        public async Task<IActionResult> GetNoteById(int id)
+        [HttpGet("NoteById")]
+        public async Task<IActionResult> GetNoteById(int id, int userId)
         {
-            _logger.LogInformation("GetNoteById: " + id + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+            _logger.LogInformation("GetNoteById: " + id + " UserId: " + userId  + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
             try
             {
-                var note = await _noteRepo.GetNoteById(id);
+                var note = await _noteRepo.GetNoteById(id, userId);
                 return Ok(note);
             }
             catch (Exception ex)
@@ -149,13 +149,13 @@ namespace Next_Core_Blog.Controllers
         }
 
         [HttpGet("getNoteAll")]
-        public async Task<IActionResult> GetNoteAll()
+        public async Task<IActionResult> GetNoteAll(int userId)
         {
-            _logger.LogInformation("GetNoteAll: " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+            _logger.LogInformation("GetNoteAll: " + userId + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
             try
             {
-                var results = await _noteRepo.GetNoteAll();
+                var results = await _noteRepo.GetNoteAll(userId);
                 return Ok(results);
             }
             catch (Exception ex)

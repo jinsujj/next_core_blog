@@ -6,7 +6,6 @@ import noteApi, { PostedNote } from "../../api/note";
 import { useSelector } from "../../store";
 import palette from "../../styles/palette";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
-import Link from "next/link";
 import Editor from "./Editor";
 import { useDispatch } from "react-redux";
 import { commonAction } from "../../store/common";
@@ -93,6 +92,7 @@ const Container = styled.div`
 `;
 
 const Body = () => {
+  const userId = useSelector((state) => state.user.userId);
   const host = process.env.NEXT_PUBLIC_API_URL + "/files/";
   const [postNotes, setPostNotes] = useState<PostedNote[]>([]);
   const postState = useSelector((state) => state.common.postState);
@@ -102,8 +102,8 @@ const Body = () => {
 
 
   useEffect(() => {
-    const Notes = noteApi.getNoteAll().then((res) => setPostNotes(res.data||[]));
-  }, []);
+    const Notes = noteApi.getNoteAll(userId).then((res) => setPostNotes(res.data||[]));
+  }, [userId]);
 
   return (
     <Container>
