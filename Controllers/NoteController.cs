@@ -17,7 +17,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Next_Core_Blog.CommonLibrary;
 using Next_Core_Blog.Model.BlogNote;
+using Next_Core_Blog.Model.User;
 using Next_Core_Blog.Repository.BlogNote;
+using Next_Core_Blog.Repository.Users;
 
 namespace Next_Core_Blog.Controllers
 {
@@ -30,14 +32,16 @@ namespace Next_Core_Blog.Controllers
         private readonly ILogger<NoteController> _logger;
 
         private readonly INoteRepository _noteRepo;
+        private readonly IUserRepository _userRepo;
 
 
-        public NoteController(IWebHostEnvironment environment, IConfiguration config, ILogger<NoteController> logger, INoteRepository noteRepo)
+        public NoteController(IWebHostEnvironment environment, IConfiguration config, ILogger<NoteController> logger, INoteRepository noteRepo, IUserRepository userRepo)
         {
             _enviorment = environment;
             _config = config;
             _logger = logger;
             _noteRepo = noteRepo;
+            _userRepo = userRepo;
         }
 
         [HttpPost]
@@ -56,19 +60,9 @@ namespace Next_Core_Blog.Controllers
             if (formType == BoardWriteFormType.modify)
             {
                 // Get the encrypted cookie value
-                var opt = HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>();
-                var cookie = opt.CurrentValue.CookieManager.GetRequestCookie(HttpContext, "UserLoginCookie");
-                Dictionary<string, string> tokenInfo = new Dictionary<string, string>();
-
-                var dataProtector = opt.CurrentValue.DataProtectionProvider.CreateProtector("Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationMiddleware", CookieAuthenticationDefaults.AuthenticationScheme, "v2");
-                var ticketDataFormat = new TicketDataFormat(dataProtector);
-                var ticket = ticketDataFormat.Unprotect(cookie);
-                foreach (var claim in ticket.Principal.Claims)
-                {
-                    tokenInfo.Add(claim.Type, claim.Value);
-                }
+                Dictionary<string, string> tokenInfo = DecryptTokenInfo(HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>());
                 if (note.userId != Convert.ToInt32(tokenInfo["userId"])) 
-                    return BadRequest(403);
+                    return StatusCode(403);
             }
             #endregion
 
@@ -101,6 +95,13 @@ namespace Next_Core_Blog.Controllers
         {
             _logger.LogInformation("Category: " + categoryView.category + " SubCateghory:  " + categoryView.subCategory + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
+            #region [Parameter Modulation Check]
+            // Get the encrypted cookie value
+            Dictionary<string, string> tokenInfo = DecryptTokenInfo(HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>());
+            RegisterViewModel userInfo =  _userRepo.GetUserByUserId(categoryView.userId);
+            if (userInfo.Role != tokenInfo["Role"]) return StatusCode(403);
+            #endregion
+
             try
             {
                 var result = _noteRepo.PostCategory(categoryView.category, categoryView.subCategory);
@@ -117,6 +118,12 @@ namespace Next_Core_Blog.Controllers
         public async Task<IActionResult> GetNoteById(int id, int userId)
         {
             _logger.LogInformation("GetNoteById: " + id + " UserId: " + userId  + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+
+            #region [Parameter Modulation Check]
+            // Get the encrypted cookie value
+            Dictionary<string, string> tokenInfo = DecryptTokenInfo(HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>());
+            if (userId != Convert.ToInt32(tokenInfo["userId"])) return StatusCode(403);
+            #endregion
 
             try
             {
@@ -296,6 +303,20 @@ namespace Next_Core_Blog.Controllers
                 i++;
             }
             return false;
+        }
+
+        private Dictionary<string, string> DecryptTokenInfo(IOptionsMonitor<CookieAuthenticationOptions> opt ){
+            Dictionary<string, string> tokenInto = new Dictionary<string, string>();
+
+            var cookie = opt.CurrentValue.CookieManager.GetRequestCookie(HttpContext, "UserLoginCookie");
+            var dataProtector = opt.CurrentValue.DataProtectionProvider.CreateProtector("Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationMiddleware", CookieAuthenticationDefaults.AuthenticationScheme, "v2");
+                var ticketDataFormat = new TicketDataFormat(dataProtector);
+                var ticket = ticketDataFormat.Unprotect(cookie);
+                foreach (var claim in ticket.Principal.Claims){
+                    tokenInto.Add(claim.Type, claim.Value);
+                }
+
+            return tokenInto;
         }
     }
 }

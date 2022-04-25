@@ -34,6 +34,7 @@ export interface PostNote {
 }
 
 export type CategoryView ={
+    userId : number;
     category : string;
     subCategory: string;
 }

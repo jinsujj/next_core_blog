@@ -74,7 +74,8 @@ const CategoryModal = ({ postNoteForm, closeModal }: IProps) => {
   const dispatch = useDispatch();
   const [dictionary, setDictionary] = useState<Map<string, string[]>>();
   const postState = useSelector((state) => state.common.postState);
-  const userInfo = useSelector((state) => state.user);
+  const userRole = useSelector((state) => state.user.role);
+  const userId = useSelector((state) => state.user.userId);
 
   // 카테고리 추가
   const [newCategory, setNewCategory] = useState("");
@@ -99,7 +100,7 @@ const CategoryModal = ({ postNoteForm, closeModal }: IProps) => {
     let category = "";
     let subCategory = "";
 
-    if(userInfo.role !== 'ADMIN' ){
+    if(userRole !== 'ADMIN' ){
       alert("관리자만 추가할 수 있습니다")
       return;
     }
@@ -119,7 +120,7 @@ const CategoryModal = ({ postNoteForm, closeModal }: IProps) => {
       }
     }
 
-    const categoryList = { category, subCategory };
+    const categoryList = { userId , category, subCategory };
     const { data } = await noteApi.postCategory(categoryList);
     alert("저장 되었습니다");
     closeModal();

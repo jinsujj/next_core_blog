@@ -56,6 +56,19 @@ namespace Next_Core_Blog.Repository.Users
             }
         }
 
+         public RegisterViewModel GetUserByUserId(int userId)
+        {
+            string sql = @"SELECT UserId, Name, Email, Role
+                            FROM user
+                            WHERE userId = @userId";
+
+            using (var con = _context.CreateConnection())
+            {
+                var result =  con.QueryFirstOrDefault<RegisterViewModel>(sql, new { userId });
+                return result;
+            }
+        }
+
         public bool IsRegistedUser(string Email)
         {
             string sql = @"SELECT 1

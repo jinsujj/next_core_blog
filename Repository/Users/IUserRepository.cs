@@ -10,6 +10,7 @@ namespace Next_Core_Blog.Repository.Users
     {
         bool AddUser(RegisterViewModel model);
         Task<RegisterViewModel> GetUserByEmail(string EMail);
+        RegisterViewModel GetUserByUserId(int userId);
         bool IsCorrectUser(string Email, string password);
         void ModifyUser(RegisterViewModel model);
         bool IsAdmin(string Email);
