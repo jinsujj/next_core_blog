@@ -1,3 +1,4 @@
+import { userInfo } from "os";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
@@ -73,6 +74,7 @@ const CategoryModal = ({ postNoteForm, closeModal }: IProps) => {
   const dispatch = useDispatch();
   const [dictionary, setDictionary] = useState<Map<string, string[]>>();
   const postState = useSelector((state) => state.common.postState);
+  const userInfo = useSelector((state) => state.user);
 
   // 카테고리 추가
   const [newCategory, setNewCategory] = useState("");
@@ -96,6 +98,12 @@ const CategoryModal = ({ postNoteForm, closeModal }: IProps) => {
   const onClickAddCategory = async () => {
     let category = "";
     let subCategory = "";
+
+    if(userInfo.role !== 'ADMIN' ){
+      alert("관리자만 추가할 수 있습니다")
+      return;
+    }
+
     if (selectedCategory === "") {
       category = newCategory.trim();
       if (options.some((t) => t === category) || category === "") {
