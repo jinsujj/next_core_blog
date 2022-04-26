@@ -1,4 +1,3 @@
-import Link from "next/link";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
@@ -9,6 +8,7 @@ import { commonAction } from "../../store/common";
 import HeaderAuths from "./HeaderAuth";
 import HeaderProfile from "./HeaderProfile";
 import AuthModal from "./authModal/AuthModal";
+import Router from "next/router";
 
 const Container = styled.div`
   border-bottom: 1px solid rgba(0, 0, 0, 0.15);
@@ -72,6 +72,11 @@ const Container = styled.div`
     text-decoration: none;
     color: black;
   }
+
+  .home-button {
+    border: none;
+    background-color: white;
+  }
 `;
 
 const Header = () => {
@@ -84,6 +89,11 @@ const Header = () => {
   const changeToggle = () => {
     dispatch(commonAction.setToggleMode(!isToggle));
   };
+
+  const goHome = (event: React.MouseEvent<HTMLButtonElement>) =>{
+    dispatch(commonAction.setSearchFilter(""));
+    Router.push("/");
+  }
 
   return (
     <>
@@ -100,9 +110,9 @@ const Header = () => {
           </div>
           <div className="title-group">
             <div className="logo">부엉이</div>
-            <Link href="/">
+            <button className="home-button"  onClick={goHome}>
               <a>부엉이 개발자</a>
-            </Link>
+            </button>
           </div>
           <div className="btn-group">
             {isLogged && <HeaderProfile />}

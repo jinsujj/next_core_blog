@@ -66,11 +66,11 @@ namespace Next_Core_Blog.Repository.BlogNote
         {
             string ParamSubCategory = "";
 
-            if (!string.IsNullOrEmpty(subCategory)) ParamSubCategory = "AND a.subName = @subCategory";
+            if (subCategory.Length >1) ParamSubCategory = "AND a.subcategory = @subCategory";
 
             string sql = string.Format(@"SELECT *
                             FROM note a
-                            WHERE a.name = @category
+                            WHERE a.category = @category
                             {0}
                             AND IsPost ='Y'
                         ",  ParamSubCategory);

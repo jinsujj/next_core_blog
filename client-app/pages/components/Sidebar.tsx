@@ -1,6 +1,8 @@
-import React from "react";
+import { stringify } from "querystring";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import styled, { css } from "styled-components";
+import noteApi, { CategoryView, SidebarCategoryView } from "../../api/note";
 import { useSelector } from "../../store";
 import { commonAction } from "../../store/common";
 import Button from "./common/Button";
@@ -59,7 +61,7 @@ const Container = styled.div<StyledProps>`
   }
 
   #search {
-    width:280px;
+    width: 280px;
   }
 
   .search-submit {
@@ -139,7 +141,7 @@ const Container = styled.div<StyledProps>`
   }
   .category .sub--menu {
     margin-bottom: 4px;
-    font-size: 24px;
+    font-size: 20px;
     line-height: 29px;
     color: black;
     display: flex;
@@ -152,7 +154,15 @@ const Container = styled.div<StyledProps>`
   }
 `;
 
+
 const Sidebar = () => {
+  const [categoryList, setCategoryList] = useState<string[]>([]);
+  const [categoryMap, setCategoryMap] = useState<Map<string, number>>();
+  const [subCategoryMap, setSubCategoryMap] =useState<Map<string, Map<string, number>[]>>();
+
+  const [todayCount, setTodayCount] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
+  const [search, setSearch] =useState('');
   const isToggle = useSelector((state) => state.common.toggle);
   const dispatch = useDispatch();
 
@@ -160,8 +170,69 @@ const Sidebar = () => {
     dispatch(commonAction.setToggleMode(!isToggle));
   };
 
+  const onChangeSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
+  }
+
+  const getCategoryList = async () => {
+    let { data } = await noteApi.getSidebarCategoryList();
+    console.log(data);
+    let categoryList: string[] = [];
+    let category = new Map<string, number>();
+    let dictionary = new Map<string, Map<string, number>[]>();
+
+    data.map((t) => {
+      let subCategoryArr = Array<Map<string, number>>();
+      let subCategory = new Map<string, number>();
+      // key set
+      if (!category.has(t.name)) {
+        categoryList.push(t.name);
+        category.set(t.name, t.mainCount);
+        subCategory.set(t.subName, t.subCount);
+        subCategoryArr.push(subCategory);
+        dictionary.set(t.name, subCategoryArr);
+      }
+      // value set
+      else {
+        subCategory.set(t.subName, t.subCount);
+        var buff = dictionary.get(t.name);
+        if (!!buff) {
+          buff?.push(subCategory);
+          dictionary.set(t.name, buff);
+        }
+      }
+    });
+
+    setCategoryList(categoryList);
+    setCategoryMap(category);
+    setSubCategoryMap(dictionary);
+  };
+
+  const onSubmited = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    dispatch((commonAction.setSearchFilter(search)));
+    setSearch("");
+  } 
+  
+  const categoryFilter = (category:string) => {
+    dispatch((commonAction.setCategoryFilter(category)));
+  }
+
+    useEffect(() => {
+    getCategoryList();
+
+    noteApi.getTotalReadCount().then((res) => {
+      setTotalCount(res.data);
+    });
+
+    noteApi.getTodayReadCount().then((res) => {
+      setTodayCount(res.data);
+    });
+  }, []);
+
+
   return (
-    <Container istoggle={isToggle}>
+    <Container istoggle={isToggle} >
       <div className="inner">
         <div className={`toggle-btn`} onClick={changeToggle}>
           Header Menu Button
@@ -172,8 +243,10 @@ const Sidebar = () => {
             id="search"
             placeholder="Search"
             useValidation={false}
+            value={search}
+            onChange={onChangeSearch}
           />
-          <Input className="search-submit" type="submit" value="submit" useValidation={false}/>
+          <button className="search-submit" onClick={onSubmited} />
         </form>
         <div className="btn-group toggle">
           <Button>Login</Button>
@@ -182,27 +255,42 @@ const Sidebar = () => {
         <div className="visit--count">
           <ul>
             <li>Total visit</li>
-            <li>10,000</li>
+            <li>{totalCount}</li>
           </ul>
           <ul>
             <li>Today visit</li>
-            <li>100</li>
+            <li>{todayCount}</li>
           </ul>
         </div>
-        <div className="category">
-          <ul className="menu">
-            <li>
-              <a href="#">Category1</a>
-            </li>
-            <li className="count">(140)</li>
-          </ul>
-          <ul className="sub--menu">
-            <li>
-              <a href="#">name</a>
-            </li>
-            <li className="count">(40)</li>
-          </ul>
-        </div>
+        {categoryList.map((category, index) => (
+          <div className="category" key={index}>
+            <ul className="menu">
+              <li>
+                <div onClick={() => categoryFilter(category)}>
+                  <a href="#">{category}</a>
+                </div>
+                
+              </li>
+              <li className="count">
+                ({categoryMap && categoryMap.get(category)})
+              </li>
+            </ul>
+            {/* {subCategoryMap?.get(category)} */}
+            {/* {dictionary.get(category) &&
+              dictionary.get(category)?.forEach((value, key) => {
+                <>
+                  <ul className="sub--menu" key={key}>
+                    <li>
+                      <a href="#">{value.entries().next().value[0]}</a>
+                    </li>
+                    <li className="count">
+                      ({value.entries().next().value[1]})
+                    </li>
+                  </ul>
+                </>;
+              })} */}
+          </div>
+        ))}
       </div>
     </Container>
   );

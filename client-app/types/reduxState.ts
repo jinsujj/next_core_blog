@@ -5,6 +5,9 @@ export type CommonState = {
     validateMode: boolean;
     postState: "write" | "modify" | "read";
     userIdOfNote: number;
+    search: string;
+    category: string;
+    subCategory: string;
 }
 
 export type UserState = {

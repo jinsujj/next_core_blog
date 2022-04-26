@@ -68,8 +68,8 @@ const Footer = () => {
         </div>
         <ul className="site-links float--right">
           <li>
-            <Link href="#">
-              <a>
+            <Link href="https://github.com/jinsujj">
+              <a target='_blank'>
                 <FontAwesomeIcon
                   icon={faGithub}
                   style={{ fontSize: 30, color: "black" }}
@@ -78,8 +78,8 @@ const Footer = () => {
             </Link>
           </li>
           <li>
-            <Link href="#">
-              <a>
+            <Link  href="https://www.linkedin.com/in/jinsu-jang-0b2269107/">
+              <a target='_blank'>
                 <FontAwesomeIcon
                   icon={faLinkedin}
                   style={{ fontSize: 30, color: "black" }}

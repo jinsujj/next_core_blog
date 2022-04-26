@@ -96,14 +96,24 @@ const Body = () => {
   const host = process.env.NEXT_PUBLIC_API_URL + "/files/";
   const [postNotes, setPostNotes] = useState<PostedNote[]>([]);
   const postState = useSelector((state) => state.common.postState);
+  const searchQuery = useSelector((state) => state.common.search);
+  const setCategoryFilter = useSelector((state) => state.common.category);
+  const setSubCategoryFilter = useSelector((state) => state.common.subCategory);
 
   const dispatch = useDispatch();
   dispatch(commonAction.setPostUserIdOfNote(0));
 
-
   useEffect(() => {
-    const Notes = noteApi.getNoteAll(userId).then((res) => setPostNotes(res.data||[]));
-  }, [userId]);
+    if(searchQuery.length >0){
+      const Notes = noteApi.getNoteBySearch(searchQuery).then((res) => setPostNotes(res.data||[]));
+    }
+    else if(setCategoryFilter.length >0){
+      const Notes = noteApi.getNoteByCategory(setCategoryFilter,setSubCategoryFilter).then((res) => setPostNotes(res.data||[]));
+    }
+    else{
+      const Notes = noteApi.getNoteAll(userId).then((res) => setPostNotes(res.data||[]));
+    }
+  }, [userId,searchQuery,setCategoryFilter]);
 
   return (
     <Container>
