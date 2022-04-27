@@ -131,6 +131,7 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
   const SearchQuery = useSelector((state) => state.common.search);
   const postState = useSelector((state) => state.common.postState);
   const sideBarCategory  = useSelector((state) => state.common.sideBarCategory);
+  const sidgBarSubCategory = useSelector((state)=> state.common.sideBarSubCategory);
   
   const dispatch = useDispatch();
   dispatch(commonAction.setPostUserIdOfNote(detailNote.userId));
@@ -138,14 +139,14 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
 
   useEffect(() =>{
     return () => {
-      if(detailNote.category !== sideBarCategory){
+      if(detailNote.category !== sideBarCategory || detailNote.subCategory !== sidgBarSubCategory){
         Router.push("/");
       }
       else if(SearchQuery.includes(detailNote.title)){
         Router.push("/");  
       }
     };
-  },[sideBarCategory,SearchQuery]);
+  },[sideBarCategory,sidgBarSubCategory,SearchQuery]);
 
 
   return (
