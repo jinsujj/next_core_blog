@@ -62,22 +62,23 @@ namespace Next_Core_Blog.Repository.BlogNote
             }
         }
 
-        public async Task<IEnumerable<GetNote>> GetNoteByCategory(string category, string subCategory)
+        public async Task<IEnumerable<GetNote>> GetNoteByCategory(int userId, string category, string subCategory)
         {
             string ParamSubCategory = "";
 
-            if (subCategory.Length >1) ParamSubCategory = "AND a.subcategory = @subCategory";
+            if (!string.IsNullOrEmpty(subCategory) && subCategory.Length >1) 
+                ParamSubCategory = "AND a.subcategory = @subCategory";
 
             string sql = string.Format(@"SELECT *
                             FROM note a
                             WHERE a.category = @category
                             {0}
-                            AND IsPost ='Y'
+                            AND (IsPost ='Y' OR (userId = @userId AND IsPost ='N'))
                         ",  ParamSubCategory);
 
             using (var con = _context.CreateConnection())
             {
-                var notes = await con.QueryAsync<GetNote>(sql, new { category, subCategory });
+                var notes = await con.QueryAsync<GetNote>(sql, new { category, subCategory, userId });
                 return notes.ToList();
             }
         }

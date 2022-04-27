@@ -13,6 +13,11 @@ import Button from "../common/Button";
 import Input from "../common/Input";
 
 const Container = styled.form`
+  @media only screen and (max-width: 768px){
+      width: 100%;
+      padding: 26px;
+  }
+
   z-index: 11;
   width: 540px;
   height: 400px;

@@ -1,6 +1,5 @@
-import { copyFileSync } from "fs";
 import Router from "next/router";
-import React, { useEffect } from "react";
+import React from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import userApi from "../../api/user";
@@ -11,10 +10,17 @@ import palette from "../../styles/palette";
 import Button from "./common/Button";
 
 const Container = styled.div`
+  position: relative;
+
   .btn-group {
     display: flex;
     justify-content: center;
     align-items: center;
+
+    @media only screen and (max-width: 768px) {
+      width: 100%;
+      float: right;
+    }
   }
 
   .userInfo {
@@ -32,6 +38,16 @@ const Container = styled.div`
     color: ${palette.black};
     font-size: 16px;
     font-weight: 600;
+
+    @media only screen and (max-width: 768px) {
+      display: none;
+    }
+  }
+
+  .logout-button {
+    @media only screen and (max-width: 768px) {
+      display: none;
+    }
   }
 `;
 
@@ -40,7 +56,7 @@ const HeaderProfile = () => {
   const userInfo = useSelector((state) => state.user);
   const postState = useSelector((state) => state.common.postState);
   const userIfofNote = useSelector((state) => state.common.userIdOfNote);
- 
+
   const onClickLogout = () => {
     try {
       userApi.Logout();
@@ -52,42 +68,43 @@ const HeaderProfile = () => {
   };
 
   const onClickPostBlog = () => {
-      if(postState === 'read' && userIfofNote === userInfo.userId){
-        dispatch(commonAction.setPostState('modify'));
-        return;
-      }
-      if(postState === 'read' && userIfofNote !== userInfo.userId){
-        dispatch(commonAction.setPostState('write'));
-        return;
-      }
-      if(postState === 'write' || postState === 'modify'){
-        dispatch(commonAction.setPostState("read"));
-        Router.push("../");
-      }
+    if (postState === "read" && userIfofNote === userInfo.userId) {
+      dispatch(commonAction.setPostState("modify"));
+      return;
+    }
+    if (postState === "read" && userIfofNote !== userInfo.userId) {
+      dispatch(commonAction.setPostState("write"));
+      return;
+    }
+    if (postState === "write" || postState === "modify") {
+      dispatch(commonAction.setPostState("read"));
+      Router.push("../");
+    }
   };
 
   return (
     <Container>
       <div className="btn-group">
-        {postState === 'read' && (userIfofNote === userInfo.userId) && (
-          <Button onClick={onClickPostBlog} width="110px" color ="green_8D">
-           수정하기
+        {postState === "read" && userIfofNote === userInfo.userId && (
+          <Button onClick={onClickPostBlog} width="110px" color="green_8D">
+            수정하기
           </Button>
-        )
-        }
-        {postState !== 'write' && (userIfofNote !== userInfo.userId) && (
-          <Button onClick={onClickPostBlog} width="110px" color ="green_8D">
+        )}
+        {postState !== "write" && userIfofNote !== userInfo.userId && (
+          <Button onClick={onClickPostBlog} width="110px" color="green_8D">
             글쓰기
           </Button>
         )}
-        {postState !== 'read' && (userInfo.name.length> 0) && (
+        {postState !== "read" && userInfo.name.length > 0 && (
           <Button onClick={onClickPostBlog} width="110px" color="green_8D">
             뒤로가기
           </Button>
         )}
-        <Button onClick={onClickLogout} width="110px">
-          Logout
-        </Button>
+        <div className="logout-button">
+          <Button onClick={onClickLogout} width="110px">
+            Logout
+          </Button>
+        </div>
         <div className="userInfo">{userInfo.name}</div>
       </div>
     </Container>

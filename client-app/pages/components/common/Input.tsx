@@ -13,6 +13,10 @@ interface StyledProps {
 }
 
 const Container = styled.div<StyledProps>`
+  @media only screen and (max-width: 768px){
+    width: 100%;
+  }
+
   input {
     width: ${(props) => (props.width === undefined ? "100%": props.width)};
     height: 40px;

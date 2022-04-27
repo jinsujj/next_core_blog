@@ -6,8 +6,8 @@ export type CommonState = {
     postState: "write" | "modify" | "read";
     userIdOfNote: number;
     search: string;
-    category: string;
-    subCategory: string;
+    sideBarCategory: string;
+    sideBarSubCategory: string;
 }
 
 export type UserState = {

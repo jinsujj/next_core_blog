@@ -8,8 +8,8 @@ const initialState: CommonState = {
     postState : "read",     // 글쓰기 상태 여부
     userIdOfNote : 0,       // 현 Note의 작성자 id 
     search: "",             // 검색 여부
-    category: "",           // 검색 카테고리
-    subCategory: "",        // 검색 카테고리
+    sideBarCategory: "",    // 검색 카테고리
+    sideBarSubCategory: "", // 검색 카테고리
 }
 
 const common = createSlice({
@@ -32,10 +32,14 @@ const common = createSlice({
             state.search = acition.payload;
         },
         setCategoryFilter(state, acition: PayloadAction<string>){
-            state.category = acition.payload;
+            state.sideBarCategory = acition.payload;
         },
         setSubCategoryFilter(state ,acition: PayloadAction<string>){
-            state.subCategory = acition.payload;
+            state.sideBarSubCategory = acition.payload;
+        },
+        initCommonState(state){
+            state = initialState;
+            return state;
         }
     }
 });

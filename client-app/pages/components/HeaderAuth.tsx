@@ -7,6 +7,9 @@ import AuthModal from "./authModal/AuthModal";
 import Button from "./common/Button";
 
 const Container = styled.div`
+  @media only screen and (max-width: 768px) {
+    display: none;
+  }
   .btn-group {
     display: flex;
     justify-content: center;
@@ -35,7 +38,7 @@ const HeaderAuths = () => {
         <Button onClick={onClickLogin}>Login</Button>
         <Button onClick={onClickRegister}>Register</Button>
         <ModalPortal>
-          <AuthModal closeModal={closeModal}/>
+          <AuthModal closeModal={closeModal} />
         </ModalPortal>
       </div>
     </Container>

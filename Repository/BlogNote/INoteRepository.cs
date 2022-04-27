@@ -15,7 +15,7 @@ namespace Next_Core_Blog.Repository.BlogNote
 
         // Get Note
         Task<IEnumerable<GetNote>> GetNoteAll(int userId);
-        Task<IEnumerable<GetNote>> GetNoteByCategory(string category, string subCategory);
+        Task<IEnumerable<GetNote>> GetNoteByCategory(int userId, string category, string subCategory);
         Task<IEnumerable<GetNote>> GetNoteBySearch(string searchQuery);
         Task<GetNote> GetNoteById(int id, int userId, string ip);
 

@@ -1,5 +1,5 @@
 import { GetServerSideProps, GetServerSidePropsContext, NextPage } from "next";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import noteApi, { PostedNote } from "../../api/note";
@@ -11,9 +11,9 @@ import Header from "../components/Header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarCheck, faEye } from "@fortawesome/free-solid-svg-icons";
 import { commonAction } from "../../store/common";
-import { write } from "fs";
 import dateFormat from "../../lib/dateFormat";
 import useUtterances from "../../hooks/useUtterances";
+import Router from "next/router";
 
 const Container = styled.div`
   margin-top: 56px;
@@ -35,6 +35,13 @@ const Container = styled.div`
   .summary__title {
     font-weight: 600;
     font-size: 32px;
+
+    @media only screen and (max-width: 768px){
+      line-height: 48px;
+      font-weight: 600;
+      font-size: 24px;
+      align-items: center;
+    }
   }
 
   .summary__write {
@@ -46,6 +53,12 @@ const Container = styled.div`
 
   .post_info {
     margin-top: 12px;
+
+    @media only screen and (max-width: 380px){
+      display: flex;
+      float: left !important;
+      margin-top: -12px;
+    }
   }
 
   .post_info ul {
@@ -53,6 +66,11 @@ const Container = styled.div`
     font-weight: 400;
     font-size: 14px;
     color: black;
+
+    @media only screen and (max-width: 768px){
+      margin-right: 8px;
+      margin-bottom: 4px;
+    }
   }
 
   .post_info ul li:first-child {
@@ -110,11 +128,25 @@ interface IProps {
 }
 
 const blogDetail: NextPage<IProps> = ({ detailNote }) => {
+  const SearchQuery = useSelector((state) => state.common.search);
   const postState = useSelector((state) => state.common.postState);
-
+  const sideBarCategory  = useSelector((state) => state.common.sideBarCategory);
+  
   const dispatch = useDispatch();
   dispatch(commonAction.setPostUserIdOfNote(detailNote.userId));
   useUtterances(detailNote.noteId.toString());
+
+  useEffect(() =>{
+    return () => {
+      if(detailNote.category !== sideBarCategory){
+        Router.push("/");
+      }
+      else if(SearchQuery.includes(detailNote.title)){
+        Router.push("/");  
+      }
+    };
+  },[sideBarCategory,SearchQuery]);
+
 
   return (
     <>

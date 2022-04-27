@@ -1,12 +1,18 @@
-import { stringify } from "querystring";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import styled, { css } from "styled-components";
-import noteApi, { CategoryView, SidebarCategoryView } from "../../api/note";
+import noteApi from "../../api/note";
+import userApi from "../../api/user";
+import useModal from "../../hooks/useModal";
 import { useSelector } from "../../store";
+import { authAction } from "../../store/auth";
 import { commonAction } from "../../store/common";
+import { userActions } from "../../store/user";
+import AuthModal from "./authModal/AuthModal";
 import Button from "./common/Button";
 import Input from "./common/Input";
+import Router from "next/router";
+import palette from "../../styles/palette";
 
 interface StyledProps {
   istoggle: boolean;
@@ -21,6 +27,17 @@ const Container = styled.div<StyledProps>`
   position: fixed;
   z-index: 1;
   background: #fff;
+
+  @media only screen and (max-width: 768px) {
+    width: 100%;
+    max-width: 600px;
+    height: 100%;
+    overflow-y: auto;
+    border: 1px solid #eee;
+    position: fixed;
+    z-index: 1;
+    background: #fff;
+  }
 
   ${(props) =>
     !props.istoggle &&
@@ -40,9 +57,14 @@ const Container = styled.div<StyledProps>`
       transition: all 0.5s;
     `}
 
-    .inner {
+  .inner {
     margin-left: 28px;
     margin-right: 28px;
+
+    @media only screen and (max-width: 768px) {
+      margin-left: 20px;
+      margin-right: 20px;
+    }
   }
 
   .toggle-btn {
@@ -50,18 +72,49 @@ const Container = styled.div<StyledProps>`
     width: 28px !important;
     height: 18px;
     cursor: pointer;
-    text-indent: -9999px;
     margin: 27px 0;
+  }
+
+  .userInfo {
+    border: 1px solid ${palette.green_53};
+    border-radius: 50px;
+    padding: 0 10px;
+    width: auto;
+    height: 24px;
+
+    align-items: center;
+    margin-left: 10px;
+
+    color: ${palette.black};
+    font-size: 16px;
+    font-weight: 600;
+    display: none;
+
+    @media only screen and (max-width: 768px) {
+      position: absolute;
+      top: 28px;
+      right: 10px;
+      display: block;
+    }
   }
 
   #search-form {
     margin-top: 33px;
     display: flex;
     position: relative;
+
+    @media only screen and (max-width: 768px) {
+      width: 100%;
+      max-width: 600px;
+    }
   }
 
   #search {
     width: 280px;
+
+    @media only screen and (max-width: 768px) {
+      width: 100% !important;
+    }
   }
 
   .search-submit {
@@ -97,6 +150,13 @@ const Container = styled.div<StyledProps>`
 
   .btn-group {
     display: none;
+
+    @media only screen and (max-width: 768px) {
+      margin-top: 15px;
+      display: flex;
+      max-width: 600px;
+      justify-content: left;
+    }
   }
 
   .visit--count {
@@ -154,17 +214,19 @@ const Container = styled.div<StyledProps>`
   }
 `;
 
-
 const Sidebar = () => {
   const [categoryList, setCategoryList] = useState<string[]>([]);
   const [categoryMap, setCategoryMap] = useState<Map<string, number>>();
   const [subCategoryMap, setSubCategoryMap] =useState<Map<string, Map<string, number>[]>>();
+  const [search, setSearch] = useState("");
 
   const [todayCount, setTodayCount] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
-  const [search, setSearch] =useState('');
-  const isToggle = useSelector((state) => state.common.toggle);
+
   const dispatch = useDispatch();
+  const isToggle = useSelector((state) => state.common.toggle);
+  const userInfo = useSelector((state) => state.user);
+  const { openModal, ModalPortal, closeModal } = useModal();
 
   const changeToggle = () => {
     dispatch(commonAction.setToggleMode(!isToggle));
@@ -172,11 +234,10 @@ const Sidebar = () => {
 
   const onChangeSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
-  }
+  };
 
   const getCategoryList = async () => {
     let { data } = await noteApi.getSidebarCategoryList();
-    console.log(data);
     let categoryList: string[] = [];
     let category = new Map<string, number>();
     let dictionary = new Map<string, Map<string, number>[]>();
@@ -208,17 +269,44 @@ const Sidebar = () => {
     setSubCategoryMap(dictionary);
   };
 
-  const onSubmited = async (event: React.MouseEvent<HTMLButtonElement>) => {
+  // search button filter
+  const searchButtonFilter = async (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
     event.preventDefault();
-    dispatch((commonAction.setSearchFilter(search)));
+    dispatch(commonAction.setSearchFilter(search));
     setSearch("");
-  } 
-  
-  const categoryFilter = (category:string) => {
-    dispatch((commonAction.setCategoryFilter(category)));
-  }
+  };
 
-    useEffect(() => {
+  // category filter
+  const categoryFilter = (category: string, subCategory: string) => {
+    dispatch(commonAction.setCategoryFilter(category));
+    dispatch(commonAction.setSubCategoryFilter(subCategory));
+  };
+
+  const onClickLogin = () => {
+    dispatch(authAction.setAuthMode("login"));
+    openModal();
+    dispatch(commonAction.setToggleMode(false));
+  };
+
+  const onClickRegister = () => {
+    dispatch(authAction.setAuthMode("signup"));
+    openModal();
+    dispatch(commonAction.setToggleMode(false));
+  };
+
+  const onClickLogout = () => {
+    try {
+      userApi.Logout();
+      dispatch(userActions.initUser());
+      Router.push("../");
+    } catch (e: any) {
+      console.log(e.message);
+    }
+  };
+
+  useEffect(() => {
     getCategoryList();
 
     noteApi.getTotalReadCount().then((res) => {
@@ -230,12 +318,11 @@ const Sidebar = () => {
     });
   }, []);
 
-
   return (
-    <Container istoggle={isToggle} >
+    <Container istoggle={isToggle}>
       <div className="inner">
         <div className={`toggle-btn`} onClick={changeToggle}>
-          Header Menu Button
+          {userInfo.isLogged && <div className="userInfo">{userInfo.name}</div>}
         </div>
         <form id="search-form" method="post" action="#">
           <Input
@@ -246,11 +333,16 @@ const Sidebar = () => {
             value={search}
             onChange={onChangeSearch}
           />
-          <button className="search-submit" onClick={onSubmited} />
+          <button className="search-submit" onClick={searchButtonFilter} />
         </form>
         <div className="btn-group toggle">
-          <Button>Login</Button>
-          <Button>Register</Button>
+          {userInfo.isLogged && <Button onClick={onClickLogout}>Logout</Button>}
+          {!userInfo.isLogged && (
+            <>
+              <Button onClick={onClickLogin}>Login</Button>
+              <Button onClick={onClickRegister}>Register</Button>
+            </>
+          )}
         </div>
         <div className="visit--count">
           <ul>
@@ -266,31 +358,44 @@ const Sidebar = () => {
           <div className="category" key={index}>
             <ul className="menu">
               <li>
-                <div onClick={() => categoryFilter(category)}>
+                <div onClick={() => categoryFilter(category, "")}>
                   <a href="#">{category}</a>
                 </div>
-                
               </li>
               <li className="count">
                 ({categoryMap && categoryMap.get(category)})
               </li>
             </ul>
-            {/* {subCategoryMap?.get(category)} */}
-            {/* {dictionary.get(category) &&
-              dictionary.get(category)?.forEach((value, key) => {
+            {subCategoryMap?.get(category)?.map(function (option, i) {
+              return (
                 <>
-                  <ul className="sub--menu" key={key}>
+                  <ul className="sub--menu" key={i}>
                     <li>
-                      <a href="#">{value.entries().next().value[0]}</a>
+                      <div
+                        onClick={() =>
+                          categoryFilter(
+                            category,
+                            option.entries().next().value[0]
+                          )
+                        }
+                      >
+                        <a href="#">{option.entries().next().value[0]}</a>
+                      </div>
                     </li>
-                    <li className="count">
-                      ({value.entries().next().value[1]})
-                    </li>
+                    {option.entries().next().value[0] && (
+                      <li className="count">
+                        ({option.entries().next().value[1]})
+                      </li>
+                    )}
                   </ul>
-                </>;
-              })} */}
+                </>
+              );
+            })}
           </div>
         ))}
+        <ModalPortal>
+          <AuthModal closeModal={closeModal} />
+        </ModalPortal>
       </div>
     </Container>
   );

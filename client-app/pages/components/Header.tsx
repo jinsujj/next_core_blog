@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import useModal from "../../hooks/useModal";
@@ -25,11 +25,20 @@ const Container = styled.div`
     position: relative;
     padding-left: 20px;
     padding-right: 20px;
+
+    @media only screen and (max-width: 768px){
+      width: 100%;
+    }
   }
   .wrapper {
     display: block;
     justify-content: center;
-    width: 270px;
+    width: 25%;
+
+
+    @media only screen and (max-width: 768px){
+      width: auto;
+    }
   }
   .toggle-btn {
     background: url("../img/toggle_blue.svg");
@@ -38,6 +47,10 @@ const Container = styled.div`
     cursor: pointer;
     text-indent: -9999px;
     margin: 28px 0px;
+
+    @media only screen and (max-width: 768px){
+      float: left;
+    }
   }
   .title-group {
     display: flex;
@@ -59,6 +72,13 @@ const Container = styled.div`
     font-weight: bold;
     line-height: 29px;
     text-decoration: none;
+
+    @media only screen and (max-width: 768px){
+      padding: 18px 0;
+      font-size: 18px;
+      font-weight: bold;
+      line-height: 18px;
+    }
   }
 
   .btn-group {
@@ -66,6 +86,10 @@ const Container = styled.div`
     justify-content: center;
     align-items: center;
     margin-right: 10px;
+
+    @media only screen and (max-width: 768px){
+      margin-right: 0px;
+    }
   }
 
   a {
@@ -91,7 +115,7 @@ const Header = () => {
   };
 
   const goHome = (event: React.MouseEvent<HTMLButtonElement>) =>{
-    dispatch(commonAction.setSearchFilter(""));
+    dispatch(commonAction.initCommonState());
     Router.push("/");
   }
 

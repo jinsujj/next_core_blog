@@ -11,9 +11,15 @@ import Button from "../common/Button";
 import Input from "../common/Input";
 
 const Container = styled.form`
+  @media only screen and (max-width: 768px) {
+    width: 100%;
+    padding: 26px;
+    height: 480px;
+  }
+
   z-index: 11;
   width: 540px;
-  height: 520px;
+  height: 460px;
   padding: 30px;
   background-color: white;
 
@@ -70,7 +76,7 @@ const SignUpModal = ({ closeModal }: IProps) => {
   const [passwordConfirm, setpasswordConfirm] = useState("");
 
   const dispatch = useDispatch();
-  const {setValidateMode} = useValidateMode();
+  const { setValidateMode } = useValidateMode();
 
   const onChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
@@ -88,18 +94,18 @@ const SignUpModal = ({ closeModal }: IProps) => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setpasswordConfirm(event.target.value);
-    if(password !== event.target.value){
+    if (password !== event.target.value) {
       setValidateMode(true);
-    }else{
+    } else {
       setValidateMode(false);
     }
-  }
+  };
 
   const onSubmiRegister = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     // nickname check
-    if(name.trim().length === 0 ){
+    if (name.trim().length === 0) {
       setValidateMode(true);
       return;
     }
@@ -122,10 +128,10 @@ const SignUpModal = ({ closeModal }: IProps) => {
     } catch (e: any) {
       const errorMessage: string = e.message;
       if (errorMessage.includes("401")) {
-        setEmailErrorMsg('해당 Eamil 이 존재합니다');
+        setEmailErrorMsg("해당 Eamil 이 존재합니다");
       }
       if (errorMessage.includes("400")) {
-        setEmailErrorMsg('이메일 형식이 아닙니다');
+        setEmailErrorMsg("이메일 형식이 아닙니다");
       }
       setValidateMode(true);
     }
@@ -133,15 +139,14 @@ const SignUpModal = ({ closeModal }: IProps) => {
 
   const changeToLoginModal = () => {
     dispatch(authAction.setAuthMode("login"));
-  }
+  };
 
   useEffect(() => {
-    return () =>{
+    return () => {
       setValidateMode(false);
-      setEmailErrorMsg('');
-    }
-  },[email]);
-
+      setEmailErrorMsg("");
+    };
+  }, [email]);
 
   return (
     <Container onSubmit={onSubmiRegister}>
@@ -152,7 +157,7 @@ const SignUpModal = ({ closeModal }: IProps) => {
           color="gray_D9"
           placeholder="닉네임"
           onChange={onChangeName}
-          useValidation ={name.trim().length === 0}
+          useValidation={name.trim().length === 0}
           errorMessage={"닉네임을 입력해주세요."}
         />
       </div>
@@ -162,8 +167,8 @@ const SignUpModal = ({ closeModal }: IProps) => {
           color="gray_D9"
           placeholder="이메일"
           onChange={onChangeEmail}
-          useValidation ={emailErrorMsg.length >0}
-          errorMessage = {emailErrorMsg}
+          useValidation={emailErrorMsg.length > 0}
+          errorMessage={emailErrorMsg}
         />
       </div>
       <div className="button-group">
@@ -173,7 +178,7 @@ const SignUpModal = ({ closeModal }: IProps) => {
           placeholder="비밀번호"
           onChange={onChangePassword}
           errorMessage={"비밀번호가 일치하지 않습니다"}
-          useValidation ={password !== passwordConfirm}
+          useValidation={password !== passwordConfirm}
         />
       </div>
       <div className="button-group">

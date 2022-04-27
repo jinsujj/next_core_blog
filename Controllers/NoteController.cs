@@ -176,13 +176,13 @@ namespace Next_Core_Blog.Controllers
         }
 
         [HttpGet("category")]
-        public async Task<IActionResult> GetNoteByCategory(string category, string subCategory)
+        public async Task<IActionResult> GetNoteByCategory(int id, string category, string subCategory)
         {
-            _logger.LogInformation("GetNoteByCategory: " + category + "|" + subCategory + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+            _logger.LogInformation("GetNoteByCategory: " +"id: "+id+" ," + category + "|" + subCategory + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
             try
             {
-                var notes = await _noteRepo.GetNoteByCategory(category, subCategory);
+                var notes = await _noteRepo.GetNoteByCategory(id, category, subCategory);
                 return Ok(notes.ToList());
             }
             catch (Exception ex)

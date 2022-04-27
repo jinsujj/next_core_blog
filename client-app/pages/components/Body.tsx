@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import styled from "styled-components";
@@ -27,21 +27,9 @@ const Container = styled.div`
     padding-bottom: 10px;
   }
 
-  .summary {
-    border-bottom: 2px solid ${palette.green_53};
-    width: 100%;
-  }
-
-  .summary__title {
-    font-weight: 600;
-    font-size: 32px;
-  }
-
   .summary__write {
     border-bottom: 2px solid ${palette.green_53};
-    width: 100%;
-    display: flex;
-    align-items: center;
+    padding-bottom: 4px;
   }
 
   .post_info {
@@ -93,32 +81,41 @@ const Container = styled.div`
 
 const Body = () => {
   const userId = useSelector((state) => state.user.userId);
-  const host = process.env.NEXT_PUBLIC_API_URL + "/files/";
   const [postNotes, setPostNotes] = useState<PostedNote[]>([]);
   const postState = useSelector((state) => state.common.postState);
   const searchQuery = useSelector((state) => state.common.search);
-  const setCategoryFilter = useSelector((state) => state.common.category);
-  const setSubCategoryFilter = useSelector((state) => state.common.subCategory);
+  const setCategoryFilter = useSelector((state) => state.common.sideBarCategory);
+  const setSubCategoryFilter = useSelector((state) => state.common.sideBarSubCategory);
 
   const dispatch = useDispatch();
-  dispatch(commonAction.setPostUserIdOfNote(0));
+  useMemo(()=>{
+    dispatch(commonAction.setPostUserIdOfNote(0));
+  },[]);
 
+  // Get BlogCard data 
   useEffect(() => {
     if(searchQuery.length >0){
       const Notes = noteApi.getNoteBySearch(searchQuery).then((res) => setPostNotes(res.data||[]));
     }
-    else if(setCategoryFilter.length >0){
-      const Notes = noteApi.getNoteByCategory(setCategoryFilter,setSubCategoryFilter).then((res) => setPostNotes(res.data||[]));
+    else if(setCategoryFilter.length >0 || setSubCategoryFilter.length>0 ){
+      const Notes = noteApi.getNoteByCategory(userId, setCategoryFilter,setSubCategoryFilter).then((res) => setPostNotes(res.data||[]));
     }
     else{
       const Notes = noteApi.getNoteAll(userId).then((res) => setPostNotes(res.data||[]));
     }
-  }, [userId,searchQuery,setCategoryFilter]);
+    dispatch(commonAction.setToggleMode(false));
+    dispatch(commonAction.setPostState('read'));
+  }, [userId,searchQuery,setCategoryFilter,setSubCategoryFilter]);
 
   return (
     <Container>
       <div className="inner">
         <div className="board">
+          {setCategoryFilter && postState =="read" && (
+            <h3 className="summary__write">
+            {setCategoryFilter} , {setSubCategoryFilter} List.
+            </h3>
+          )}
           {postState == "read" && (
             <ResponsiveMasonry
               columnsCountBreakPoints={{ 350: 1, 450: 2, 650:3, 900: 4 }}

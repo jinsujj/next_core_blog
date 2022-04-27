@@ -9,6 +9,10 @@ interface StyledProps {
 }
 
 const Container = styled.button<StyledProps>`
+    @media only screen and (max-width: 768px){
+        width: 100%;
+    }
+    
     width: ${(props) =>props.width};
     height: 40px;
     padding: 0 16px;
