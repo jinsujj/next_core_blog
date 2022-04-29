@@ -18,7 +18,7 @@ const app = ({ Component, pageProps }: AppProps) => {
   return (
     <>
       <Head>
-        <title>사심가득 블로그</title>
+        <title>부엉이 개발자 블로그</title>
       </Head>
       <Component {...pageProps} />
       <div id="root-modal" />

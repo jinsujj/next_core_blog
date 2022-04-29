@@ -21,7 +21,7 @@ namespace Next_Core_Blog.Context
         public DapperContext(IConfiguration config){
             // Access for root Dir appsettings.json
             _config = config;
-            _ConnectionString = _config.GetConnectionString("SuwonLocalConnection");
+            _ConnectionString = _config.GetConnectionString("SuwonConnection");
         }
         
         public IDbConnection CreateConnection(){

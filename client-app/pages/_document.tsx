@@ -17,6 +17,11 @@ class MyDocument extends Document {
     return (
       <Html>
         <Head>
+          {/* favIcon */}
+          <link rel="shortcut icon" type="image/x-icon" href="./img/owl.svg"/>
+          <link rel="icon" href="./img/owl.svg"/>
+          <link rel="apple-touch-icon" href="./img/owl.svg"/>
+
           {/* Standard Font */}
           <link href="https://fonts.googleapis.com/css?family=Nanum+Gothic+Coding:400" rel="stylesheet"/>
           <link href="https://fonts.googleapis.com/css?family=Nanum+Gothic:400" rel="stylesheet"></link>
