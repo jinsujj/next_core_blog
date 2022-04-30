@@ -14,6 +14,7 @@ import { commonAction } from "../../store/common";
 import dateFormat from "../../lib/dateFormat";
 import useUtterances from "../../hooks/useUtterances";
 import Router from "next/router";
+import axios from "../../api";
 
 const Container = styled.div`
   margin-top: 56px;
@@ -219,8 +220,11 @@ export default blogDetail;
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
+  const cookies = context.req.headers.cookie;
+  console.log(cookies);
   const userId = context.query.hasOwnProperty('me')? context.query.me: 0;
   const id = context.query.id;
+  axios.defaults.headers.common["Cookie"] = cookies || "";
   const { data: detailNote } = await noteApi.getNoteById(Number(id as string) ,Number(userId as string));
   return {
     props: {
