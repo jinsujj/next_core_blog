@@ -248,7 +248,7 @@ namespace Next_Core_Blog.Controllers
             {
                 // file Extension Check
                 if(extType.Where(t => t == Path.GetExtension(file.FileName)).FirstOrDefault().Length <1){
-                    return "Err.. Check file Type";
+                    return "Err.. Check file Ext Type ";
                 }
 
                 string fileName = string.Empty;
@@ -260,7 +260,7 @@ namespace Next_Core_Blog.Controllers
                     fileFullPath = CommonLibrary.FileUtility.GetFileNameWithNumbering(uploadDir,
                                 Path.GetFileName(ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.ToString()));
 
-                    fileName = fileFullPath.Split("files\\")[1].ToString();
+                    fileName = fileFullPath.Split("files")[1].ToString();
                     using (FileStream fileStream = new FileStream(fileFullPath, FileMode.OpenOrCreate))
                     {
                         await file.CopyToAsync(fileStream);
