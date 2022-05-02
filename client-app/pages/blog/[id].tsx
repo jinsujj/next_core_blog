@@ -38,7 +38,7 @@ const Container = styled.div`
     font-size: 32px;
 
     @media only screen and (max-width: 768px){
-      line-height: 48px;
+      line-height: 36px;
       font-weight: 600;
       font-size: 24px;
       align-items: center;
@@ -221,10 +221,8 @@ export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
   const cookies = context.req.headers.cookie;
-  console.log(cookies);
   const userId = context.query.hasOwnProperty('me')? context.query.me: 0;
   const id = context.query.id;
-  axios.defaults.headers.common["Cookie"] = cookies || "";
   const { data: detailNote } = await noteApi.getNoteById(Number(id as string) ,Number(userId as string));
   return {
     props: {
