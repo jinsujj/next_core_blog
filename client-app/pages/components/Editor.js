@@ -208,7 +208,7 @@ const Editor = ({ NoteInfo }) => {
 
     // summernote Editor init
     useEffect(() => {
-        host = "https://" + window.location.hostname + ':' + process.env.NEXT_PUBLIC_BACKEND_PORT;
+        host = process.env.NEXT_PUBLIC_API_URL;
 
         if (postState === "read") {
             $('#summernote').summernote({
