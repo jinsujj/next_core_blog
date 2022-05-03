@@ -85,7 +85,7 @@ namespace Next_Core_Blog.Repository.BlogNote
 
         public async Task<GetNote> GetNoteById(int id, int userId, string ip)
         {
-            Log("page: " + id, ip);
+            Log(id, ip);
             string updataCount = @"UPDATE note SET ReadCount = ReadCount+1 
                                     WHERE noteId =@id 
                                     AND isPost ='Y'";
@@ -294,12 +294,13 @@ namespace Next_Core_Blog.Repository.BlogNote
             }
         }
 
-        public void Log(string Content, string Ip)
+        public void Log(int id, string Ip)
         {
-            string sql = "SELECT COUNT(*) FROM note WHERE noteId= @Content AND isPost ='Y'";
+            string Content = string.Format("page {0}",id);
+            string sql = "SELECT COUNT(*) FROM note WHERE noteId= @id AND isPost ='Y'";
             using (var con = _context.CreateConnection())
             {
-                int isPosted = con.QueryFirstOrDefault<int>(sql, new {Content});
+                int isPosted = con.QueryFirstOrDefault<int>(sql, new {id});
                 if(isPosted == 1){
                     con.Execute(@"INSERT INTO userlog SET Content=@Content, Ip =@Ip, Date =NOW()", new { Content, Ip });    
                 }
