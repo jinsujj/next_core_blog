@@ -121,10 +121,10 @@ namespace Next_Core_Blog.Controllers
 
             #region [Parameter Modulation Check]
             // Get the encrypted cookie value
-            // if(userId != 0){
-            //     Dictionary<string, string> tokenInfo = DecryptTokenInfo(HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>());
-            //     if (userId != Convert.ToInt32(tokenInfo["userId"])) return StatusCode(403);
-            // }
+            if(userId != 0){
+                Dictionary<string, string> tokenInfo = DecryptTokenInfo(HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>());
+                if (userId != Convert.ToInt32(tokenInfo["userId"])) return StatusCode(403);
+            }
             #endregion
 
             try

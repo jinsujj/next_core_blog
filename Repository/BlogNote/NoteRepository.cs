@@ -296,9 +296,13 @@ namespace Next_Core_Blog.Repository.BlogNote
 
         public void Log(string Content, string Ip)
         {
+            string sql = "SELECT COUNT(*) FROM note WHERE noteId= @Content AND isPost ='Y'";
             using (var con = _context.CreateConnection())
             {
-                con.Execute(@"INSERT INTO userlog SET Content=@Content, Ip =@Ip, Date =NOW()", new { Content, Ip });
+                int isPosted = con.QueryFirstOrDefault<int>(sql, new {Content});
+                if(isPosted == 1){
+                    con.Execute(@"INSERT INTO userlog SET Content=@Content, Ip =@Ip, Date =NOW()", new { Content, Ip });    
+                }
             }
         }
     }

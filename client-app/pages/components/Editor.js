@@ -127,8 +127,7 @@ const Container = styled.form`
 
 
 const Editor = ({ NoteInfo }) => {
-    // front backend 동일 서버에서 사용.
-    let host = '';
+    let host = process.env.NEXT_PUBLIC_API_URL;
     const [imageBuff, setImageBuff] = useState();
     const [title, setTitle] = useState();
     const [content, setContent] = useState();

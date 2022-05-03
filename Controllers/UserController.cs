@@ -113,7 +113,6 @@ namespace Next_Core_Blog.Controllers
 
         [HttpGet("Logout")]
         [Produces("application/json")]
-        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public IActionResult Logout()
         {
             try
