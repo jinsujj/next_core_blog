@@ -58,13 +58,14 @@ namespace Next_Core_Blog
                 options.Cookie.Name = "UserLoginCookie";
                 options.SlidingExpiration = true;
                 options.SlidingExpiration = true;
-                options.ExpireTimeSpan = new TimeSpan(1,0,0);  //1 hour 0 min 0 sec
+                options.ExpireTimeSpan = new TimeSpan(0,20,0);  //1 hour 0 min 0 sec
                 options.Events.OnRedirectToLogin = (context) =>{
                     context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                     return Task.CompletedTask;
                 };
                 options.Cookie.HttpOnly = true;
                 options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.Domain = ".owl-dev.me";
             });
 
             services.AddSwaggerGen(c =>
