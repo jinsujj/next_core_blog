@@ -28,7 +28,7 @@ const app = ({ Component, pageProps }: AppProps) => {
 
 // Cookie Check
 app.getInitialProps = wrapper.getInitialAppProps((store) => async (context) => {
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+  //process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
   const appInitalProps = await App.getInitialProps(context);
   const cookieObject = context.ctx.req?.headers.cookie;
   try {
