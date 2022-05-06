@@ -252,6 +252,13 @@ namespace Next_Core_Blog.Repository.BlogNote
                                                  AND subName = @SubCategory";
                         con.Execute(subCategoryUpdateSql, new {Category = noteInfo.Category, SubCategory = noteInfo.SubCategory});                                                
                     }
+                    if(noteInfo.SubCategory.Length >0 && note.subCategory.Length == 0)
+                    {
+                        subCategoryUpdateSql = @"UPDATE subcategory SET Count = Count - 1 
+                                                 WHERE name = @Category
+                                                 AND subName = @SubCategory";
+                        con.Execute(subCategoryUpdateSql, new { Category = noteInfo.Category, SubCategory = noteInfo.SubCategory });
+                    }
 
                     // Update Note
                     postNotesql = string.Format(@"UPDATE note
