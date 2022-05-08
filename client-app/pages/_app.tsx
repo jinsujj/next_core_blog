@@ -19,6 +19,13 @@ const app = ({ Component, pageProps }: AppProps) => {
     <>
       <Head>
         <title>부엉이 개발자 블로그</title>
+        <meta property="og:url" content="owl-dev.me" />
+        <meta property="og:title" content="부엉이 개발자 블로그" />
+        <meta property="og:description" content="CTO 가 되고픈 부엉이 블로그 입니다" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://www.owl-dev.me/img/owl.svg"/>
+        <meta property="og:image:width" content={String("36")} />
+        <meta property="og:image:height" content={String("36")} />
       </Head>
       <Component {...pageProps} />
       <div id="root-modal" />
@@ -28,7 +35,7 @@ const app = ({ Component, pageProps }: AppProps) => {
 
 // Cookie Check
 app.getInitialProps = wrapper.getInitialAppProps((store) => async (context) => {
-  //process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
   const appInitalProps = await App.getInitialProps(context);
   const cookieObject = context.ctx.req?.headers.cookie;
   try {

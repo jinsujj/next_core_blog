@@ -57,7 +57,6 @@ namespace Next_Core_Blog
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>{
                 options.Cookie.Name = "UserLoginCookie";
                 options.SlidingExpiration = true;
-                options.SlidingExpiration = true;
                 options.ExpireTimeSpan = new TimeSpan(2,0,0);  //1 hour 0 min 0 sec
                 options.Events.OnRedirectToLogin = (context) =>{
                     context.Response.StatusCode = StatusCodes.Status401Unauthorized;
