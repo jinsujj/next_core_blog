@@ -75,9 +75,10 @@ const BlogCard = ({ blog }: IProps) => {
     blog.thumbImage = "default.svg";
   }
 
+  var blogPostDate = blog.postDate.replace(/-/g,"/");
   var postdate = formatDistance(
     new Date(),
-    new Date(blog.postDate),
+    new Date(blogPostDate),
     { addSuffix: true }
   ) 
   return (

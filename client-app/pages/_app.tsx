@@ -26,6 +26,8 @@ const app = ({ Component, pageProps }: AppProps) => {
         <meta property="og:image" content="https://www.owl-dev.me/img/owl.svg"/>
         <meta property="og:image:width" content={String("36")} />
         <meta property="og:image:height" content={String("36")} />
+        <meta name="naver-site-verification" content="857ab4a6de4aa0b0ddd2df29bcd1fb3129fe9198" />
+        <meta name="google-site-verification" content="sxi1RDD-x-R6U-lHMRiV2kEtt-m7NVfNAaK-JoPyzTA" />
       </Head>
       <Component {...pageProps} />
       <div id="root-modal" />
