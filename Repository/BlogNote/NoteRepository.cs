@@ -53,6 +53,7 @@ namespace Next_Core_Blog.Repository.BlogNote
                             FROM note
                             WHERE isPost = 'Y'
                             OR (userId = @UserId AND isPost ='N')
+                            ORDER BY readCount DESC, postDate DESC
                         ";
 
             using (var con = _context.CreateConnection())
@@ -74,6 +75,7 @@ namespace Next_Core_Blog.Repository.BlogNote
                             WHERE a.category = @category
                             {0}
                             AND (IsPost ='Y' OR (userId = @userId AND IsPost ='N'))
+                            ORDER BY readCount DESC, postDate DESC
                         ",  ParamSubCategory);
 
             using (var con = _context.CreateConnection())
@@ -109,6 +111,7 @@ namespace Next_Core_Blog.Repository.BlogNote
                             WHERE Title LIKE @searchQuery
                             OR Content LIKE @searchQuery
                             AND IsPost ='Y'
+                            ORDER BY readCount DESC, postDate DESC
                           ";
 
             using (var con = _context.CreateConnection())
