@@ -25,5 +25,6 @@ namespace Next_Core_Blog.Repository.BlogNote
         Task<int> GetCountAll();
         Task<int> getTotalReadCount();
         Task<int> getTodayReadCount();
+        Task<int> postIpLog(IpLogModel logModel);
     }
 }

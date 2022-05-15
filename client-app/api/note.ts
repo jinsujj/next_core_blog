@@ -47,6 +47,11 @@ export type SidebarCategoryView ={
 }
 
 
+export type IpLog = {
+    _ip: string;
+    _id: number;
+}
+
 // formType(0) : insert
 // formType(1) : update
 const postNote = (formType: number, payload: PostNote) => {
@@ -57,6 +62,9 @@ const postCategory = (category: CategoryView) => {
     return api.post(`/api/Note/PostCategory`, category);
 }
 
+const postIpLog = (payload: IpLog) =>{
+    return api.post(`/api/Note/postIpLog`, payload);
+}
 
 const getNoteById = async (id: number, userId: number) => {
     return await api.get<PostedNote>(`/api/Note/NoteById?id=${id}&userId=${userId}`);
@@ -116,6 +124,7 @@ const noteApi = {
     getNoteAll,
     getNoteBySearch,
     getNoteCountAll,
+    postIpLog,
     deleteNoteById,
     getCategoryList,
     getTotalReadCount,

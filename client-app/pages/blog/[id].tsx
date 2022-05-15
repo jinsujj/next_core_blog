@@ -223,10 +223,16 @@ export const getServerSideProps: GetServerSideProps = async (
   const cookies = context.req.headers.cookie;
   const userId = context.query.hasOwnProperty('me')? context.query.me: 0;
   const id = context.query.id;
+  const ip = context.req.headers['x-real-ip'] || context.req.connection.remoteAddress||'';
+ 
+  var _id = Number(id as string);
+  var _ip = String(ip as string);
+  const ipLog = {_id, _ip};
+  const {data: data} = await noteApi.postIpLog(ipLog);
   const { data: detailNote } = await noteApi.getNoteById(Number(id as string) ,Number(userId as string));
   return {
     props: {
       detailNote,
     },
   };
-};
+}

@@ -114,6 +114,22 @@ namespace Next_Core_Blog.Controllers
             }
         }
 
+        [HttpPost("postIpLog")]
+        public async Task<IActionResult> postIpLog([FromBody] IpLogModel logmodel) {
+            _logger.LogInformation("postIpLog: " + logmodel._ip + " " + logmodel._id + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+
+            try
+            {
+                var result = await _noteRepo.postIpLog(logmodel);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("error" + ex.Message);
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpGet("NoteById")]
         public async Task<IActionResult> GetNoteById(int id, int userId)
         {
