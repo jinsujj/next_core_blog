@@ -154,16 +154,13 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
   return (
     <>
     <NextSeo
-      title= "부엉이 개발자 블로그"
-      description='CTO 가 되고픈 부엉이 블로그 입니다'
-      canonical="https://www.owl-dev.me"
       openGraph={{
         url: `https://www.owl-dev.me/blog/${detailNote.noteId}`,
         title: `${detailNote.title}`,
         description: `${detailNote.content}`,
         images: [
           {
-            url: 'https://www.owl-dev.me/img/owl.svg',
+            url: `https://backend.owl-dev.me/files/${detailNote.thumbImage}`,
             width: 800,
             height: 600,
             alt: 'Owl',
