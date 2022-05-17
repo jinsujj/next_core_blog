@@ -157,7 +157,7 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
       openGraph={{
         url: `https://www.owl-dev.me/blog/${detailNote.noteId}`,
         title: `${detailNote.title}`,
-        description: `${detailNote.content}`,
+        description: 'CTO 가 되고픈 부엉이 블로그 입니다',
         images: [
           {
             url: `https://backend.owl-dev.me/files/${detailNote.thumbImage}`,
