@@ -1574,6 +1574,11 @@ next-redux-wrapper@^7.0.5:
   resolved "https://registry.npmjs.org/next-redux-wrapper/-/next-redux-wrapper-7.0.5.tgz"
   integrity sha512-UFXdAWG5i+GFT8+Hoqpx3GArkPh34fVWF9YoA2VSHlBzsrPtnRd7NWM6FNSYUennpommTpWJ09mu+r/1UxyIkg==
 
+next-seo@^5.4.0:
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/next-seo/-/next-seo-5.4.0.tgz#37a7784b30b3f70cec3fa0d77f9dde5990822d24"
+  integrity sha512-R9DhajPwJnR/lsF2hZ8cN8uqr5CVITsRrCG1AF5+ufcaybKYOvnH8sH9MaH4/hpkps3PQ9H71S7J7SPYixAYzQ==
+
 next@12.1.0:
   version "12.1.0"
   resolved "https://registry.npmjs.org/next/-/next-12.1.0.tgz"
@@ -1820,7 +1825,7 @@ react-redux@^7.2.6:
 
 react-responsive-masonry@^2.1.4:
   version "2.1.4"
-  resolved "https://registry.yarnpkg.com/react-responsive-masonry/-/react-responsive-masonry-2.1.4.tgz#28d6058167c5b047c9df2ae41216c4fdc6ca976b"
+  resolved "https://registry.npmjs.org/react-responsive-masonry/-/react-responsive-masonry-2.1.4.tgz"
   integrity sha512-Neqkc6gM7F5d+nBvDSlKQmQOjdWNabLT2EXpVvpJb6oD8lD3hRujd8IDd1UViQR++SSTkhLcsC3Ru7hc6XjT5A==
 
 react@17.0.2:

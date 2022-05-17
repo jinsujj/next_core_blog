@@ -15,6 +15,7 @@ import dateFormat from "../../lib/dateFormat";
 import useUtterances from "../../hooks/useUtterances";
 import Router from "next/router";
 import axios from "../../api";
+import { NextSeo } from "next-seo";
 
 const Container = styled.div`
   margin-top: 56px;
@@ -152,6 +153,26 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
 
   return (
     <>
+    <NextSeo
+      title= "부엉이 개발자 블로그"
+      description='CTO 가 되고픈 부엉이 블로그 입니다'
+      canonical="https://www.owl-dev.me"
+      openGraph={{
+        url: `https://www.owl-dev.me/blog/${detailNote.noteId}`,
+        title: `${detailNote.title}`,
+        description: `${detailNote.content}`,
+        images: [
+          {
+            url: 'https://www.owl-dev.me/img/owl.svg',
+            width: 800,
+            height: 600,
+            alt: 'Owl',
+            type: 'svg',
+          },
+        ],
+        site_name: `${detailNote.category}`,
+      }}
+    />
       <Header />
       <Container>
         <div className="inner">
