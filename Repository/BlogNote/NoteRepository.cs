@@ -304,13 +304,12 @@ namespace Next_Core_Blog.Repository.BlogNote
         }
 
         public async Task<int> postIpLog(IpLogModel logModel){
-            string Content = string.Format("page {0}",logModel._id+" " + logModel._ip);
+            string Content = string.Format("{0}",logModel._id);
 
             // Ignore GoogleBot And Local Log
             if(logModel._ip.StartsWith("66.249") ||
                 logModel._ip.StartsWith("192.") ||
-                logModel._ip.StartsWith("127.") ||
-                logModel._ip.StartsWith("223.38.45.3") 
+                logModel._ip.StartsWith("127.")
             ){
                 return 1;
             }

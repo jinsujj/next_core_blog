@@ -14,7 +14,6 @@ import { commonAction } from "../../store/common";
 import dateFormat from "../../lib/dateFormat";
 import useUtterances from "../../hooks/useUtterances";
 import Router from "next/router";
-import axios from "../../api";
 import { NextSeo } from "next-seo";
 
 const Container = styled.div`
@@ -38,7 +37,7 @@ const Container = styled.div`
     font-weight: 600;
     font-size: 32px;
 
-    @media only screen and (max-width: 768px){
+    @media only screen and (max-width: 768px) {
       line-height: 36px;
       font-weight: 600;
       font-size: 24px;
@@ -56,7 +55,7 @@ const Container = styled.div`
   .post_info {
     margin-top: 12px;
 
-    @media only screen and (max-width: 380px){
+    @media only screen and (max-width: 380px) {
       display: flex;
       float: left !important;
       margin-top: -12px;
@@ -69,7 +68,7 @@ const Container = styled.div`
     font-size: 14px;
     color: black;
 
-    @media only screen and (max-width: 768px){
+    @media only screen and (max-width: 768px) {
       margin-right: 8px;
       margin-bottom: 4px;
     }
@@ -120,8 +119,13 @@ const Container = styled.div`
   }
 
   .utterances {
-    width:100%;
+    width: 100%;
     max-width: 1200px !important;
+  }
+
+  .noAuthority {
+    padding: 50% 0%;
+    text-align:center;
   }
 `;
 
@@ -130,46 +134,62 @@ interface IProps {
 }
 
 const blogDetail: NextPage<IProps> = ({ detailNote }) => {
+  if (detailNote.noteId === undefined) {
+    return (
+      <>
+        <Container>
+          <div className="inner">
+            <div className="noAuthority">
+              <h1>조회 권한이 없습니다</h1>
+            </div>
+          </div>
+        </Container>
+      </>
+    );
+  }
   const SearchQuery = useSelector((state) => state.common.search);
   const postState = useSelector((state) => state.common.postState);
-  const sideBarCategory  = useSelector((state) => state.common.sideBarCategory);
-  const sidgBarSubCategory = useSelector((state)=> state.common.sideBarSubCategory);
-  
+  const sideBarCategory = useSelector((state) => state.common.sideBarCategory);
+  const sidgBarSubCategory = useSelector(
+    (state) => state.common.sideBarSubCategory
+  );
+
   const dispatch = useDispatch();
   dispatch(commonAction.setPostUserIdOfNote(detailNote.userId));
   useUtterances(detailNote.noteId.toString());
 
-  useEffect(() =>{
+  useEffect(() => {
     return () => {
-      if(detailNote.category !== sideBarCategory || detailNote.subCategory !== sidgBarSubCategory){
+      if (
+        detailNote.category !== sideBarCategory ||
+        detailNote.subCategory !== sidgBarSubCategory
+      ) {
+        Router.push("/");
+      } else if (SearchQuery.includes(detailNote.title)) {
         Router.push("/");
       }
-      else if(SearchQuery.includes(detailNote.title)){
-        Router.push("/");  
-      }
     };
-  },[sideBarCategory,sidgBarSubCategory,SearchQuery]);
-
+  }, [sideBarCategory, sidgBarSubCategory, SearchQuery]);
 
   return (
     <>
-    <NextSeo
-      openGraph={{
-        url: `https://www.owl-dev.me/blog/${detailNote.noteId}`,
-        title: `${detailNote.title}`,
-        description: 'CTO 가 되고픈 부엉이 블로그 입니다',
-        images: [
-          {
-            url: `https://backend.owl-dev.me/files/${detailNote.thumbImage}`,
-            width: 800,
-            height: 600,
-            alt: 'Owl',
-            type: 'svg',
-          },
-        ],
-        site_name: `${detailNote.category}`,
-      }}
-    />
+      <NextSeo
+        openGraph={{
+          url: `https://www.owl-dev.me/blog/${detailNote.noteId}`,
+          title: `${detailNote.title}`,
+          description: "CTO 가 되고픈 부엉이 블로그 입니다",
+          images: [
+            {
+              url: `https://backend.owl-dev.me/files/${detailNote.thumbImage}`,
+              width: 800,
+              height: 600,
+              alt: "Owl",
+              type: "svg",
+            },
+          ],
+          site_name: `${detailNote.category}`,
+        }}
+      />
       <Header />
       <Container>
         <div className="inner">
@@ -188,7 +208,9 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
                       />
                     </li>
                     <li>
-                      {dateFormat.toStringByFormatting(new Date(detailNote.postDate))}
+                      {dateFormat.toStringByFormatting(
+                        new Date(detailNote.postDate)
+                      )}
                     </li>
                   </ul>
                   <ul>
@@ -206,14 +228,14 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
             {postState === "write" && (
               <div className="board clearfix">
                 <div className="board">
-                  <Editor NoteInfo={undefined}/>
+                  <Editor NoteInfo={undefined} />
                 </div>
               </div>
             )}
             {postState === "modify" && (
               <div className="board clearfix">
                 <div className="board">
-                  <Editor NoteInfo={detailNote}/>
+                  <Editor NoteInfo={detailNote} />
                 </div>
               </div>
             )}
@@ -239,18 +261,22 @@ export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
   const cookies = context.req.headers.cookie;
-  const userId = context.query.hasOwnProperty('me')? context.query.me: 0;
   const id = context.query.id;
-  const ip = context.req.headers['x-real-ip'] || context.req.connection.remoteAddress||'';
- 
+  const ip =
+    context.req.headers["x-real-ip"] ||
+    context.req.connection.remoteAddress ||
+    "";
+
   var _id = Number(id as string);
   var _ip = String(ip as string);
-  const ipLog = {_id, _ip};
-  const {data: data} = await noteApi.postIpLog(ipLog);
-  const { data: detailNote } = await noteApi.getNoteById(Number(id as string) ,Number(userId as string));
+  const ipLog = { _id, _ip };
+  const { data: data } = await noteApi.postIpLog(ipLog);
+  const { data: detailNote } = await noteApi.getNoteById(Number(id as string));
+
+  console.log(detailNote);
   return {
     props: {
       detailNote,
     },
   };
-}
+};

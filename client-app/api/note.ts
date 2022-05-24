@@ -66,8 +66,8 @@ const postIpLog = (payload: IpLog) =>{
     return api.post(`/api/Note/postIpLog`, payload);
 }
 
-const getNoteById = async (id: number, userId: number) => {
-    return await api.get<PostedNote>(`/api/Note/NoteById?id=${id}&userId=${userId}`);
+const getNoteById = async (id: number) => {
+    return await api.get<PostedNote>(`/api/Note/NoteById?id=${id}`);
 }
 
 const getNoteByCategory = async (id: number, category: string, subCategory: string) => {

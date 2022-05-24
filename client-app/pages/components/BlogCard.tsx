@@ -84,7 +84,7 @@ const BlogCard = ({ blog }: IProps) => {
   return (
     <Container isPost={blog.isPost}>
       <div className="imageWrapper">
-        <Link href={`/blog/${blog.noteId}?me=${userId}`} key={blog.noteId}>
+        <Link href={`/blog/${blog.noteId}`} key={blog.noteId}>
           <img key={blog.noteId} src={`${host}${blog.thumbImage}`} />
         </Link>
         <div className="blogTitle">

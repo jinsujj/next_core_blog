@@ -51,7 +51,8 @@ namespace Next_Core_Blog.Controllers
             _logger.LogInformation("PostNote: " + note.title + " " + formType + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
             #region [XSS Script Check]
-            if(XSS_Check(note.content)){
+            if (XSS_Check(note.content))
+            {
                 return StatusCode(403);
             }
             #endregion
@@ -61,7 +62,7 @@ namespace Next_Core_Blog.Controllers
             {
                 // Get the encrypted cookie value
                 Dictionary<string, string> tokenInfo = DecryptTokenInfo(HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>());
-                if (note.userId != Convert.ToInt32(tokenInfo["userId"])) 
+                if (note.userId != Convert.ToInt32(tokenInfo["userId"]))
                     return StatusCode(403);
             }
             #endregion
@@ -98,7 +99,7 @@ namespace Next_Core_Blog.Controllers
             #region [Parameter Modulation Check]
             // Get the encrypted cookie value
             Dictionary<string, string> tokenInfo = DecryptTokenInfo(HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>());
-            RegisterViewModel userInfo =  _userRepo.GetUserByUserId(categoryView.userId);
+            RegisterViewModel userInfo = _userRepo.GetUserByUserId(categoryView.userId);
             if (userInfo.Role != tokenInfo["Role"]) return StatusCode(403);
             #endregion
 
@@ -115,7 +116,8 @@ namespace Next_Core_Blog.Controllers
         }
 
         [HttpPost("postIpLog")]
-        public async Task<IActionResult> postIpLog([FromBody] IpLogModel logmodel) {
+        public async Task<IActionResult> postIpLog([FromBody] IpLogModel logmodel)
+        {
             _logger.LogInformation("postIpLog: " + logmodel._ip + " " + logmodel._id + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
             try
@@ -131,17 +133,17 @@ namespace Next_Core_Blog.Controllers
         }
 
         [HttpGet("NoteById")]
-        public async Task<IActionResult> GetNoteById(int id, int userId)
+        public async Task<IActionResult> GetNoteById(int id)
         {
-            _logger.LogInformation("GetNoteById: " + id + " UserId: " + userId  + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+            _logger.LogInformation("GetNoteById: " + id +" "+ DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
-            #region [Parameter Modulation Check]
             // Get the encrypted cookie value
-            if(userId != 0){
+            int userId =0;
+            if (!String.IsNullOrEmpty(HttpContext.Request.Cookies["UserLoginCookie"]))
+            {
                 Dictionary<string, string> tokenInfo = DecryptTokenInfo(HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>());
-                if (userId != Convert.ToInt32(tokenInfo["userId"])) return StatusCode(403);
+                userId = Convert.ToInt32(tokenInfo["userId"]);
             }
-            #endregion
 
             try
             {
@@ -194,7 +196,7 @@ namespace Next_Core_Blog.Controllers
         [HttpGet("category")]
         public async Task<IActionResult> GetNoteByCategory(int id, string category, string subCategory)
         {
-            _logger.LogInformation("GetNoteByCategory: " +"id: "+id+" ," + category + "|" + subCategory + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+            _logger.LogInformation("GetNoteByCategory: " + "id: " + id + " ," + category + "|" + subCategory + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
             try
             {
@@ -227,7 +229,7 @@ namespace Next_Core_Blog.Controllers
 
         [HttpGet("getCategoryList")]
         [Produces("application/json")]
-        public async Task<IActionResult> getCategoryList() 
+        public async Task<IActionResult> getCategoryList()
         {
             _logger.LogInformation("getCategoryList" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
             try
@@ -235,7 +237,7 @@ namespace Next_Core_Blog.Controllers
                 var categoryList = await _noteRepo.getNoteCategoryList();
                 return Ok(categoryList);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError("error" + ex.Message);
                 return StatusCode(500, ex.Message);
@@ -243,17 +245,19 @@ namespace Next_Core_Blog.Controllers
         }
 
         [HttpGet("getSidebarCategoryList")]
-        public async Task<IActionResult> getSidebarCategoryList() 
+        public async Task<IActionResult> getSidebarCategoryList()
         {
-             _logger.LogInformation("getSidebarCategoryList" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
-             try{
-                 var categoryList = await _noteRepo.GetSidebarCategoryList();
-                 return Ok(categoryList);
-             }
-             catch(Exception ex){
-                 _logger.LogError("error" + ex.Message);
-                 return StatusCode(500, ex.Message);
-             }
+            _logger.LogInformation("getSidebarCategoryList" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+            try
+            {
+                var categoryList = await _noteRepo.GetSidebarCategoryList();
+                return Ok(categoryList);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("error" + ex.Message);
+                return StatusCode(500, ex.Message);
+            }
         }
 
         [HttpPost("saveImage")]
@@ -263,7 +267,8 @@ namespace Next_Core_Blog.Controllers
             try
             {
                 // file Extension Check
-                if(extType.Where(t => t == Path.GetExtension(file.FileName)).FirstOrDefault().Length <1){
+                if (extType.Where(t => t == Path.GetExtension(file.FileName)).FirstOrDefault().Length < 1)
+                {
                     return "Err.. Check file Ext Type ";
                 }
 
@@ -310,15 +315,16 @@ namespace Next_Core_Blog.Controllers
         }
 
         [HttpGet("totalReadCount")]
-        public async Task<IActionResult> getTotalReadCount() 
+        public async Task<IActionResult> getTotalReadCount()
         {
-            try{
+            try
+            {
                 var result = await _noteRepo.getTotalReadCount();
                 return Ok(result);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                  _logger.LogError("error" + ex.Message);
+                _logger.LogError("error" + ex.Message);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -326,13 +332,14 @@ namespace Next_Core_Blog.Controllers
         [HttpGet("todayReadCount")]
         public async Task<IActionResult> getTodayReadCount()
         {
-            try{
+            try
+            {
                 var result = await _noteRepo.getTodayReadCount();
                 return Ok(result);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                  _logger.LogError("error" + ex.Message);
+                _logger.LogError("error" + ex.Message);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -341,23 +348,28 @@ namespace Next_Core_Blog.Controllers
             ".jpg",".jpeg",".png"
         };
 
-        private Boolean XSS_Check(string content){
+        private Boolean XSS_Check(string content)
+        {
             int openTagIndex = -1, closeTagIndex = -1;
 
             var arrayValue = content.ToArray();
-            int i =0;
-            foreach(var t in arrayValue){
-                if(t == '<' && openTagIndex == -1){
+            int i = 0;
+            foreach (var t in arrayValue)
+            {
+                if (t == '<' && openTagIndex == -1)
+                {
                     openTagIndex = i;
                 }
-                else if(t == '>' && closeTagIndex == -1){
+                else if (t == '>' && closeTagIndex == -1)
+                {
                     closeTagIndex = i;
                 }
-                if(openTagIndex != -1 && closeTagIndex != -1){
-                    var buff = content.Substring(openTagIndex, (closeTagIndex-openTagIndex+1)).ToLower();
-                    if(buff.Contains("script"))
+                if (openTagIndex != -1 && closeTagIndex != -1)
+                {
+                    var buff = content.Substring(openTagIndex, (closeTagIndex - openTagIndex + 1)).ToLower();
+                    if (buff.Contains("script"))
                         return true;
-                    
+
                     openTagIndex = -1;
                     closeTagIndex = -1;
                 }
@@ -366,16 +378,18 @@ namespace Next_Core_Blog.Controllers
             return false;
         }
 
-        private Dictionary<string, string> DecryptTokenInfo(IOptionsMonitor<CookieAuthenticationOptions> opt ){
+        private Dictionary<string, string> DecryptTokenInfo(IOptionsMonitor<CookieAuthenticationOptions> opt)
+        {
             Dictionary<string, string> tokenInto = new Dictionary<string, string>();
 
             var cookie = opt.CurrentValue.CookieManager.GetRequestCookie(HttpContext, "UserLoginCookie");
             var dataProtector = opt.CurrentValue.DataProtectionProvider.CreateProtector("Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationMiddleware", CookieAuthenticationDefaults.AuthenticationScheme, "v2");
-                var ticketDataFormat = new TicketDataFormat(dataProtector);
-                var ticket = ticketDataFormat.Unprotect(cookie);
-                foreach (var claim in ticket.Principal.Claims){
-                    tokenInto.Add(claim.Type, claim.Value);
-                }
+            var ticketDataFormat = new TicketDataFormat(dataProtector);
+            var ticket = ticketDataFormat.Unprotect(cookie);
+            foreach (var claim in ticket.Principal.Claims)
+            {
+                tokenInto.Add(claim.Type, claim.Value);
+            }
 
             return tokenInto;
         }
