@@ -10,7 +10,7 @@ Full Stack 개발자가 되기 위해 쌓아온 그간의 경험을 모아서, �
    <img src="https://img.shields.io/badge/Next.js-black?style=flat-square&logo=Next.js&logoColor=white"/>
    <img src="https://img.shields.io/badge/.Net Core-9556ce?style=flat-square&logo=.NET&logoColor=white"/>
    <img src="https://img.shields.io/badge/Mysql-42759c?style=flat-square&logo=MySQL&logoColor=white"/>
-   <img src="https://img.shields.io/badge/Nginx-009137?style=flat-square&logo=Bloglovin&logoColor=white"/>
+   <img src="https://img.shields.io/badge/Nginx-009137?style=flat-square&logo=Nginx&logoColor=white"/>
 <br/>
 
 <p align="center">
@@ -19,7 +19,7 @@ Full Stack 개발자가 되기 위해 쌓아온 그간의 경험을 모아서, �
   <a href="https://www.owl-dev.me" target="_blank">
      <img src="https://img.shields.io/badge/부엉이 개발자 블로그-6d4534?style=flat-square&logo=Bloglovin&logoColor=white"/></a>
   <br/><br/>
-  <img src="https://jinsujj.github.io/github_css_study/img/next_core_blog.jpg" width="40%"/>
+  <img src="https://jinsujj.github.io/github_css_study/img/next_core_blog.jpg" width="70%" max-width:600px;/>
 </p>
   
 Front-end : Next.js  <br>
@@ -38,6 +38,9 @@ Database  : MySQL
 <b>'CommonLibrary'</b>      - *FileUpload* , *Security* 관련 Library 를 처리합니다. <br/> 
 <b>'Startup.cs'</b>         - *'Cookie'* 및 *'Cors'*, *'DB Repository'* 를 관리합니다. <br/>
 <b>'Context/DapperContext'</b> - mysql Db 와 ORM 연동을 해줍니다 <br/>
+<b>'Controllers'</b>           - 노트(Note), 유저(User) 관련 컨트롤러를 관리합니다 <br/>
+<b>'Model'</b>                 - 노트(Note), 유저(User) 관련 모델 관리합니다 <br/>
+<b>'Repository'</b>            - 노트(Note), 유저(User) 관련 DB SQL 을 관리합니다 <br/>
 <br/>
 <b>'client-app/api'</b>    - api(axios) 정의 부분입니다 <br/>
 <b>'client-app/hooks'</b>  - *'모달'*, *'댓글(Utterance)'*, *'검증(validate)'* hook 으로 처리합니다<br/>
