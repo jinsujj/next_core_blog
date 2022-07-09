@@ -2,12 +2,13 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "caddy": "../caddy/caddy.exe reverse-proxy --from localhost:3030 --to localhost:3000",
-    "start": "concurrently \"yarn caddy\" \"dotnet watch run\" \"cd client-app && npm run dev\""
+    "caddy_window": "../caddy/caddy.exe reverse-proxy --from localhost:3030 --to localhost:3000",
+    "caddy_mac": "caddy reverse-proxy --from localhost:3030 --to localhost:3000",
+    "start": "concurrently \"yarn caddy_mac \" \"dotnet watch run\" \"cd client-app && npm run dev\""
   },
   "dependencies": {
     "@types/react-dom": "^17.0.14",
-    "concurrently": "^7.0.0",
+    "concurrently": "^7.2.2",
     "date-fns": "^2.28.0",
     "react-dom": "^18.0.0"
   }
