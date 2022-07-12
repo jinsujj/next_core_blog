@@ -147,6 +147,8 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
       </>
     );
   }
+
+  const canonicalUrl = `https://owl-dev.me/blog/${detailNote.noteId}`;
   const SearchQuery = useSelector((state) => state.common.search);
   const postState = useSelector((state) => state.common.postState);
   const sideBarCategory = useSelector((state) => state.common.sideBarCategory);
@@ -174,9 +176,10 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
   return (
     <>
       <NextSeo
+        canonical={canonicalUrl}
         openGraph={{
-          url: `https://www.owl-dev.me/blog/${detailNote.noteId}`,
-          title: `${detailNote.title}`,
+          url: canonicalUrl,
+          title: detailNote.title,
           description: "CTO 가 되고픈 부엉이 블로그 입니다",
           images: [
             {
@@ -273,10 +276,10 @@ export const getServerSideProps: GetServerSideProps = async (
   const { data: data } = await noteApi.postIpLog(ipLog);
   const { data: detailNote } = await noteApi.getNoteById(Number(id as string));
 
-  console.log(detailNote);
   return {
     props: {
       detailNote,
     },
   };
 };
+
