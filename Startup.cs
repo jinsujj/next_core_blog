@@ -46,10 +46,9 @@ namespace Next_Core_Blog
                     .AllowAnyHeader()
                     .SetIsOriginAllowed(origin => {
                         if(string.IsNullOrWhiteSpace(origin)) return false;
-                        if(origin.ToLower().StartsWith("http://localhost")) return true;
                         if(origin.ToLower().StartsWith("https://localhost")) return true;
-                        if(origin.ToLower().StartsWith("https://www.owl-dev.me")) return true;
                         if(origin.ToLower().StartsWith("https://owl-dev.me")) return true;
+                        if(origin.ToLower().StartsWith("https://www.owl-dev.me")) return true;
                         return false;
                     });
                 });

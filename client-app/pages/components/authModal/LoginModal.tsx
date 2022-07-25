@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
+import kakaoApi from "../../../api/kakao";
 import userApi from "../../../api/user";
 import useModal from "../../../hooks/useModal";
 import useValidateMode from "../../../hooks/useValidateMode";
@@ -13,14 +14,14 @@ import Button from "../common/Button";
 import Input from "../common/Input";
 
 const Container = styled.form`
-  @media only screen and (max-width: 768px){
-      width: 100%;
-      padding: 26px;
+  @media only screen and (max-width: 768px) {
+    width: 100%;
+    padding: 26px;
   }
 
   z-index: 11;
-  width: 540px;
-  height: 400px;
+  width: 360px;
+  height: 420px;
   padding: 30px;
   background-color: white;
 
@@ -31,7 +32,7 @@ const Container = styled.form`
     font-weight: 700;
     text-align: center;
     align-items: center;
-    margin-bottom: 36px;
+    margin-bottom: 20px;
   }
 
   .button-group {
@@ -41,7 +42,7 @@ const Container = styled.form`
 
   .stay-login {
     display: flex;
-    margin-bottom: 10px;
+    margin-bottom: 16px;
     color: ${palette.blue_fb};
     font-size: 14px;
     font-weight: 400;
@@ -75,11 +76,33 @@ const Container = styled.form`
       font-weight: bold;
     }
   }
+
+  .login-provider {
+    margin-top: 5px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .kakao-login {
+    border: none;
+    background: url("../img/kakao_login_medium_wide.png");
+    background-repeat: no-repeat;
+    cursor: pointer;
+    display: center;
+    justify-content: center;
+    width: 300px;
+    //width:185px;
+    height: 45px;
+  }
 `;
 
 interface IProps {
   closeModal: () => void;
 }
+
+const REST_API_KEY = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;
+const REDIRECT_URI = process.env.NEXT_PUBLIC_REDIRECT_URI;
+const KAKAO_LOGIN_URI = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}`;
 
 const LoginModal = ({ closeModal }: IProps) => {
   const [stayLogin, setStayLogin] = useState<boolean>(false);
@@ -129,8 +152,10 @@ const LoginModal = ({ closeModal }: IProps) => {
           setEmailErrorMsg("이메일 형식이 아닙니다");
           return;
         }
-        if (errorMessage.includes("403")){
-          setEmailErrorMsg("5회 이상 틀렸습니다. 10분 뒤에 재 로그인 바랍니다.");
+        if (errorMessage.includes("403")) {
+          setEmailErrorMsg(
+            "5회 이상 틀렸습니다. 10분 뒤에 재 로그인 바랍니다."
+          );
           return;
         }
       }
@@ -182,9 +207,16 @@ const LoginModal = ({ closeModal }: IProps) => {
         />
         <div>Email 기억하기</div>
       </div>
-      <Button width="100%" color="blue_fb" type="submit">
+      <Button width="300px" color="blue_fb" type="submit">
         로그인
       </Button>
+      <div className="login-provider">
+        <a
+          href={KAKAO_LOGIN_URI}
+          className="kakao-login"
+          type="button"
+        />
+      </div>
       <div className="route-menu">
         <div className="float--left">비밀번호 찾기</div>
         <div className="float--right" onClick={changeToSignupModal}>

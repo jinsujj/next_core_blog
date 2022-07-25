@@ -9,6 +9,7 @@ namespace Next_Core_Blog.Repository.Users
     public interface IUserRepository
     {
         bool AddUser(RegisterViewModel model);
+        void UpdateToken (string Email, string Token);
         Task<RegisterViewModel> GetUserByEmail(string EMail);
         RegisterViewModel GetUserByUserId(int userId);
         bool IsCorrectUser(string Email, string password);
@@ -21,6 +22,7 @@ namespace Next_Core_Blog.Repository.Users
         void ClearLogin(string Email);
         bool IsFiveOverCount(string Email);
         bool IsLastLoginWithinTenMinute(string Email);
+        Task<string> getKakaoToken(string Email);
     }
 
 }

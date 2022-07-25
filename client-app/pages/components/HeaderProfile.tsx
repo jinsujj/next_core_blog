@@ -2,6 +2,7 @@ import Router from "next/router";
 import React from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
+import kakaoApi from "../../api/kakao";
 import userApi from "../../api/user";
 import { useSelector } from "../../store";
 import { commonAction } from "../../store/common";
@@ -60,6 +61,7 @@ const HeaderProfile = () => {
   const onClickLogout = () => {
     try {
       userApi.Logout();
+      kakaoApi.postKakaoLogout(userInfo.email);
       dispatch(userActions.initUser());
       Router.push("../");
     } catch (e: any) {

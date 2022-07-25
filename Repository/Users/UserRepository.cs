@@ -42,6 +42,14 @@ namespace Next_Core_Blog.Repository.Users
             return true;
         }
 
+        public async void UpdateToken (string Email, string Token){
+            string sql = @"UPDATE user SET password = @Token
+                            WHERE email = @Email
+                            ";
+            using (var con = _context.CreateConnection()){
+                var result = await con.ExecuteAsync(sql, new { Email , Token});
+            }
+        }
 
         public async Task<RegisterViewModel> GetUserByEmail(string Email)
         {
@@ -199,5 +207,14 @@ namespace Next_Core_Blog.Repository.Users
             }
         }
 
+        public async Task<string> getKakaoToken(string Email)
+        {
+            string sql = @"SELECT password 
+                            FROM user
+                            WHERE email =@Email";
+            using (var con = _context.CreateConnection()){
+                return await con.QueryFirstOrDefaultAsync<string>(sql, new {Email});
+            }
+        }
     }
 }
