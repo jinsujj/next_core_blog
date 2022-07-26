@@ -16,18 +16,18 @@ import Input from "../common/Input";
 const Container = styled.form`
   @media only screen and (max-width: 768px) {
     width: 100%;
-    padding: 26px;
+    padding: 24px;
   }
 
   z-index: 11;
   width: 360px;
-  height: 420px;
+  height: 400px;
   padding: 30px;
   background-color: white;
 
   .title {
     color: ${palette.blue_fb};
-    font-size: 32px;
+    font-size: 30px;
     line-height: 40px;
     font-weight: 700;
     text-align: center;
@@ -91,7 +91,6 @@ const Container = styled.form`
     display: center;
     justify-content: center;
     width: 300px;
-    //width:185px;
     height: 45px;
   }
 `;
@@ -106,7 +105,6 @@ const KAKAO_LOGIN_URI = `https://kauth.kakao.com/oauth/authorize?response_type=c
 
 const LoginModal = ({ closeModal }: IProps) => {
   const [stayLogin, setStayLogin] = useState<boolean>(false);
-  const { openModal, ModalPortal } = useModal();
   const [email, setEmail] = useState("");
   const [emailErrorMsg, setEmailErrorMsg] = useState("");
   const [password, setPassword] = useState("");

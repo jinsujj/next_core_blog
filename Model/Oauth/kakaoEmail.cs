@@ -8,5 +8,9 @@ namespace next_core_blog.Model.Oauth
     public class kakaoEmail 
     {
         public string Email {get;set;}
+
+        public kakaoEmail(string email){
+            this.Email = email;
+        }
     }
 }

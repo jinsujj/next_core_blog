@@ -24,7 +24,7 @@ namespace next_core_blog.Controllers
     [ApiController]
     public class OauthController : ControllerBase
     {
-        private IWebHostEnvironment _enviorment;
+        private readonly IWebHostEnvironment _enviorment;
         private readonly IConfiguration _config;
         private readonly ILogger<OauthController> _logger;
         private readonly IUserRepository _userRepo;
@@ -63,13 +63,11 @@ namespace next_core_blog.Controllers
                 // Check Logic is user Regist?
                 if (!_userRepo.IsRegistedUser(Dictionary.kakao_account.email))
                     RegistUser(Dictionary, kakaoToken.Token);
-                else 
-                    _userRepo.UpdateToken(Dictionary.kakao_account.email, kakaoToken.Token);
-                
-                
-                // Login by Email
-                var userInfo = await LoginByEmail(Dictionary.kakao_account.email);
-                return Ok(userInfo);
+                else
+                    _userRepo.UpdateToken(Dictionary.kakao_account.email, Dictionary.properties.nickname, kakaoToken.Token);
+
+                // Login By Email
+                return  await LoginByEmail(new kakaoEmail(Dictionary.kakao_account.email));
             }
             catch (Exception ex)
             {
@@ -88,6 +86,7 @@ namespace next_core_blog.Controllers
 
             string Token = await _userRepo.getKakaoToken(email.Email);
             _logger.LogInformation("Token: " + Token);
+
             try
             {
                 string url = "https://kapi.kakao.com/v1/user/logout";
@@ -107,6 +106,10 @@ namespace next_core_blog.Controllers
                 }
                 catch (Exception ex)
                 {
+                    if (ex.Message.Contains("401"))
+                    {
+                        return Ok("local Login");
+                    }
                     _logger.LogError("error" + ex.Message);
                     return StatusCode(500, ex.Message);
                 }
@@ -134,7 +137,6 @@ namespace next_core_blog.Controllers
                 }
             }
             var json = JsonConvert.SerializeObject(jsonRst);
-            _logger.LogInformation(json);
             var Dictionary = JsonConvert.DeserializeObject<kakaoProfile>(json);
             return Dictionary;
         }
@@ -157,21 +159,28 @@ namespace next_core_blog.Controllers
             return json;
         }
 
-        private void RegistUser(kakaoProfile profile, string Token){
+        private void RegistUser(kakaoProfile profile, string Token)
+        {
             // kakao regist
-                    RegisterViewModel model = new RegisterViewModel();
-                    model.Email = profile.kakao_account.email;
-                    model.Name = profile.properties.nickname;
-                    model.Password = Token;
-                    model.Role = "USER";
-                    var data = _userRepo.AddUser(model);
-            _logger.LogInformation("RegistUser: "+ data);
+            RegisterViewModel model = new RegisterViewModel();
+            model.Email = profile.kakao_account.email;
+            model.Name = profile.properties.nickname;
+            model.Password = Token;
+            model.Role = "USER";
+            model.Oauth = "KAKAO";
+            var data = _userRepo.AddUser(model);
+            _logger.LogInformation("RegistUser: " + data);
         }
 
-        private async Task<RegisterViewModel> LoginByEmail(string email)
+        private async Task<IActionResult> LoginByEmail([FromBody] kakaoEmail email)
         {
-            RegisterViewModel userInfo = await _userRepo.GetUserByEmail(email);
-            var claims = new List<Claim>()
+            _logger.LogInformation("LoginByEmail: " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+            _logger.LogInformation("email " + email.Email);
+
+            try
+            {
+                RegisterViewModel userInfo = await _userRepo.GetUserByEmail(email.Email);
+                var claims = new List<Claim>()
                         {
                             new Claim("userId", userInfo.userId.ToString()),
                             new Claim("name", userInfo.Name),
@@ -179,9 +188,15 @@ namespace next_core_blog.Controllers
                             new Claim("Role", userInfo.Role)
                         };
 
-            var ci = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(ci)).Wait();
-            return userInfo;
+                var ci = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(ci)).Wait();
+
+                return Ok(userInfo);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
     }
 }

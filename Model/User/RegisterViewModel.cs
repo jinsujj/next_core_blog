@@ -21,5 +21,6 @@ namespace Next_Core_Blog.Model.User
         [Compare("Password", ErrorMessage ="패스워드가 일치하지 않습니다")]
         public string ConfirmPassword {get;set;}
         public string Role {get;set;}
+        public string Oauth {get;set;}
     }
 }

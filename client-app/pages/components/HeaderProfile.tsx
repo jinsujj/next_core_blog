@@ -60,9 +60,12 @@ const HeaderProfile = () => {
 
   const onClickLogout = () => {
     try {
+      dispatch(userActions.initUser());
+      if(userInfo.isLogged === true){
+        dispatch(userActions.initUser());
+      }
       userApi.Logout();
       kakaoApi.postKakaoLogout(userInfo.email);
-      dispatch(userActions.initUser());
       Router.push("../");
     } catch (e: any) {
       console.log(e.message);

@@ -39,30 +39,29 @@ namespace Next_Core_Blog
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
 
-            services.AddCors(options => {
-                options.AddPolicy("Dev", builder => {
-                    builder.WithMethods("GET","POST","PATCH","DELETE")
+            services.AddCors(options =>
+            {
+                options.AddPolicy("Dev", builder =>
+                {
+                    builder.WithMethods("GET", "POST", "PATCH", "DELETE")
                     .AllowCredentials()
                     .AllowAnyHeader()
-                    .SetIsOriginAllowed(origin => {
-                        if(string.IsNullOrWhiteSpace(origin)) return false;
-                        if(origin.ToLower().StartsWith("https://localhost")) return true;
-                        if(origin.ToLower().StartsWith("https://owl-dev.me")) return true;
-                        if(origin.ToLower().StartsWith("https://www.owl-dev.me")) return true;
+                    .SetIsOriginAllowed(origin =>
+                    {
+                        if (string.IsNullOrWhiteSpace(origin)) return false;
+                        if (origin.ToLower().StartsWith("https://localhost")) return true;
+                        if (origin.ToLower().StartsWith("https://owl-dev.me")) return true;
+                        if (origin.ToLower().StartsWith("https://www.owl-dev.me")) return true;
                         return false;
                     });
                 });
             });
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>{
-                options.Cookie.Name = "UserLoginCookie";
+            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options => {
+                options.Cookie.Name ="UserLoginCookie";
                 options.SlidingExpiration = true;
-                options.ExpireTimeSpan = new TimeSpan(2,0,0);  //1 hour 0 min 0 sec
-                options.Events.OnRedirectToLogin = (context) =>{
-                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                    return Task.CompletedTask;
-                };
+                options.ExpireTimeSpan = new TimeSpan(6,0,0);
                 options.Cookie.HttpOnly = true;
                 options.Cookie.SameSite = SameSiteMode.None;
                 options.Cookie.Domain = ".owl-dev.me";

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Extensions.Logging;
+using next_core_blog.Model.Oauth;
 using Next_Core_Blog.Context;
 using Next_Core_Blog.Model.BlogNote;
 using Next_Core_Blog.Model.User;
@@ -25,8 +26,8 @@ namespace Next_Core_Blog.Repository.Users
         {
             string checkSql = "SELECT COUNT(*) FROM user WHERE Email = @Email";
 
-            string sql = @"INSERT INTO user (Name, Email, Password, FailedPasswordAttemptCount, Role, CreatedDate)
-                            VALUES(@Name, @Email, @Password, 0, 'USER', NOW());";
+            string sql = @"INSERT INTO user (Name, Email, Password, FailedPasswordAttemptCount, Role, CreatedDate, Oauth)
+                            VALUES(@Name, @Email, @Password, 0, 'USER', NOW(), @Oauth);";
 
             using (var con = _context.CreateConnection())
             {
@@ -36,24 +37,24 @@ namespace Next_Core_Blog.Repository.Users
                     _logger.LogError("Email already exist");
                     return false;
                 }
-                var result = con.Execute(sql, new { name = model.Name, email = model.Email, password = model.Password });
+                var result = con.Execute(sql, new { name = model.Name, email = model.Email, password = model.Password ,Oauth = model.Oauth });
             }
 
             return true;
         }
 
-        public async void UpdateToken (string Email, string Token){
-            string sql = @"UPDATE user SET password = @Token
+        public async void UpdateToken (string Email, string Name, string Token){
+            string sql = @"UPDATE user SET password = @Token , name = @Name
                             WHERE email = @Email
                             ";
             using (var con = _context.CreateConnection()){
-                var result = await con.ExecuteAsync(sql, new { Email , Token});
+                var result = await con.ExecuteAsync(sql, new { Email , Name, Token});
             }
         }
 
         public async Task<RegisterViewModel> GetUserByEmail(string Email)
         {
-            string sql = @"SELECT UserId, Name, Email, Role
+            string sql = @"SELECT UserId, Name, Email, Role, Oauth
                             FROM user
                             WHERE Email = @Email";
 
@@ -209,11 +210,11 @@ namespace Next_Core_Blog.Repository.Users
 
         public async Task<string> getKakaoToken(string Email)
         {
-            string sql = @"SELECT password 
+            string sql = @"SELECT password as Token, Oauth
                             FROM user
                             WHERE email =@Email";
             using (var con = _context.CreateConnection()){
-                return await con.QueryFirstOrDefaultAsync<string>(sql, new {Email});
+                return  await con.QueryFirstAsync<string>(sql, new {Email});
             }
         }
     }

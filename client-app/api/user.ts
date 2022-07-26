@@ -1,12 +1,13 @@
 import api from "./index";
 
-interface User {
+export interface User {
     userId : number;
     name : string;
     email: string;
     password: string;
     confirmPassword: string;
     role?: string;
+    oauth?: string;
 }
 
 export type postUser = Omit<User, "userId">;

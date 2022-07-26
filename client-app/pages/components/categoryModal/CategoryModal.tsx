@@ -173,7 +173,6 @@ const CategoryModal = ({ postNoteForm, closeModal }: IProps) => {
     } else if (postState === "modify") {
       var { data } = await noteApi.postNote(1, postNoteForm);
     }
-    console.log(data);
     if (data === 1) {
       if(mode === 'save'){
         alert("저장 되었습니다");  

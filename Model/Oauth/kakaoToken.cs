@@ -8,5 +8,6 @@ namespace next_core_blog.Model.Oauth
     public class kakaoToken
     {
         public string Token {get;set;}
+        public string Oauth {get;set;}
     }
 }

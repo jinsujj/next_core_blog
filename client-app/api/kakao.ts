@@ -1,4 +1,5 @@
 import api from "./index";
+import { User } from "./user";
 
 const REST_API_KEY = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;
 const REDIRECT_URI = process.env.NEXT_PUBLIC_KAKAO_CLIENT_SECRET;
@@ -26,7 +27,7 @@ export type kakaoToken = {
 };
 
 export type kakaoEmail = {
-  email: string;
+  Email: string;
 };
 
 
@@ -35,8 +36,6 @@ const getKakaoAccessCode = async () => {
 };
 
 const postAccesCode = async (payload: KakaoParam) => {
-  api.defaults.withCredentials = false;
-
   const res = await api.post<kakaoTokenResponse>(
     `https://kauth.kakao.com/oauth/token`,
     new URLSearchParams({
@@ -50,22 +49,32 @@ const postAccesCode = async (payload: KakaoParam) => {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
       },
-    }
+      withCredentials: false 
+    },
   );
   return res.data;
 };
 
-const postKaKaoToken = async (token: string) => {
+const kakaoLoginByEmail = async (email: string) => {
+  const kakaoEmail :kakaoEmail= {
+    Email: email
+  };
+  const result = api.post<User>(`/api/Oauth/Kakao/LoginByEmail`, kakaoEmail);
+  return result;
+}
+
+const postkakaoLogin = async (token: string) => {
   const kakaoToken :kakaoToken= {
     token: token
   };
 
-  return api.post(`/api/Oauth/Kakao/Login`, kakaoToken);
+  const result = api.post<User>(`/api/Oauth/Kakao/Login`, kakaoToken);
+  return result;
 };
 
 const postKakaoLogout = async (email : string) => {
   const kakaoEmail :kakaoEmail= {
-    email: email
+    Email: email
   };
   return api.post(`/api/Oauth/Kakao/Logout`, kakaoEmail);
 };
@@ -73,8 +82,9 @@ const postKakaoLogout = async (email : string) => {
 const kakaoApi = {
   getKakaoAccessCode,
   postAccesCode,
-  postKaKaoToken,
+  postkakaoLogin,
   postKakaoLogout,
+  kakaoLoginByEmail
 };
 
 export default kakaoApi;

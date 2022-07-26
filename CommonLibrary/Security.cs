@@ -141,7 +141,7 @@ namespace Next_Core_Blog.CommonLibrary
             }
             catch (Exception ex)
             {
-                throw ex;
+                return ex.Message;
             }
         }
         #endregion
@@ -181,7 +181,7 @@ namespace Next_Core_Blog.CommonLibrary
             }
             catch (Exception ex)
             {
-                throw ex;
+                return ex.Message;
             }
         }
         #endregion

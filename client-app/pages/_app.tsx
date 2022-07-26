@@ -1,19 +1,18 @@
 import "../styles/globals.css";
 import App, { AppProps } from "next/app";
-import { wrapper } from "../store";
+import { useSelector, wrapper } from "../store";
 import Head from "next/head";
 import "@fortawesome/fontawesome-svg-core/styles.css"; // import Font Awesome CSS
 import { config } from "@fortawesome/fontawesome-svg-core";
 import axios from "../api";
-import { userActions } from "../store/user";
-import userApi from "../api/user";
+import user, { userActions } from "../store/user";
+import userApi, { LoginModel } from "../api/user";
 import { useDispatch } from "react-redux";
 import { commonAction } from "../store/common";
 import { NextSeo } from "next-seo";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import kakaoApi, { kakaoToken, kakaoTokenResponse } from "../api/kakao";
 config.autoAddCss = false; // Tell Font Awesome to skip adding the CSS automatically since it's being imported above
-
 
 const app = ({ Component, pageProps }: AppProps) => {
   const dispatch = useDispatch();
@@ -24,22 +23,26 @@ const app = ({ Component, pageProps }: AppProps) => {
     const search = decodeURI(window.location.href).split("?")[1];
     const KAKAO_ACCESS_CODE = new URLSearchParams(search).get("code") || "";
 
-    if(KAKAO_ACCESS_CODE.length > 1 ){
+    if (KAKAO_ACCESS_CODE.length > 1) {
       kakaoLogin(KAKAO_ACCESS_CODE);
     }
   }, []);
 
-  const kakaoLogin = async (KAKAO_ACCESS_CODE:string) => {
-    const token:kakaoTokenResponse = await kakaoApi.postAccesCode({
+  const kakaoLogin = async (KAKAO_ACCESS_CODE :string) => {
+    const Token = await kakaoApi.postAccesCode({
       client_id: process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID || "",
       redirect_uri: process.env.NEXT_PUBLIC_REDIRECT_URI || "",
       code: KAKAO_ACCESS_CODE,
       client_secret: process.env.NEXT_PUBLIC_KAKAO_CLIENT_SECRET || "",
     });
 
-    const {data} = await kakaoApi.postKaKaoToken(token.access_token);
-    dispatch(userActions.setLoggedUser(data));
-    console.log(data);
+    try {
+      const {data} = await kakaoApi.postkakaoLogin(Token.access_token);
+      console.log(data);
+      dispatch(userActions.setLoggedUser(data));
+    } catch (e: any) {
+      console.log(e.message);
+    }
   };
 
   return (
@@ -80,7 +83,7 @@ const app = ({ Component, pageProps }: AppProps) => {
 
 // Cookie Check
 app.getInitialProps = wrapper.getInitialAppProps((store) => async (context) => {
-  //process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
   const appInitalProps = await App.getInitialProps(context);
   const cookieObject = context.ctx.req?.headers.cookie;
   try {

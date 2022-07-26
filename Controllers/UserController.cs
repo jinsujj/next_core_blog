@@ -78,7 +78,7 @@ namespace Next_Core_Blog.Controllers
 
                     if (_userRepo.IsCorrectUser(model.Email, new Security().EncryptPassword(model.Password)))
                     {
-                        RegisterViewModel userInfo = await _userRepo.GetUserByEmail(model.Email);
+                        RegisterViewModel userInfo =  await _userRepo.GetUserByEmail(model.Email);
                         var claims = new List<Claim>()
                         {
                             new Claim("userId", userInfo.userId.ToString()),
@@ -134,7 +134,7 @@ namespace Next_Core_Blog.Controllers
             var opt = HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>();
             var cookie = opt.CurrentValue.CookieManager.GetRequestCookie(HttpContext, "UserLoginCookie");
             Dictionary<string, string> tokenInfo = new Dictionary<string, string>();
-
+            
             // Decrypt if found
             if (!string.IsNullOrEmpty(cookie))
             {
