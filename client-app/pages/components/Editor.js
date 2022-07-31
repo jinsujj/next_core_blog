@@ -7,7 +7,6 @@ import palette from "../../styles/palette";
 import CategoryModal from "./categoryModal/CategoryModal";
 import Button from "./common/Button";
 import Input from "./common/Input";
-import Prism from "prismjs";
 
 const Container = styled.form`
   .title_input {
