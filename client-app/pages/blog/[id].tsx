@@ -11,10 +11,10 @@ import Header from "../components/Header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarCheck, faEye } from "@fortawesome/free-solid-svg-icons";
 import { commonAction } from "../../store/common";
-import dateFormat from "../../lib/dateFormat";
 import useUtterances from "../../hooks/useUtterances";
 import Router from "next/router";
 import { NextSeo } from "next-seo";
+import { format } from "date-fns";
 
 const Container = styled.div`
   margin-top: 56px;
@@ -152,9 +152,7 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
   const SearchQuery = useSelector((state) => state.common.search);
   const postState = useSelector((state) => state.common.postState);
   const sideBarCategory = useSelector((state) => state.common.sideBarCategory);
-  const sidgBarSubCategory = useSelector(
-    (state) => state.common.sideBarSubCategory
-  );
+  const sidgBarSubCategory = useSelector((state) => state.common.sideBarSubCategory);
 
   const dispatch = useDispatch();
   dispatch(commonAction.setPostUserIdOfNote(detailNote.userId));
@@ -211,9 +209,7 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
                       />
                     </li>
                     <li>
-                      {dateFormat.toStringByFormatting(
-                        new Date(detailNote.postDate)
-                      )}
+                      {format(new Date( detailNote.postDate.replace(/-/g,"/")), "yyyy-MM-dd")}
                     </li>
                   </ul>
                   <ul>

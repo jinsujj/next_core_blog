@@ -62,6 +62,12 @@ const Container = styled.div<StyledProps>`
     display: flex;
     margin-right: 8px;
   }
+  .iconDateTime {
+    width:100%;
+    justify-content: center;
+    display: flex;
+    margin-right: 8px;
+  }
 `;
 
 export interface IProps {
@@ -106,7 +112,7 @@ const BlogCard = ({ blog }: IProps) => {
           </div>
         </div>
         <div className="blogData">
-          <div className="iconGroup">
+          <div className="iconDateTime">
             <FontAwesomeIcon
               icon={faCalendarCheck}
               style={{ fontSize: 14, color: `${palette.gray_bb}` }}
