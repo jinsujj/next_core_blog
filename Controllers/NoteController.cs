@@ -367,8 +367,11 @@ namespace Next_Core_Blog.Controllers
                 if (openTagIndex != -1 && closeTagIndex != -1)
                 {
                     var buff = content.Substring(openTagIndex, (closeTagIndex - openTagIndex + 1)).ToLower();
-                    if (buff.Contains("script"))
+                    if (buff.Contains("typescript"))
+                        buff = "";
+                    else if(buff.Contains("script")){
                         return true;
+                    }
 
                     openTagIndex = -1;
                     closeTagIndex = -1;

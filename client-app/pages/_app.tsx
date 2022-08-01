@@ -1,17 +1,18 @@
 import "../styles/globals.css";
 import App, { AppProps } from "next/app";
-import { useSelector, wrapper } from "../store";
+import { wrapper } from "../store";
 import Head from "next/head";
 import "@fortawesome/fontawesome-svg-core/styles.css"; // import Font Awesome CSS
 import { config } from "@fortawesome/fontawesome-svg-core";
 import axios from "../api";
-import user, { userActions } from "../store/user";
-import userApi, { LoginModel } from "../api/user";
+import { userActions } from "../store/user";
+import userApi from "../api/user";
 import { useDispatch } from "react-redux";
 import { commonAction } from "../store/common";
 import { NextSeo } from "next-seo";
 import { useEffect } from "react";
 import kakaoApi, { kakaoToken, kakaoTokenResponse } from "../api/kakao";
+import 'prismjs/themes/prism-coy.css';
 config.autoAddCss = false; // Tell Font Awesome to skip adding the CSS automatically since it's being imported above
 
 const app = ({ Component, pageProps }: AppProps) => {

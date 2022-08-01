@@ -16,6 +16,17 @@ import Router from "next/router";
 import { NextSeo } from "next-seo";
 import { format } from "date-fns";
 
+import Prism from 'prismjs';
+import 'prismjs/components/prism-typescript.min';
+import 'prismjs/components/prism-jsx.min';
+import 'prismjs/components/prism-tsx.min';
+import 'prismjs/components/prism-csharp';
+import 'prismjs/components/prism-java';
+import 'prismjs/components/prism-sql';
+import 'prismjs/components/prism-bash';
+
+
+
 const Container = styled.div`
   margin-top: 56px;
 
@@ -157,6 +168,10 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
   const dispatch = useDispatch();
   dispatch(commonAction.setPostUserIdOfNote(detailNote.userId));
   useUtterances(detailNote.noteId.toString());
+
+  useEffect(() => {
+    Prism.highlightAll();
+  }, []);
 
   useEffect(() => {
     return () => {

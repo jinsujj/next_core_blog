@@ -212,8 +212,6 @@ const Editor = ({ NoteInfo }) => {
 
   // summernote Editor init
   useEffect(() => {
-    Prism.highlightAll();
-
     host = process.env.NEXT_PUBLIC_API_URL;
 
     if (postState === "read") {
@@ -352,59 +350,59 @@ const Editor = ({ NoteInfo }) => {
   }, []);
 
   return (
-      <Container onSubmit={openCategoryModal} postState={postState}>
-        {postState !== "read" && (
-          <div className="title_input">
-            <Input
-              type="text"
-              placeholder="제목"
-              color="gray_cd"
-              focusColor="gray_80"
-              useValidation={false}
-              value={title}
-              onChange={onChangeTitle}
+    <Container onSubmit={openCategoryModal} postState={postState}>
+      {postState !== "read" && (
+        <div className="title_input">
+          <Input
+            type="text"
+            placeholder="제목"
+            color="gray_cd"
+            focusColor="gray_80"
+            useValidation={false}
+            value={title}
+            onChange={onChangeTitle}
+          />
+        </div>
+      )}
+      <textarea id="summernote" />
+      {postState !== "read" && (
+        <div className="save-button clearfix">
+          <div className="float--left">
+            <input
+              className="upload-name"
+              value={imageBuff}
+              placeholder="Thumbnail"
+            />
+            <label htmlFor="file">파일찾기</label>
+            <input
+              type="file"
+              id="file"
+              className="upload-name"
+              onChange={setThumbFile.bind(this)}
+              placeholder="첨부파일"
+              accept="image/jpg, image/png, image/jpeg"
             />
           </div>
-        )}
-        <textarea id="summernote" />
-        {postState !== "read" && (
-          <div className="save-button clearfix">
-            <div className="float--left">
-              <input
-                className="upload-name"
-                value={imageBuff}
-                placeholder="Thumbnail"
-              />
-              <label htmlFor="file">파일찾기</label>
-              <input
-                type="file"
-                id="file"
-                className="upload-name"
-                onChange={setThumbFile.bind(this)}
-                placeholder="첨부파일"
-                accept="image/jpg, image/png, image/jpeg"
-              />
-            </div>
-            <div className="float--right">
-              <Button type="submit">저장하기</Button>
-            </div>
+          <div className="float--right">
+            <Button type="submit">저장하기</Button>
           </div>
-        )}
-        <ModalPortal>
-          <CategoryModal
-            postNoteForm={{
-              noteId: postState === "modify" ? NoteInfo.noteId : "0",
-              title: title,
-              userId: userId,
-              content: content,
-              thumbImage: imageBuff,
-              category: postState === "modify" ? NoteInfo.category : "",
-              subCategory: postState === "modify" ? NoteInfo.subCategory : "",
-            }}
-            closeModal={closeModal}
-          />
-        </ModalPortal>
-      </Container>
+        </div>
+      )}
+      <ModalPortal>
+        <CategoryModal
+          postNoteForm={{
+            noteId: postState === "modify" ? NoteInfo.noteId : "0",
+            title: title,
+            userId: userId,
+            content: content,
+            thumbImage: imageBuff,
+            category: postState === "modify" ? NoteInfo.category : "",
+            subCategory: postState === "modify" ? NoteInfo.subCategory : "",
+          }}
+          closeModal={closeModal}
+        />
+      </ModalPortal>
+    </Container>
   );
 };
 
