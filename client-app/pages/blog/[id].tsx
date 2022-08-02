@@ -17,6 +17,9 @@ import { NextSeo } from "next-seo";
 import { format } from "date-fns";
 
 import Prism from 'prismjs';
+import 'prismjs/themes/prism-coy.css';
+import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
+import 'prismjs/plugins/line-numbers/prism-line-numbers';
 import 'prismjs/components/prism-typescript.min';
 import 'prismjs/components/prism-jsx.min';
 import 'prismjs/components/prism-tsx.min';
@@ -24,6 +27,7 @@ import 'prismjs/components/prism-csharp';
 import 'prismjs/components/prism-java';
 import 'prismjs/components/prism-sql';
 import 'prismjs/components/prism-bash';
+
 
 
 

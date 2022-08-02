@@ -55,8 +55,6 @@ class MyDocument extends Document {
             href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css"
             rel="stylesheet"
           />
-          {/* Prism */}
-          <link href="../css/prism_coy.css" rel="stylesheet" />
         </Head>
         <body>
           <Main />
@@ -64,8 +62,6 @@ class MyDocument extends Document {
           {/* jquery 3.6.0 */}
           <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
           <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-          {/* Prism */}
-          <script src="../js/prism_coy.js" />
           {/* fontawesom */}
           <script src="https://kit.fontawesome.com/3ec141240c.js"></script>
           {/* bootstrap */}

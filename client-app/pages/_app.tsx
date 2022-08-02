@@ -12,7 +12,7 @@ import { commonAction } from "../store/common";
 import { NextSeo } from "next-seo";
 import { useEffect } from "react";
 import kakaoApi, { kakaoToken, kakaoTokenResponse } from "../api/kakao";
-import 'prismjs/themes/prism-coy.css';
+
 config.autoAddCss = false; // Tell Font Awesome to skip adding the CSS automatically since it's being imported above
 
 const app = ({ Component, pageProps }: AppProps) => {
