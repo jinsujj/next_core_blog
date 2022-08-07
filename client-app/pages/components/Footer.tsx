@@ -16,7 +16,7 @@ const Container = styled.footer`
   }
 
   .inner {
-    max-width: 1200px;
+    max-width: 940px;
     margin: 0 auto;
     box-sizing: border-box;
     position: relative;

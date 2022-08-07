@@ -126,6 +126,12 @@ const Container = styled.form`
   .save-button {
     position: relative;
   }
+
+  element.style {
+    background-attachment: none !important;
+    background-origin: none !important;
+    background-clip: unset !important;
+  }
 `;
 
 const Editor = ({ NoteInfo }) => {

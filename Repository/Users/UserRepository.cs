@@ -43,49 +43,49 @@ namespace Next_Core_Blog.Repository.Users
             return true;
         }
 
-        public async void UpdateToken (string Email, string Name, string Token){
-            string sql = @"UPDATE user SET password = @Token , name = @Name
+        public async void UpdateKakaoProfile (string Email, string Name, string Token, string thumbnail_image_url, string profile_image_url){
+            string sql = @"UPDATE user SET password = @Token , name = @Name, thumbnail_image_url =@thumbnail_image_url, image_url =@profile_image_url
                             WHERE email = @Email
                             ";
             using (var con = _context.CreateConnection()){
-                var result = await con.ExecuteAsync(sql, new { Email , Name, Token});
+                var result = await con.ExecuteAsync(sql, new { Email , Name, Token, thumbnail_image_url, profile_image_url});
             }
         }
 
-        public async Task<RegisterViewModel> GetUserByEmail(string Email)
+        public async Task<RegisterViewModel> GetUserByEmail(string Email_or_Id)
         {
             string sql = @"SELECT UserId, Name, Email, Role, Oauth
                             FROM user
-                            WHERE Email = @Email";
+                            WHERE Email = @Email_or_Id";
 
             using (var con = _context.CreateConnection())
             {
-                var result = await con.QueryFirstAsync<RegisterViewModel>(sql, new { Email });
+                var result = await con.QueryFirstAsync<RegisterViewModel>(sql, new { Email_or_Id });
                 return result;
             }
         }
 
-         public RegisterViewModel GetUserByUserId(int userId)
+        public RegisterViewModel GetUserByUserId(int UserId)
         {
             string sql = @"SELECT UserId, Name, Email, Role
                             FROM user
-                            WHERE userId = @userId";
+                            WHERE userId = @UserId";
 
             using (var con = _context.CreateConnection())
             {
-                var result =  con.QueryFirstOrDefault<RegisterViewModel>(sql, new { userId });
+                var result =  con.QueryFirstOrDefault<RegisterViewModel>(sql, new { UserId });
                 return result;
             }
         }
 
-        public bool IsRegistedUser(string Email)
+        public bool IsRegistedUser(string Email_or_Id)
         {
             string sql = @"SELECT 1
                             FROM user
-                            WHERE Email = @Email";
+                            WHERE Email = @Email_or_Id";
             
             using (var con = _context.CreateConnection()){
-                var result = con.QueryFirstOrDefault<bool>(sql, new{Email});
+                var result = con.QueryFirstOrDefault<bool>(sql, new{Email_or_Id});
                 return result;
             }
         }
@@ -170,7 +170,7 @@ namespace Next_Core_Blog.Repository.Users
             }
         }
 
-        public void ModifyUser(RegisterViewModel model)
+        public void ModifyUser(RegisterViewModel Model)
         {
             string sql = @"UPDATE user 
                             SET Name = @Name,
@@ -178,7 +178,7 @@ namespace Next_Core_Blog.Repository.Users
                             WHERE Email = @Email
                             ";
             using (var con = _context.CreateConnection()){
-                con.Execute(sql, new {Name = model.Name, Password = model.Password, Email = model.Email});
+                con.Execute(sql, new {Name = Model.Name, Password = Model.Password, Email = Model.Email});
             }
         }
 
@@ -191,7 +191,7 @@ namespace Next_Core_Blog.Repository.Users
                             WHERE Email = @Email
                             ";
 
-            using(var con = _context.CreateConnection())                            {
+            using(var con = _context.CreateConnection()){
                 con.Execute(sql, new {Email});
             }
         }

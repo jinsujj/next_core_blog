@@ -35,7 +35,7 @@ const Container = styled.div`
   margin-top: 56px;
 
   .inner {
-    max-width: 1200px;
+    max-width: 940px;
     margin: 0 auto;
     box-sizing: border-box;
     position: relative;
@@ -68,12 +68,13 @@ const Container = styled.div`
   }
 
   .post_info {
-    margin-top: 12px;
+    display: flex;
+    padding-top: 40px;
 
-    @media only screen and (max-width: 380px) {
+    @media only screen and (max-width: 480px) {
       display: flex;
       float: left !important;
-      margin-top: -12px;
+      padding-top: 12px !important;
     }
   }
 
@@ -95,7 +96,6 @@ const Container = styled.div`
     font-size: 14px;
     color: black;
     margin-left: 5px;
-    padding-top: 12px;
   }
 
   .post_info ul li {
@@ -105,7 +105,6 @@ const Container = styled.div`
     color: black;
     line-height: 8px;
     margin-left: 5px;
-    padding-top: 12px;
   }
 
   .board {
@@ -135,7 +134,7 @@ const Container = styled.div`
 
   .utterances {
     width: 100%;
-    max-width: 1200px !important;
+    max-width: 940px !important;
   }
 
   .noAuthority {
@@ -230,15 +229,6 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
                     <li>
                       {format(new Date( detailNote.postDate.replace(/-/g,"/")), "yyyy-MM-dd")}
                     </li>
-                  </ul>
-                  <ul>
-                    <li>
-                      <FontAwesomeIcon
-                        icon={faEye}
-                        style={{ fontSize: 12, color: "black" }}
-                      />
-                    </li>
-                    <li>{detailNote.readCount}</li>
                   </ul>
                 </div>
               </div>

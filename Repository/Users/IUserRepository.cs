@@ -10,13 +10,13 @@ namespace Next_Core_Blog.Repository.Users
     public interface IUserRepository
     {
         bool AddUser(RegisterViewModel model);
-        void UpdateToken (string Email, string name, string Token);
-        Task<RegisterViewModel> GetUserByEmail(string EMail);
+        void UpdateKakaoProfile (string Email, string name, string Token, string thumbnail_image_url, string profile_image_url);
+        Task<RegisterViewModel> GetUserByEmail(string Email_or_Id);
         RegisterViewModel GetUserByUserId(int userId);
         bool IsCorrectUser(string Email, string password);
         void ModifyUser(RegisterViewModel model);
         bool IsAdmin(string Email);
-        bool IsRegistedUser(string Emaill);
+        bool IsRegistedUser(string Email_or_Id);
         void Log(string page, string ip);
 
         void TryLogin(string Email);

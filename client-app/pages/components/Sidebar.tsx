@@ -13,6 +13,7 @@ import Button from "./common/Button";
 import Input from "./common/Input";
 import Router from "next/router";
 import palette from "../../styles/palette";
+import { faWindowClose } from "@fortawesome/free-solid-svg-icons";
 
 interface StyledProps {
   istoggle: boolean;
@@ -161,6 +162,7 @@ const Container = styled.div<StyledProps>`
 
   .visit--count {
     margin-top: 28px;
+    margin-bottom: 20px;
   }
   .visit--count ul {
     display: flex;
@@ -181,7 +183,7 @@ const Container = styled.div<StyledProps>`
   }
 
   .category {
-    margin: 20px 0;
+    margin: 8px 0;
     border-top: 1px solid #219653;
   }
   .category .menu {
@@ -282,6 +284,7 @@ const Sidebar = () => {
   const categoryFilter = (category: string, subCategory: string) => {
     dispatch(commonAction.setCategoryFilter(category));
     dispatch(commonAction.setSubCategoryFilter(subCategory));
+    dispatch(commonAction.setSearchFilter(""));
   };
 
   const onClickLogin = () => {
@@ -402,3 +405,7 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
+function debounce(arg0: () => void) {
+  throw new Error("Function not implemented.");
+}
+

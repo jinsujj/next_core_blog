@@ -17,6 +17,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Next_Core_Blog.Model.User;
+using Org.BouncyCastle.Bcpg;
 
 namespace next_core_blog.Controllers
 {
@@ -42,124 +43,126 @@ namespace next_core_blog.Controllers
         [Produces("application/json")]
         public async Task<IActionResult> GetKaKaoProfileInfo([FromBody] kakaoToken kakaoToken)
         {
-            _logger.LogInformation("GetKaKaoProfileInfo" + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
-            _logger.LogInformation("Token: " + kakaoToken.Token);
+            _logger.LogInformation("GetKaKaoProfileInfo" + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + "  |  Token: " + kakaoToken.Token);
+            try
+            {
+                // Decode kakao Token
+                HttpWebRequest req = kakaoLoginRequest(kakaoToken.Token);
+                kakaoProfile kakaoProfile = DecodeKakaoToken(req);
 
+                // kakao email exist check
+                if (String.IsNullOrEmpty(kakaoProfile.kakao_account.email))
+                {
+                    AccountCheckById(kakaoProfile, kakaoToken.Token);
+                    return await createCookie(new kakaoPrimaryKey("", kakaoProfile.id.ToString()));
+                }
+                else
+                {
+                    AccountCheckByEmail(kakaoProfile, kakaoToken.Token);
+                    return await createCookie(new kakaoPrimaryKey(kakaoProfile.kakao_account.email, ""));
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("error" + ex.Message);
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        private HttpWebRequest kakaoLoginRequest(string token)
+        {
             string url = "https://kapi.kakao.com/v2/user/me";
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
             req.Method = "POST";
             req.Timeout = 30 * 1000;
             req.Headers.Add("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
-            req.Headers.Add("Authorization", "Bearer " + kakaoToken.Token);
+            req.Headers.Add("Authorization", "Bearer " + token);
             req.UseDefaultCredentials = true;
             req.PreAuthenticate = true;
             req.Credentials = CredentialCache.DefaultCredentials;
-
-            try
-            {
-                // Decode kakao Token
-                var Dictionary = DecodeKakaoToken(req);
-
-                // Check Logic is user Regist?
-                if (!_userRepo.IsRegistedUser(Dictionary.kakao_account.email))
-                    RegistUser(Dictionary, kakaoToken.Token);
-                else
-                    _userRepo.UpdateToken(Dictionary.kakao_account.email, Dictionary.properties.nickname, kakaoToken.Token);
-
-                // Login By Email
-                return  await LoginByEmail(new kakaoEmail(Dictionary.kakao_account.email));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("error" + ex.Message);
-                return StatusCode(500, ex.Message);
-            }
-        }
-
-        [HttpPost("Kakao/Logout")]
-        [Produces("application/json")]
-        public async Task<IActionResult> PostKakaoLogout([FromBody] kakaoEmail email)
-        {
-            // Refresh Accesscode and Token
-            _logger.LogInformation("PostKakaoLogout" + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
-            _logger.LogInformation("email: " + email.Email);
-
-            string Token = await _userRepo.getKakaoToken(email.Email);
-            _logger.LogInformation("Token: " + Token);
-
-            try
-            {
-                string url = "https://kapi.kakao.com/v1/user/logout";
-                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
-                req.Method = "POST";
-                req.Timeout = 30 * 1000;
-                req.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
-                req.Headers.Add("Authorization", "Bearer " + Token);
-                req.UseDefaultCredentials = true;
-                req.PreAuthenticate = true;
-                req.Credentials = CredentialCache.DefaultCredentials;
-
-                try
-                {
-                    string id = KakaoLogout(req);
-                    return Ok(id);
-                }
-                catch (Exception ex)
-                {
-                    if (ex.Message.Contains("401"))
-                    {
-                        return Ok("local Login");
-                    }
-                    _logger.LogError("error" + ex.Message);
-                    return StatusCode(500, ex.Message);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("error" + ex.Message);
-                return StatusCode(500, ex.Message);
-            }
+            return req;
         }
 
         private kakaoProfile DecodeKakaoToken(HttpWebRequest req)
         {
-            JObject jsonRst;
-            using (HttpWebResponse res = (HttpWebResponse)req.GetResponse())
-            {
-                HttpStatusCode status = res.StatusCode;
-                _logger.LogInformation("status: " + status.ToString());
-
-                Stream resStream = res.GetResponseStream();
-                using (StreamReader sr = new StreamReader(resStream))
-                {
-                    jsonRst = JObject.Parse(sr.ReadToEnd());
-
-                }
-            }
-            var json = JsonConvert.SerializeObject(jsonRst);
-            var Dictionary = JsonConvert.DeserializeObject<kakaoProfile>(json);
-            return Dictionary;
+            var jsonRst = kakaoReqResponse(req);
+            var serializedJson = JsonConvert.SerializeObject(jsonRst);
+            kakaoProfile kakaoProfile = JsonConvert.DeserializeObject<kakaoProfile>(serializedJson);
+            return kakaoProfile;
         }
 
-        private string KakaoLogout(HttpWebRequest req)
+        private void AccountCheckById(kakaoProfile kakaoProfile, string token)
         {
-            JObject jsonRst;
-            using (HttpWebResponse res = (HttpWebResponse)req.GetResponse())
-            {
-                HttpStatusCode status = res.StatusCode;
-                _logger.LogInformation("status: " + status.ToString());
-
-                Stream resStream = res.GetResponseStream();
-                using (StreamReader sr = new StreamReader(resStream))
-                {
-                    jsonRst = JObject.Parse(sr.ReadToEnd());
-                }
-            }
-            var json = JsonConvert.SerializeObject(jsonRst);
-            return json;
+            if (!_userRepo.IsRegistedUser(kakaoProfile.id.ToString()))
+                RegistUserById(kakaoProfile, token);
+            else
+                _userRepo.UpdateKakaoProfile(kakaoProfile.kakao_account.email
+                        , kakaoProfile.properties.nickname
+                        , token
+                        , kakaoProfile.kakao_account.profile.thumbnail_image_url
+                        , kakaoProfile.kakao_account.profile.profile_image_url);
         }
 
-        private void RegistUser(kakaoProfile profile, string Token)
+        private void AccountCheckByEmail(kakaoProfile kakaoProfile, String token)
+        {
+            if (!_userRepo.IsRegistedUser(kakaoProfile.kakao_account.email))
+                RegistUserByEmail(kakaoProfile, token);
+            else
+                _userRepo.UpdateKakaoProfile(kakaoProfile.kakao_account.email
+                        , kakaoProfile.properties.nickname
+                        , token
+                        , kakaoProfile.kakao_account.profile.thumbnail_image_url
+                        , kakaoProfile.kakao_account.profile.profile_image_url);
+        }
+
+        #region [ kakao Logout ]
+        [HttpPost("Kakao/Logout")]
+        [Produces("application/json")]
+        public async Task<IActionResult> PostKakaoLogout([FromBody] kakaoPrimaryKey email)
+        {
+            _logger.LogInformation("PostKakaoLogout" + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + "  |  email: " + email.Email);
+            string Token = await _userRepo.getKakaoToken(email.Email);
+            try
+            {
+                HttpWebRequest req = kakaoLogoutRequest(Token);
+                return Ok(kakaoReqResponse(req));
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("401")) return Ok("Email login logout");
+                return StatusCode(500, ex.Message);
+            }
+        }
+        private HttpWebRequest kakaoLogoutRequest(string token)
+        {
+            string url = "https://kapi.kakao.com/v1/user/logout";
+            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+            req.Method = "POST";
+            req.Timeout = 30 * 1000;
+            req.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+            req.Headers.Add("Authorization", "Bearer " + token);
+            req.UseDefaultCredentials = true;
+            req.PreAuthenticate = true;
+            req.Credentials = CredentialCache.DefaultCredentials;
+            return req;
+        }
+        #endregion
+
+        #region [ user Regist ]
+        private void RegistUserById(kakaoProfile profile, string Token)
+        {
+            // kakao regist
+            RegisterViewModel model = new RegisterViewModel();
+            model.Email = profile.id.ToString();
+            model.Name = profile.properties.nickname;
+            model.Password = Token;
+            model.Role = "USER";
+            model.Oauth = "KAKAO";
+            var data = _userRepo.AddUser(model);
+
+            _logger.LogInformation("RegistUser: " + data);
+        }
+        private void RegistUserByEmail(kakaoProfile profile, string Token)
         {
             // kakao regist
             RegisterViewModel model = new RegisterViewModel();
@@ -169,28 +172,21 @@ namespace next_core_blog.Controllers
             model.Role = "USER";
             model.Oauth = "KAKAO";
             var data = _userRepo.AddUser(model);
+
             _logger.LogInformation("RegistUser: " + data);
         }
+        #endregion
 
-        private async Task<IActionResult> LoginByEmail([FromBody] kakaoEmail email)
+        #region [ cookie Create ]
+        private async Task<IActionResult> createCookie([FromBody] kakaoPrimaryKey email_or_id)
         {
-            _logger.LogInformation("LoginByEmail: " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
-            _logger.LogInformation("email " + email.Email);
-
             try
             {
-                RegisterViewModel userInfo = await _userRepo.GetUserByEmail(email.Email);
-                var claims = new List<Claim>()
-                        {
-                            new Claim("userId", userInfo.userId.ToString()),
-                            new Claim("name", userInfo.Name),
-                            new Claim("Email", userInfo.Email),
-                            new Claim("Role", userInfo.Role)
-                        };
-
-                var ci = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(ci)).Wait();
-
+                string primaryKey = email_or_id.Email == "" ? email_or_id.Id : email_or_id.Email;
+                RegisterViewModel userInfo = await _userRepo.GetUserByEmail(primaryKey);
+                var claims = makeTokenClaims(userInfo);
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity)).Wait();
                 return Ok(userInfo);
             }
             catch (Exception ex)
@@ -198,5 +194,37 @@ namespace next_core_blog.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        private List<System.Security.Claims.Claim> makeTokenClaims(RegisterViewModel userInfo)
+        {
+            var claims = new List<Claim>()
+                        {
+                            new Claim("userId", userInfo.userId.ToString()),
+                            new Claim("name", userInfo.Name),
+                            new Claim("Email", userInfo.Email),
+                            new Claim("Role", userInfo.Role)
+                        };
+            return claims;
+        }
+        #endregion
+
+        #region [ Http Response ]
+        private JObject kakaoReqResponse(HttpWebRequest req)
+        {
+            JObject jsonRst;
+            using (HttpWebResponse res = (HttpWebResponse)req.GetResponse())
+            {
+                HttpStatusCode status = res.StatusCode;
+                _logger.LogInformation("status: " + status.ToString());
+
+                Stream resStream = res.GetResponseStream();
+                using (StreamReader sr = new StreamReader(resStream))
+                {
+                    jsonRst = JObject.Parse(sr.ReadToEnd());
+                }
+            }
+            return jsonRst;
+        }
+        #endregion
     }
 }
