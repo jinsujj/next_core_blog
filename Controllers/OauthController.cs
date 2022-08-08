@@ -39,6 +39,7 @@ namespace next_core_blog.Controllers
             this._userRepo = userRepo;
         }
 
+        #region [ kakao Login ]
         [HttpPost("Kakao/Login")]
         [Produces("application/json")]
         public async Task<IActionResult> GetKaKaoProfileInfo([FromBody] kakaoToken kakaoToken)
@@ -114,6 +115,7 @@ namespace next_core_blog.Controllers
                         , kakaoProfile.kakao_account.profile.thumbnail_image_url
                         , kakaoProfile.kakao_account.profile.profile_image_url);
         }
+        #endregion
 
         #region [ kakao Logout ]
         [HttpPost("Kakao/Logout")]

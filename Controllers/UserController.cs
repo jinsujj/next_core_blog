@@ -33,84 +33,85 @@ namespace Next_Core_Blog.Controllers
             _userRepo = userRepo;
         }
 
-
+        #region [ Register ]
         [HttpPost]
         public IActionResult Register(RegisterViewModel model)
         {
             _logger.LogInformation("Register:" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
-
             if (ModelState.IsValid)
             {
-                // type convert
                 model.Name = model.Name.Trim();
                 model.Password = new Security().EncryptPassword(model.Password);
 
-                var result = _userRepo.AddUser(model);
+                bool result = _userRepo.AddUser(model);
                 if (result)
-                {
                     return Ok(true);
-                }
                 else
                     return StatusCode(401);
             }
-            else
-            {
-                return BadRequest();
-            }
+
+            return BadRequest();
         }
+        #endregion
 
-
+        #region [ Login ]
         [HttpPost("Login")]
         [Produces("application/json")]
         public async Task<IActionResult> LoginAsync([FromBody] LoginViewModel model)
         {
             _logger.LogInformation("Login:" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
-
             try
             {
                 if (ModelState.IsValid)
                 {
-                    if (isLoginFailed(model.Email))
-                    {
-                        // 403 Forbidden  10분 이내 5번 로그인 시도
+                    if (LoginMoreThanFiveTimesWithin10min(model.Email))
                         return StatusCode(403);
-                    }
 
-                    if (_userRepo.IsCorrectUser(model.Email, new Security().EncryptPassword(model.Password)))
-                    {
-                        RegisterViewModel userInfo =  await _userRepo.GetUserByEmail(model.Email);
-                        var claims = new List<Claim>()
+                    if (_userRepo.IsCorrectUser(model.Email, new Security().EncryptPassword(model.Password))) {
+                        RegisterViewModel userInfo = await _userRepo.GetUserByEmail(model.Email);
+                        createCookie(userInfo);
+                        return Ok(userInfo);
+                    }
+                    else {
+                        _userRepo.TryLogin(model.Email);
+                        return StatusCode(401);
+                    }
+                }
+                else
+                    return BadRequest();
+            }
+            catch (Exception ex) {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        private bool LoginMoreThanFiveTimesWithin10min(string Email)
+        {
+            // is Registed User?
+            if (_userRepo.IsRegistedUser(Email))
+            {
+                // attempt more than 5times and within 10 minutes
+                if (_userRepo.IsFiveOverCount(Email) && _userRepo.IsLastLoginWithinTenMinute(Email))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        private void createCookie(RegisterViewModel userInfo)
+        {
+            var claims = new List<Claim>()
                         {
                             new Claim("userId", userInfo.userId.ToString()),
                             new Claim("name", userInfo.Name),
                             new Claim("Email", userInfo.Email),
                             new Claim("Role", userInfo.Role)
                         };
-
-                        var ci = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                        HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(ci)).Wait();
-                        return Ok(userInfo);
-                    }
-                    else
-                    {
-                        _logger.LogError("email, password not matched");
-                        _userRepo.TryLogin(model.Email);
-                        return StatusCode(401);
-                    }
-                }
-                else
-                {
-                    return BadRequest();
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("error" + ex);
-                return StatusCode(500, ex.Message);
-            }
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity)).Wait();
         }
+        #endregion
 
-
+        #region [ Logout ]
         [HttpGet("Logout")]
         [Produces("application/json")]
         public IActionResult Logout()
@@ -125,7 +126,9 @@ namespace Next_Core_Blog.Controllers
                 return StatusCode(500);
             }
         }
+        #endregion
 
+        #region [ Decode Cookie ]
         [HttpGet("meAPI")]
         [Produces("application/json")]
         public async Task<RegisterViewModel> meAPIAsync()
@@ -134,8 +137,6 @@ namespace Next_Core_Blog.Controllers
             var opt = HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>();
             var cookie = opt.CurrentValue.CookieManager.GetRequestCookie(HttpContext, "UserLoginCookie");
             Dictionary<string, string> tokenInfo = new Dictionary<string, string>();
-            
-            // Decrypt if found
             if (!string.IsNullOrEmpty(cookie))
             {
                 var dataProtector = opt.CurrentValue.DataProtectionProvider.CreateProtector("Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationMiddleware", CookieAuthenticationDefaults.AuthenticationScheme, "v2");
@@ -145,28 +146,11 @@ namespace Next_Core_Blog.Controllers
                 {
                     tokenInfo.Add(claim.Type, claim.Value);
                 }
-
-                RegisterViewModel userInfo = await _userRepo.GetUserByEmail(tokenInfo["Email"]);
-                return userInfo;
+                return await _userRepo.GetUserByEmail(tokenInfo["Email"]);;
             }
-            else
-            {
-                return null;
-            }
+            
+            return null;
         }
-
-        private bool isLoginFailed(string Email)
-        {
-            // is Registed User?
-            if (_userRepo.IsRegistedUser(Email))
-            {
-                // attempt more than 5times and within 10 minutes
-                if (_userRepo.IsFiveOverCount(Email) && _userRepo.IsLastLoginWithinTenMinute(Email))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+        #endregion
     }
 }

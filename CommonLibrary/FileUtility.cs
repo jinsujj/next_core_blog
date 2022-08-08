@@ -30,9 +30,7 @@ namespace Next_Core_Blog.CommonLibrary
             while (blnExist){
                 string fullPath = @Path.Combine(dir, name);
                 if (File.Exists(fullPath))
-                {
                     name = strName + "(" + ++i +")" + strExt;
-                }
                 else{
                     blnExist = false;
                     name = fullPath;

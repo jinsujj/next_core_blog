@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -30,7 +31,6 @@ namespace Next_Core_Blog.Controllers
         private IWebHostEnvironment _enviorment;
         private readonly IConfiguration _config;
         private readonly ILogger<NoteController> _logger;
-
         private readonly INoteRepository _noteRepo;
         private readonly IUserRepository _userRepo;
 
@@ -44,44 +44,24 @@ namespace Next_Core_Blog.Controllers
             _userRepo = userRepo;
         }
 
+        #region [ Post Note ]
         [HttpPost]
         [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public IActionResult PostNote(PostNoteView note, BoardWriteFormType formType)
         {
             _logger.LogInformation("PostNote: " + note.title + " " + formType + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+            note.postIp = HttpContext.Connection.RemoteIpAddress.ToString();
+            try {
+                if (XSS_Check(note.content)) return StatusCode(403);
 
-            #region [XSS Script Check]
-            if (XSS_Check(note.content))
-            {
-                return StatusCode(403);
-            }
-            #endregion
-
-            #region [Parameter Modulation Check]
-            if (formType == BoardWriteFormType.modify)
-            {
-                // Get the encrypted cookie value
-                Dictionary<string, string> tokenInfo = DecryptTokenInfo(HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>());
-                if (note.userId != Convert.ToInt32(tokenInfo["userId"]))
-                    return StatusCode(403);
-            }
-            #endregion
-
-            try
-            {
-                var result = 0;
-                if (formType == BoardWriteFormType.create)
+                if (formType == BoardWriteFormType.modify)
                 {
-                    note.postIp = HttpContext.Connection.RemoteIpAddress.ToString();
-                    result = _noteRepo.PostNote(note, BoardWriteFormType.create);
-                }
-                else if (formType == BoardWriteFormType.modify)
-                {
-                    note.modifyIp = HttpContext.Connection.RemoteIpAddress.ToString();
-                    result = _noteRepo.PostNote(note, BoardWriteFormType.modify);
+                    var parameterModulationCheck = DecryptTokenInfo(HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>());
+                    if (note.userId != Convert.ToInt32(parameterModulationCheck["userId"]))
+                        return StatusCode(403);
                 }
 
-                return Ok(result);
+                return Ok(_noteRepo.PostNote(note, formType));
             }
             catch (Exception ex)
             {
@@ -89,19 +69,18 @@ namespace Next_Core_Blog.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        #endregion
 
+        #region [ Post Category ]
         [HttpPost("PostCategory")]
         [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public IActionResult PostCategory([FromBody] CategoryViewModel categoryView)
         {
             _logger.LogInformation("Category: " + categoryView.category + " SubCateghory:  " + categoryView.subCategory + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
-            #region [Parameter Modulation Check]
-            // Get the encrypted cookie value
-            Dictionary<string, string> tokenInfo = DecryptTokenInfo(HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>());
+            var parameterModulationCheck = DecryptTokenInfo(HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>());
             RegisterViewModel userInfo = _userRepo.GetUserByUserId(categoryView.userId);
-            if (userInfo.Role != tokenInfo["Role"]) return StatusCode(403);
-            #endregion
+            if (userInfo.Role != parameterModulationCheck["Role"]) return StatusCode(403);
 
             try
             {
@@ -114,15 +93,15 @@ namespace Next_Core_Blog.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        #endregion
 
+        #region [ Save Log ]
         [HttpPost("postIpLog")]
         public async Task<IActionResult> postIpLog([FromBody] IpLogModel logmodel)
         {
-            _logger.LogInformation("postIpLog: " + logmodel._ip + " " + logmodel._id + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
-
             try
             {
-                var result = await _noteRepo.postIpLog(logmodel);
+                await _noteRepo.postIpLog(logmodel);
                 return Ok();
             }
             catch (Exception ex)
@@ -131,33 +110,9 @@ namespace Next_Core_Blog.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        #endregion
 
-        [HttpGet("NoteById")]
-        public async Task<IActionResult> GetNoteById(int id)
-        {
-            _logger.LogInformation("GetNoteById: " + id +" "+ DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
-
-            // Get the encrypted cookie value
-            int userId =0;
-            if (!String.IsNullOrEmpty(HttpContext.Request.Cookies["UserLoginCookie"]))
-            {
-                Dictionary<string, string> tokenInfo = DecryptTokenInfo(HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>());
-                userId = Convert.ToInt32(tokenInfo["userId"]);
-            }
-
-            try
-            {
-                string ip = HttpContext.Connection.RemoteIpAddress.ToString();
-                var note = await _noteRepo.GetNoteById(id, userId, ip);
-                return Ok(note);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("error" + ex.Message);
-                return StatusCode(500, ex.Message);
-            }
-        }
-
+        #region [ Delete Note ]
         [HttpDelete("{id}")]
         [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public IActionResult DeleteNote(int id)
@@ -175,7 +130,9 @@ namespace Next_Core_Blog.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        #endregion
 
+        #region [ Get Note Info ]
         [HttpGet("getNoteAll")]
         public async Task<IActionResult> GetNoteAll(int userId)
         {
@@ -193,14 +150,40 @@ namespace Next_Core_Blog.Controllers
             }
         }
 
-        [HttpGet("category")]
-        public async Task<IActionResult> GetNoteByCategory(int id, string category, string subCategory)
+        [HttpGet("NoteById")]
+        public async Task<IActionResult> GetNoteById(int id)
         {
-            _logger.LogInformation("GetNoteByCategory: " + "id: " + id + " ," + category + "|" + subCategory + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+            _logger.LogInformation("GetNoteById: " + id + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+            int userId = 0;
+            if (!String.IsNullOrEmpty(HttpContext.Request.Cookies["UserLoginCookie"]))
+            {
+                var parameterModulationCheck = DecryptTokenInfo(HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>());
+                userId = Convert.ToInt32(parameterModulationCheck["userId"]);
+            }
 
             try
             {
-                var notes = await _noteRepo.GetNoteByCategory(id, category, subCategory);
+                string ip = HttpContext.Connection.RemoteIpAddress.ToString();
+                var note = await _noteRepo.GetNoteById(id, userId, ip);
+                return Ok(note);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("error" + ex.Message);
+                return StatusCode(500, ex.Message);
+            }
+        }
+        #endregion
+
+        #region [ Get Sidebar Info ]
+        [HttpGet("search")]
+        public async Task<IActionResult> GetNoteBySearch(string query)
+        {
+            _logger.LogInformation("GetNoteBySearch: " + query + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+
+            try
+            {
+                var notes = await _noteRepo.GetNoteBySearch(query);
                 return Ok(notes.ToList());
             }
             catch (Exception ex)
@@ -210,14 +193,14 @@ namespace Next_Core_Blog.Controllers
             }
         }
 
-        [HttpGet("search")]
-        public async Task<IActionResult> GetNoteBySearch(string query)
+        [HttpGet("category")]
+        public async Task<IActionResult> GetNoteByCategory(int id, string category, string subCategory)
         {
-            _logger.LogInformation("GetNoteBySearch: " + query + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+            _logger.LogInformation("GetNoteByCategory: " + "id: " + id + " ," + category + "|" + subCategory + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
             try
             {
-                var notes = await _noteRepo.GetNoteBySearch(query);
+                var notes = await _noteRepo.GetNoteByCategory(id, category, subCategory);
                 return Ok(notes.ToList());
             }
             catch (Exception ex)
@@ -259,53 +242,51 @@ namespace Next_Core_Blog.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        #endregion
 
+        #region [ SaveImage ]
         [HttpPost("saveImage")]
         [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public async Task<string> saveImage(IFormFile file)
         {
+            string fileName = "";
             try
             {
-                // file Extension Check
-                if (extType.Where(t => t == Path.GetExtension(file.FileName)).FirstOrDefault().Length < 1)
-                {
+                if (fileExtensionType.Where(t => t == Path.GetExtension(file.FileName)).FirstOrDefault().Length < 1)
                     return "Err.. Check file Ext Type ";
-                }
-
-                string fileName = string.Empty;
-                string fileFullPath = string.Empty;
-                var uploadDir = Path.Combine(_enviorment.WebRootPath, "files");
 
                 if ((file != null) && (file.Length > 0))
-                {
-                    fileFullPath = CommonLibrary.FileUtility.GetFileNameWithNumbering(uploadDir,
-                                Path.GetFileName(ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.ToString()));
+                    fileName = await saveImageFile(Path.Combine(_enviorment.WebRootPath, "files"), file);
 
-                    fileName = fileFullPath.Split("files")[1].ToString();
-                    using (FileStream fileStream = new FileStream(fileFullPath, FileMode.OpenOrCreate))
-                    {
-                        await file.CopyToAsync(fileStream);
-                    }
-                }
                 return fileName;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
                 return "Err.. Check file Type";
             }
         }
 
+        private async Task<String> saveImageFile(string uploadDir, IFormFile file)
+        {
+            string fileFullPath = CommonLibrary.FileUtility.GetFileNameWithNumbering(uploadDir,
+                                Path.GetFileName(ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.ToString()));
 
+            string fileName = fileFullPath.Split("files")[1].Substring(1);
+            using (FileStream fileStream = new FileStream(fileFullPath, FileMode.OpenOrCreate))
+            {
+                await file.CopyToAsync(fileStream);
+            }
+            return fileName;
+        }
+        #endregion
+
+        #region [ Read Count Info ]
         [HttpGet("noteCountAll")]
         public IActionResult GetCountAll()
         {
-            _logger.LogInformation("GetCountAll: " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
-
             try
             {
-                var result = _noteRepo.GetCountAll();
-                return Ok(result);
+                return Ok(_noteRepo.GetCountAll());
             }
             catch (Exception ex)
             {
@@ -319,8 +300,7 @@ namespace Next_Core_Blog.Controllers
         {
             try
             {
-                var result = await _noteRepo.getTotalReadCount();
-                return Ok(result);
+                return Ok(await _noteRepo.getTotalReadCount());
             }
             catch (Exception ex)
             {
@@ -334,8 +314,7 @@ namespace Next_Core_Blog.Controllers
         {
             try
             {
-                var result = await _noteRepo.getTodayReadCount();
-                return Ok(result);
+                return Ok(await _noteRepo.getTodayReadCount());
             }
             catch (Exception ex)
             {
@@ -343,40 +322,31 @@ namespace Next_Core_Blog.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        #endregion
 
-        public IEnumerable<string> extType = new List<string>{
-            ".jpg",".jpeg",".png"
-        };
-
+        #region [ Security Check ]
         private Boolean XSS_Check(string content)
         {
-            int openTagIndex = -1, closeTagIndex = -1;
-
+            int openTagIndex = -1, closeTagIndex = -1, index =0;
             var arrayValue = content.ToArray();
-            int i = 0;
             foreach (var t in arrayValue)
             {
                 if (t == '<' && openTagIndex == -1)
-                {
-                    openTagIndex = i;
-                }
+                    openTagIndex = index;
                 else if (t == '>' && closeTagIndex == -1)
-                {
-                    closeTagIndex = i;
-                }
+                    closeTagIndex = index;
+
                 if (openTagIndex != -1 && closeTagIndex != -1)
                 {
                     var buff = content.Substring(openTagIndex, (closeTagIndex - openTagIndex + 1)).ToLower();
-                    if (buff.Contains("typescript"))
-                        buff = "";
-                    else if(buff.Contains("script")){
+                    if (buff.Contains("typescript")) continue;
+                    else if (buff.Contains("script")) 
                         return true;
-                    }
 
                     openTagIndex = -1;
                     closeTagIndex = -1;
                 }
-                i++;
+                index++;
             }
             return false;
         }
@@ -393,8 +363,12 @@ namespace Next_Core_Blog.Controllers
             {
                 tokenInto.Add(claim.Type, claim.Value);
             }
-
             return tokenInto;
         }
+        #endregion
+
+        public IEnumerable<string> fileExtensionType = new List<string>{
+            ".jpg",".jpeg",".png"
+        };
     }
 }
