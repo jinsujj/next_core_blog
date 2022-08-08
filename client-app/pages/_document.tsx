@@ -87,6 +87,10 @@ class MyDocument extends Document {
                       });`,
             }}
           />
+          <script
+            async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2309486098831986"
+          />
         </body>
       </Html>
     );
