@@ -127,13 +127,14 @@ const LoginModal = ({ closeModal }: IProps) => {
     event.preventDefault();
     setValidateMode(true);
 
-    if (stayLogin) {
+    if (stayLogin) 
       localStorage.setItem("Email", email);
-    }
+    
 
-    if (!email || !password) {
+    if (!email || !password) 
       alert("Email 과 비밀번호를 입력해 주세요");
-    } else {
+    
+    else {
       const loginBody = { email, password };
       try {
         const { data } = await userApi.Login(loginBody);
@@ -142,6 +143,7 @@ const LoginModal = ({ closeModal }: IProps) => {
         closeModal();
       } catch (e: any) {
         const errorMessage: string = e.message;
+
         if (errorMessage.includes("401")) {
           setEmailErrorMsg("해당 계정이 없거나 비밀번호가 일치하지 않습니다");
           return;
@@ -151,9 +153,7 @@ const LoginModal = ({ closeModal }: IProps) => {
           return;
         }
         if (errorMessage.includes("403")) {
-          setEmailErrorMsg(
-            "5회 이상 틀렸습니다. 10분 뒤에 재 로그인 바랍니다."
-          );
+          setEmailErrorMsg("5회 이상 틀렸습니다. 10분 뒤에 재 로그인 바랍니다.");
           return;
         }
       }

@@ -75,14 +75,9 @@ export interface IProps {
 
 const host = process.env.NEXT_PUBLIC_API_URL + "/files/";
 const BlogCard = ({ blog }: IProps) => {
-  if (blog.thumbImage === null) {
-    blog.thumbImage = "default.svg";
-  }
+  if (blog.thumbImage === null) blog.thumbImage = "default.svg";
 
   var blogPostDate = blog.postDate.replace(/-/g, "/");
-  var postdate = formatDistance(new Date(), new Date(blogPostDate), {
-    addSuffix: true,
-  });
 
   return (
     <Container isPost={blog.isPost}>
@@ -99,7 +94,11 @@ const BlogCard = ({ blog }: IProps) => {
               icon={faCalendarCheck}
               style={{ fontSize: 14, color: `${palette.gray_bb}` }}
             />
-            <p>{postdate}</p>
+            <p>
+              {formatDistance(new Date(), new Date(blogPostDate), {
+                addSuffix: true,
+              })}
+            </p>
           </div>
         </div>
       </div>

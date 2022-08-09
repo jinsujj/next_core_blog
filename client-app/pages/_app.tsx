@@ -21,8 +21,8 @@ const app = ({ Component, pageProps }: AppProps) => {
 
   useEffect(() => {
     // kakao Login check
-    const search = decodeURI(window.location.href).split("?")[1];
-    const KAKAO_ACCESS_CODE = new URLSearchParams(search).get("code") || "";
+    const parameterCheck = decodeURI(window.location.href).split("?")[1];
+    const KAKAO_ACCESS_CODE = new URLSearchParams(parameterCheck).get("code") || "";
 
     if (KAKAO_ACCESS_CODE.length > 1) {
       kakaoLogin(KAKAO_ACCESS_CODE);
@@ -88,15 +88,14 @@ app.getInitialProps = wrapper.getInitialAppProps((store) => async (context) => {
   const appInitalProps = await App.getInitialProps(context);
   const cookieObject = context.ctx.req?.headers.cookie;
   try {
-    axios.defaults.headers.common["Cookie"] =
-      context.ctx.req?.headers.cookie || "";
-
+    axios.defaults.headers.common["Cookie"] = context.ctx.req?.headers.cookie || "";
     const data = await userApi.meAPI();
-    if (data.data.userId) {
+
+    if (data.data.userId) 
       store.dispatch(userActions.setLoggedUser(data.data));
-    } else {
+    else 
       store.dispatch(userActions.initUser());
-    }
+
   } catch (e: any) {
     console.log(e.message);
   }

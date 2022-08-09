@@ -38,20 +38,6 @@ const Container = styled.form`
     margin-bottom: 0.5rem;
   }
 
-  // pre{
-  //     display: block;
-  //     padding: 9.5px;
-  //     margin: 0 0 10px;
-  //     font-size: 13px;
-  //     line-height: 1.42857143;
-  //     color: #333;
-  //     word-break: break-all;
-  //     word-wrap: break-word;
-  //     background-color: #f5f5f5;
-  //     border: 1px solid #ccc;
-  //     border-radius: 4px;
-  // }
-
   .note-editor.note-airframe
     .note-editing-area
     .note-editable[contenteditable="false"],
@@ -71,7 +57,9 @@ const Container = styled.form`
   }
 
   .note-editable {
+    font-family: 'Nanum Gothic', sans-serif;
     min-height: 500px;
+    line-height: 1.5;
   }
 
   .note-statusbar {
