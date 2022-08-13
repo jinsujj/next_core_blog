@@ -15,9 +15,9 @@ import useUtterances from "../../hooks/useUtterances";
 import Router from "next/router";
 import { NextSeo } from "next-seo";
 import { format } from "date-fns";
+import Head from 'next/head';
 
 import Prism from 'prismjs';
-import 'prismjs/themes/prism-coy.css';
 import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
 import 'prismjs/plugins/line-numbers/prism-line-numbers';
 import 'prismjs/components/prism-typescript.min';
@@ -191,6 +191,9 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
 
   return (
     <>
+    <Head>
+      <title>{detailNote.title}</title>
+    </Head>
       <NextSeo
         canonical={canonicalUrl}
         openGraph={{

@@ -17,7 +17,6 @@ class MyDocument extends Document {
     return (
       <Html>
         <Head>
-          <script src={"https://localhost:3030/js/prism.js"}></script>
           {/* favIcon */}
           <link rel="shortcut icon" type="image/x-icon" href="./img/owl.svg" />
           <link rel="icon" href="./img/owl.svg" />
@@ -55,7 +54,7 @@ class MyDocument extends Document {
             href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css"
             rel="stylesheet"
           />
-
+          {/* google Adsense */}
           <script
             async
             src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2309486098831986"
