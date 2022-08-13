@@ -54,6 +54,12 @@ class MyDocument extends Document {
             href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css"
             rel="stylesheet"
           />
+         {/* prism one-dark theme */}
+          <link
+            href="../css/prism-one-dark.css"
+            rel="stylesheet"
+          />
+
           {/* google Adsense */}
           <script
             async
