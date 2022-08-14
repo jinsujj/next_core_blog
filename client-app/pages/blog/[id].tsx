@@ -161,7 +161,7 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
     );
   }
 
-  const canonicalUrl = `https://owl-dev.me/blog/${detailNote.noteId}`;
+  const canonicalUrl = `https://www.owl-dev.me/blog/${detailNote.noteId}`;
   const SearchQuery = useSelector((state) => state.common.search);
   const postState = useSelector((state) => state.common.postState);
   const sideBarCategory = useSelector((state) => state.common.sideBarCategory);
@@ -194,11 +194,13 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
       <title>{detailNote.title}</title>
     </Head>
       <NextSeo
+        title={detailNote.title}
+        description={"("+detailNote.title+") CTO 가 되고픈 부엉이 개발자 블로그 입니다"}
         canonical={canonicalUrl}
         openGraph={{
           url: canonicalUrl,
           title: detailNote.title,
-          description: `CTO 가 되고픈 부엉이 개발자 블로그 입니다 "+${detailNote.title}`,
+          description: `CTO 가 되고픈 부엉이 개발자 블로그 입니다`,
           images: [
             {
               url: `https://backend.owl-dev.me/files/${detailNote.thumbImage}`,

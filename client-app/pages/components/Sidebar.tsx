@@ -13,7 +13,6 @@ import Button from "./common/Button";
 import Input from "./common/Input";
 import Router from "next/router";
 import palette from "../../styles/palette";
-import { faWindowClose } from "@fortawesome/free-solid-svg-icons";
 
 interface StyledProps {
   istoggle: boolean;

@@ -107,7 +107,7 @@ const Header = () => {
   const isToggle = useSelector((state) => state.common.toggle);
   const isLogged = useSelector((state) => state.user.isLogged);
 
-  const { openModal, ModalPortal, closeModal } = useModal();
+  const {ModalPortal, closeModal } = useModal();
   const dispatch = useDispatch();
 
   const changeToggle = () => {
