@@ -66,7 +66,6 @@ const Container = styled.div`
     display: flex;
     align-items: center;
   }
-
   .post_info {
     display: flex;
     padding-top: 40px;
@@ -199,7 +198,7 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
         openGraph={{
           url: canonicalUrl,
           title: detailNote.title,
-          description: "CTO 가 되고픈 부엉이 블로그 입니다",
+          description: `CTO 가 되고픈 부엉이 개발자 블로그 입니다 "+${detailNote.title}`,
           images: [
             {
               url: `https://backend.owl-dev.me/files/${detailNote.thumbImage}`,
@@ -218,9 +217,9 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
           <div className="board">
             {postState === "read" && (
               <div className="summary clearfix">
-                <h2 className="summary__title float--left">
+                <h1 className="summary__title float--left">
                   {detailNote.title}
-                </h2>
+                </h1>
                 <div className="post_info float--right">
                   <ul>
                     <li>

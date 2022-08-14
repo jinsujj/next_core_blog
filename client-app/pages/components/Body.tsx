@@ -14,7 +14,10 @@ import BlogCard from "./BlogCard";
 
 const Container = styled.div`
   margin-top: 56px;
-
+  
+  h1{
+    font-size:24px;
+  }
   .inner {
     max-width: 940px;
     margin: 0 auto;
@@ -112,9 +115,9 @@ const Body = () => {
       <div className="inner">
         <div className="board">
           {setCategoryFilter && postState =="read" && (
-            <h3 className="summary__write">
+            <h1 className="summary__write">
             {setCategoryFilter} , {setSubCategoryFilter} List.
-            </h3>
+            </h1>
           )}
           {postState == "read" && (
             <ResponsiveMasonry
