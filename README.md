@@ -23,7 +23,7 @@ Full Stack 개발자가 되기 위해 쌓아온 그간의 경험을 모아서, �
 </p>
   
 Front-end : Next.js  <br>
-Back-end  : .Net Core 5 <br>
+Back-end  : .Net Core 5 -> .Net Core 6 <br>
 Language  : typescript , C# , SQL <br>
 Database  : MySQL 
 <br/>
@@ -36,7 +36,7 @@ Database  : MySQL
 
 <b>'next_core_blog_erd'</b> - mysql ERD 구조를 보관하고 있습니다. <br/>
 <b>'CommonLibrary'</b>      - *FileUpload* , *Security* 관련 Library 를 처리합니다. <br/> 
-<b>'Startup.cs'</b>         - *'Cookie'* 및 *'Cors'*, *'DB Repository'* 를 관리합니다. <br/>
+<b>'Program.cs'</b>         - *'Cookie'* 및 *'Cors'*, *'DB Repository'* 를 관리합니다. <br/>
 <b>'Context/DapperContext'</b> - mysql Db 와 ORM 연동을 해줍니다 <br/>
 <b>'Controllers'</b>           - 노트(Note), 유저(User) 관련 컨트롤러를 관리합니다 <br/>
 <b>'Model'</b>                 - 노트(Note), 유저(User) 관련 모델 관리합니다 <br/>
