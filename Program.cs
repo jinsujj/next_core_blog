@@ -84,7 +84,7 @@ app.UseStaticFiles();
 // useCors should be located between useRouting and useAuthorization
 app.UseCors("Dev");
 app.UseAuthentication();
-app.UseAuthentication();
+app.UseAuthorization();
 
 // Nginx Reverse Proxy - Real Ip Set
 app.UseForwardedHeaders(new ForwardedHeadersOptions
