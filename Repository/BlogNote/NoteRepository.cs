@@ -304,12 +304,12 @@ namespace Next_Core_Blog.Repository.BlogNote
         }
 
         public async Task<int> postIpLog(IpLogModel logModel){
-            string Content = string.Format("{0}",logModel._id);
+            string Content = string.Format("{0}",logModel.id);
 
             // Ignore GoogleBot And Local Log
-            if(logModel._ip.StartsWith("66.249") ||
-                logModel._ip.StartsWith("192.") ||
-                logModel._ip.StartsWith("127.")
+            if(logModel.ip.StartsWith("66.249") ||
+                logModel.ip.StartsWith("192.") ||
+                logModel.ip.StartsWith("127.")
             ){
                 return 1;
             }
@@ -317,9 +317,9 @@ namespace Next_Core_Blog.Repository.BlogNote
             string sql = "SELECT COUNT(*) FROM note WHERE noteId= @id AND isPost ='Y'";
             using (var con = _context.CreateConnection())
             {
-                int isPosted = con.QueryFirstOrDefault<int>(sql, new {id = logModel._id});
+                int isPosted = con.QueryFirstOrDefault<int>(sql, new {id = logModel.id});
                 if(isPosted == 1){
-                    await con.QueryAsync(@"INSERT INTO userlog SET Content= @Content, Ip = @Ip, Date =NOW()", new { Content, Ip = logModel._ip });    
+                    await con.QueryAsync(@"INSERT INTO userlog SET Content= @Content, Ip = @Ip, Date =NOW()", new { Content, Ip = logModel.ip });    
                 }
                 return 1;
             }

@@ -57,7 +57,7 @@ const Container = styled.form`
   }
 
   .note-editable {
-    font-family: 'Nanum Gothic', sans-serif;
+    font-family: "Nanum Gothic", sans-serif;
     min-height: 500px;
     line-height: 1.5;
   }
@@ -208,18 +208,7 @@ const Editor = ({ NoteInfo }) => {
   useEffect(() => {
     host = process.env.NEXT_PUBLIC_API_URL;
 
-    if (postState === "read") {
-      $("#summernote").summernote({
-        lang: "ko-KR", // default: 'en-US'
-        height:
-          $(document).height() -
-          ($("#Maintable").height() + $("#TblTop").height() + 60),
-        toolbar: [],
-        disableDragAndDrop: true,
-      });
-      $("#summernote").summernote("code", NoteInfo.content);
-      $("#summernote").summernote("disable");
-    } else if (postState === "modify") {
+    if (postState === "modify") {
       setTitle(NoteInfo.title);
       $("#summernote").summernote({
         lang: "ko-KR", // default: 'en-US'
@@ -345,43 +334,43 @@ const Editor = ({ NoteInfo }) => {
 
   return (
     <Container onSubmit={openCategoryModal} postState={postState}>
-      {postState !== "read" && (
-        <div className="title_input">
-          <Input
-            type="text"
-            placeholder="제목"
-            color="gray_cd"
-            focusColor="gray_80"
-            useValidation={false}
-            value={title}
-            onChange={onChangeTitle}
+      {/* title */}
+      <div className="title_input">
+        <Input
+          type="text"
+          placeholder="제목"
+          color="gray_cd"
+          focusColor="gray_80"
+          useValidation={false}
+          value={title}
+          onChange={onChangeTitle}
+        />
+      </div>
+      {/* contnet */}
+      <textarea id="summernote" />
+      {/* bottom */}
+      <div className="save-button clearfix">
+        <div className="float--left">
+          <input
+            className="upload-name"
+            value={imageBuff}
+            placeholder="Thumbnail"
+          />
+          <label htmlFor="file">파일찾기</label>
+          <input
+            type="file"
+            id="file"
+            className="upload-name"
+            onChange={setThumbFile.bind(this)}
+            placeholder="첨부파일"
+            accept="image/jpg, image/png, image/jpeg"
           />
         </div>
-      )}
-      <textarea id="summernote" />
-      {postState !== "read" && (
-        <div className="save-button clearfix">
-          <div className="float--left">
-            <input
-              className="upload-name"
-              value={imageBuff}
-              placeholder="Thumbnail"
-            />
-            <label htmlFor="file">파일찾기</label>
-            <input
-              type="file"
-              id="file"
-              className="upload-name"
-              onChange={setThumbFile.bind(this)}
-              placeholder="첨부파일"
-              accept="image/jpg, image/png, image/jpeg"
-            />
-          </div>
-          <div className="float--right">
-            <Button type="submit">저장하기</Button>
-          </div>
+        <div className="float--right">
+          <Button type="submit">저장하기</Button>
         </div>
-      )}
+      </div>
+
       <ModalPortal>
         <CategoryModal
           postNoteForm={{

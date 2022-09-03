@@ -101,6 +101,7 @@ namespace Next_Core_Blog.Controllers
         {
             try
             {
+                _logger.LogInformation("ip: "+logmodel.ip+" ,id: "+logmodel.id);
                 await _noteRepo.postIpLog(logmodel);
                 return Ok();
             }

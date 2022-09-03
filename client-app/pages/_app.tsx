@@ -84,9 +84,10 @@ const app = ({ Component, pageProps }: AppProps) => {
 
 // Cookie Check
 app.getInitialProps = wrapper.getInitialAppProps((store) => async (context) => {
-  //process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+  // 로컬에서 실행시 주석 해제
+  // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
   const appInitalProps = await App.getInitialProps(context);
-  const cookieObject = context.ctx.req?.headers.cookie;
+
   try {
     axios.defaults.headers.common["Cookie"] = context.ctx.req?.headers.cookie || "";
     const data = await userApi.meAPI();

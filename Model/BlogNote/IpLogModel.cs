@@ -7,7 +7,7 @@ namespace Next_Core_Blog.Model.BlogNote
 {
     public class IpLogModel
     {
-        public string _ip {get;set;}
-        public int _id {get;set;}
+        public string ip {get;set;}
+        public int id {get;set;}
     }
 }

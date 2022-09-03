@@ -70,7 +70,7 @@ class MyDocument extends Document {
           <Main />
           <NextScript />
           {/* jquery 3.6.0 */}
-          <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+          <script src="https://code.jquery.com/jquery-3.6.1.slim.min.js" />
           <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
           {/* fontawesom */}
           <script src="https://kit.fontawesome.com/3ec141240c.js"></script>
@@ -80,7 +80,6 @@ class MyDocument extends Document {
           {/* summernote */}
           <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
           <script src="../js/summernote-ext-syntax.js"></script>
-          <script src="../js/summernote-ko-KR.js"></script>
           {/* Global Site Tag (gtag.js) - Google Analytics */}
           <script
             async

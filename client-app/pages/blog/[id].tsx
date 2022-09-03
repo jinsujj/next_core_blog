@@ -15,21 +15,18 @@ import useUtterances from "../../hooks/useUtterances";
 import Router from "next/router";
 import { NextSeo } from "next-seo";
 import { format } from "date-fns";
-import Head from 'next/head';
+import Head from "next/head";
 
-import Prism from 'prismjs';
-import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
-import 'prismjs/plugins/line-numbers/prism-line-numbers';
-import 'prismjs/components/prism-typescript.min';
-import 'prismjs/components/prism-jsx.min';
-import 'prismjs/components/prism-tsx.min';
-import 'prismjs/components/prism-csharp';
-import 'prismjs/components/prism-java';
-import 'prismjs/components/prism-sql';
-import 'prismjs/components/prism-bash';
-
-
-
+import Prism from "prismjs";
+import "prismjs/plugins/line-numbers/prism-line-numbers.css";
+import "prismjs/plugins/line-numbers/prism-line-numbers";
+import "prismjs/components/prism-typescript.min";
+import "prismjs/components/prism-jsx.min";
+import "prismjs/components/prism-tsx.min";
+import "prismjs/components/prism-csharp";
+import "prismjs/components/prism-java";
+import "prismjs/components/prism-sql";
+import "prismjs/components/prism-bash";
 
 const Container = styled.div`
   margin-top: 56px;
@@ -138,7 +135,36 @@ const Container = styled.div`
 
   .noAuthority {
     padding: 50% 0%;
-    text-align:center;
+    text-align: center;
+  }
+
+  .title_input {
+    align-items: center;
+    border: 1px solid ${palette.gray_cd};
+    padding: 4px 4px 4px 4px;
+    background-color: ${palette.gray_f5};
+  }
+
+  .title {
+    align-items: center;
+    padding-top: 1px;
+  }
+
+  blockquote {
+    padding: 10px 20px;
+    margin: 0 0 20px;
+    font-size: 17.5px;
+    border-left: 5px solid ${palette.blockQuote};
+  }
+
+  ul li {
+    padding: 5px 0px 5px 5px;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #efefef;
+  }
+
+  ol li {
+    margin-bottom: 0.5rem;
   }
 `;
 
@@ -165,7 +191,9 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
   const SearchQuery = useSelector((state) => state.common.search);
   const postState = useSelector((state) => state.common.postState);
   const sideBarCategory = useSelector((state) => state.common.sideBarCategory);
-  const sidgBarSubCategory = useSelector((state) => state.common.sideBarSubCategory);
+  const sideBarSubCategory = useSelector(
+    (state) => state.common.sideBarSubCategory
+  );
 
   const dispatch = useDispatch();
   dispatch(commonAction.setPostUserIdOfNote(detailNote.userId));
@@ -179,23 +207,25 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
     return () => {
       if (
         detailNote.category !== sideBarCategory ||
-        detailNote.subCategory !== sidgBarSubCategory
+        detailNote.subCategory !== sideBarSubCategory
       ) {
         Router.push("/");
       } else if (SearchQuery.includes(detailNote.title)) {
         Router.push("/");
       }
     };
-  }, [sideBarCategory, sidgBarSubCategory, SearchQuery]);
+  }, [sideBarCategory, sideBarSubCategory, SearchQuery]);
 
   return (
     <>
-    <Head>
-      <title>{detailNote.title}</title>
-    </Head>
+      <Head>
+        <title>{detailNote.title}</title>
+      </Head>
       <NextSeo
         title={detailNote.title}
-        description={"("+detailNote.title+") CTO 가 되고픈 부엉이 개발자 블로그 입니다"}
+        description={
+          "(" + detailNote.title + ") CTO 가 되고픈 부엉이 개발자 블로그 입니다"
+        }
         canonical={canonicalUrl}
         openGraph={{
           url: canonicalUrl,
@@ -231,7 +261,10 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
                       />
                     </li>
                     <li>
-                      {format(new Date( detailNote.postDate.replace(/-/g,"/")), "yyyy-MM-dd")}
+                      {format(
+                        new Date(detailNote.postDate.replace(/-/g, "/")),
+                        "yyyy-MM-dd"
+                      )}
                     </li>
                   </ul>
                 </div>
@@ -253,9 +286,10 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
             )}
             {postState === "read" && (
               <div className="board clearfix">
-                <div className="board">
-                  <Editor NoteInfo={detailNote} />
-                </div>
+                <div
+                  className="board"
+                  dangerouslySetInnerHTML={{ __html: detailNote.content }}
+                />
               </div>
             )}
           </div>
@@ -272,18 +306,15 @@ export default blogDetail;
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  const cookies = context.req.headers.cookie;
-  const id = context.query.id;
-  const ip =
+  let id = Number(context.query.id as string);
+  let ip = String(
     context.req.headers["x-real-ip"] ||
-    context.req.connection.remoteAddress ||
-    "";
+      context.req.connection.remoteAddress ||
+      ("" as string)
+  );
 
-  var _id = Number(id as string);
-  var _ip = String(ip as string);
-  const ipLog = { _id, _ip };
-  const { data: data } = await noteApi.postIpLog(ipLog);
-  const { data: detailNote } = await noteApi.getNoteById(Number(id as string));
+  noteApi.postIpLog({ip,id});
+  const { data: detailNote } = await noteApi.getNoteById(id);
 
   return {
     props: {
@@ -291,4 +322,3 @@ export const getServerSideProps: GetServerSideProps = async (
     },
   };
 };
-
