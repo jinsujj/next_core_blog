@@ -104,7 +104,6 @@ const Container = styled.div`
 `;
 
 const Header = () => {
-  let sidebarInit = false;
   const isToggle = useSelector((state) => state.common.toggle);
   const isLogged = useSelector((state) => state.user.isLogged);
 
@@ -113,8 +112,6 @@ const Header = () => {
 
   const changeToggle = () => {
     dispatch(commonAction.setToggleMode(!isToggle));
-    sidebarInit =true;
-    console.log(sidebarInit);
   };
 
   const goHome = (event: React.MouseEvent<HTMLButtonElement>) =>{
@@ -124,7 +121,7 @@ const Header = () => {
 
   return (
     <>
-      {!!!sidebarInit && <Sidebar/>}
+      {isToggle && <Sidebar/>}
       <Container>
         <div className="inner">
           <div className="wrapper">

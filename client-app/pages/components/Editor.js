@@ -270,7 +270,7 @@ const Editor = ({ NoteInfo }) => {
       });
       $("#summernote").summernote("reset");
       $("#summernote").summernote("code", NoteInfo.content);
-    } else {
+    } else if (postState == "write") {
       $("#summernote").summernote({
         lang: "ko-KR", // default: 'en-US'
         height: 800,

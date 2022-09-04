@@ -18,9 +18,9 @@ class MyDocument extends Document {
       <Html>
         <Head>
           {/* favIcon */}
-          <link rel="shortcut icon" type="image/x-icon" href="./img/owl.svg" />
-          <link rel="icon" href="./img/owl.svg" />
-          <link rel="apple-touch-icon" href="./img/owl.svg" />
+          <link rel="shortcut icon" type="image/x-icon" href="/public/img/owl.svg" />
+          <link rel="icon" href="/public/img/owl.svg" />
+          <link rel="apple-touch-icon" href="/public/img/owl.svg" />
 
           {/* Standard Font */}
           <link
@@ -69,14 +69,13 @@ class MyDocument extends Document {
         <body>
           <Main />
           <NextScript />
-          {/* jquery 3.6.0 */}
+          {/* jquery 3.6.1 */}
           <script src="https://code.jquery.com/jquery-3.6.1.slim.min.js" />
           <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
           {/* fontawesom */}
           <script src="https://kit.fontawesome.com/3ec141240c.js"></script>
           {/* bootstrap */}
           <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
           {/* summernote */}
           <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
           <script src="../js/summernote-ext-syntax.js"></script>
