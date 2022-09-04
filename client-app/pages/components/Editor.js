@@ -217,6 +217,29 @@ const Editor = ({ NoteInfo }) => {
           ($("#Maintable").height() + $("#TblTop").height() + 60),
         tabsize: 3,
         toolbar: toolbar,
+        buttons: {
+          myVideo: function(context) {
+            var ui = $.summernote.ui;
+            var button = ui.button({
+              contents: '<i class="fa fa-video-camera"/>',
+              tooltip: 'video',
+              click: function() {
+              var div = document.createElement('div');
+              div.classList.add('iframe');
+              var iframe = document.createElement('iframe');
+              iframe.src = prompt('Enter video url:');
+              iframe.src =" https://www.youtube.com/embed/" + iframe.src.split("=")[1];
+              iframe.setAttribute('frameborder', 0);
+              iframe.setAttribute('width', '100%');
+              iframe.classList.add('note-video-clip')
+              iframe.setAttribute('allowfullscreen', true);
+              div.appendChild(iframe);
+              context.invoke('editor.insertNode', div);
+                }
+            });
+    
+            return button.render();
+          }},
         focus: true,
         fontNames: [
           "Arial",
@@ -276,6 +299,28 @@ const Editor = ({ NoteInfo }) => {
         height: 800,
         tabsize: 3,
         toolbar: toolbar,
+        buttons: {
+          myVideo: function(context) {
+            var ui = $.summernote.ui;
+            var button = ui.button({
+              contents: '<i class="fa fa-video-camera"/>',
+              tooltip: 'video',
+              click: function() {
+                var div = document.createElement('div');
+                div.classList.add('iframe');
+                var iframe = document.createElement('iframe');
+                iframe.src = prompt('Enter video url:');
+                iframe.src =" https://www.youtube.com/embed/" + iframe.src.split("=")[1];
+                iframe.setAttribute('frameborder', 0);
+                iframe.setAttribute('width', '100%');
+                iframe.classList.add('note-video-clip')
+                iframe.setAttribute('allowfullscreen', true);
+                div.appendChild(iframe);
+                context.invoke('editor.insertNode', div);
+                  }
+            });
+            return button.render();
+          }},
         focus: true,
         fontNames: [
           "Arial",
@@ -402,7 +447,8 @@ const toolbar = [
   ["table", ["table"]],
   ["para", ["ul", "ol", "paragraph"]],
   ["height", ["height"]],
-  ["insert", ["picture", "link", "video"]],
+  ["insert", ["picture", "link"]],
   ["view", ["fullscreen", "codeview"]],
   ["help", ["help"]],
+  ['mybutton', ['myVideo']]
 ];

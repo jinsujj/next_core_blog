@@ -166,6 +166,23 @@ const Container = styled.div`
   ol li {
     margin-bottom: 0.5rem;
   }
+
+  .iframe {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  }
+  .note-video-clip {
+    position: absolute;
+    top: 10;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
 `;
 
 interface IProps {

@@ -121,7 +121,7 @@ const Header = () => {
 
   return (
     <>
-      {isToggle && <Sidebar/>}
+      <Sidebar/>
       <Container>
         <div className="inner">
           <div className="wrapper">
