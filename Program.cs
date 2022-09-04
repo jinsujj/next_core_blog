@@ -11,7 +11,7 @@ using Microsoft.OpenApi.Models;
 using Next_Core_Blog.Context;
 using Next_Core_Blog.Repository.BlogNote;
 using Next_Core_Blog.Repository.Users;
-using Org.BouncyCastle.Utilities.Net;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,6 +65,17 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Next_Core_Blog", Version = "v1" });
 });
+
+
+ builder.WebHost.ConfigureKestrel((context, options) =>
+  {
+    options.Listen(System.Net.IPAddress.Any, 5001, listenOptions =>
+    {
+      // Use HTTP/3
+      listenOptions.Protocols = HttpProtocols.Http1AndHttp2AndHttp3;
+      listenOptions.UseHttps();
+    });
+  });
 
 
 var app = builder.Build();
