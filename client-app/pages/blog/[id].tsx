@@ -33,6 +33,7 @@ const Container = styled.div`
 
   .inner {
     max-width: 940px;
+    overflow-x: scroll;
     margin: 0 auto;
     box-sizing: border-box;
     position: relative;
@@ -104,6 +105,7 @@ const Container = styled.div`
   }
 
   .board {
+    width:100%;
     min-height: 500px;
   }
 
