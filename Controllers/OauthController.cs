@@ -52,6 +52,7 @@ namespace next_core_blog.Controllers
                 kakaoProfile kakaoProfile = DecodeKakaoToken(req);
 
                 // kakao email exist check
+                // 카카오 로그인 시, 카카오 이메일 없는 경우가 있어서 로직 분기 처리함.
                 if (String.IsNullOrEmpty(kakaoProfile.kakao_account.email))
                 {
                     AccountCheckById(kakaoProfile, kakaoToken.Token);
