@@ -18,7 +18,11 @@ class MyDocument extends Document {
       <Html>
         <Head>
           {/* favIcon */}
-          <link rel="shortcut icon" type="image/x-icon" href="/public/img/owl.svg" />
+          <link
+            rel="shortcut icon"
+            type="image/x-icon"
+            href="/public/img/owl.svg"
+          />
           <link rel="icon" href="/public/img/owl.svg" />
           <link rel="apple-touch-icon" href="/public/img/owl.svg" />
 
@@ -54,17 +58,8 @@ class MyDocument extends Document {
             href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css"
             rel="stylesheet"
           />
-         {/* prism one-dark theme */}
-          <link
-            href="../css/prism-one-dark.css"
-            rel="stylesheet"
-          />
-
-          {/* google Adsense */}
-          <script
-            async
-            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2309486098831986"
-          />
+          {/* prism one-dark theme */}
+          <link href="../css/prism-one-dark.css" rel="stylesheet" />
         </Head>
         <body>
           <Main />
@@ -94,6 +89,11 @@ class MyDocument extends Document {
                         page_path: window.location.pathname,
                       });`,
             }}
+          />
+          {/* google Adsense */}
+          <script
+            async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2309486098831986"
           />
         </body>
       </Html>
