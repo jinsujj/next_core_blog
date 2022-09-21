@@ -31,13 +31,12 @@ jobs:
         run : ls /home/runner/work/next_core_blog/next_core_blog/bin/Debug/net6.0/ -al
 
       - name: 'deploy file trasmit'
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        uses: sebastianpopp/ftp-action@releases/v2
         with: 
-          server: '110.8.21.243'
-          username: 'jisoo'
+          host: '110.8.21.243'
+          user: 'jisoo'
           password: '8782'
-          local_path: '/home/runner/work/next_core_blog/next_core_blog/bin/Debug/net6.0/'
-          remote_path: '/home/'
-          sftpArgs: '-o ConnectTimeout=5'
+          localDir: '/home/runner/work/next_core_blog/next_core_blog/bin/Debug/net6.0/'
+          remoteDir: '/home/'
           # port: ${{ secrets.PORT }}
          
