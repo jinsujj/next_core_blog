@@ -36,7 +36,7 @@ jobs:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          sftp_only: true
+          # sftp_only: true
           port: ${{ secrets.PORT }}
-          local_path: '/home/runner/work/next_core_blog/next_core_blog/bin/Debug/net6.0/*'
+          local_path: '/home/runner/work/next_core_blog/next_core_blog/bin/Debug/net6.0/'
           remote_path: './deploy'
