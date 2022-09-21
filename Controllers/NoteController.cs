@@ -51,7 +51,8 @@ namespace Next_Core_Blog.Controllers
         {
             _logger.LogInformation("PostNote: " + note.title + " " + formType + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
             note.postIp = HttpContext.Connection.RemoteIpAddress.ToString();
-            try {
+            try
+            {
                 if (XSS_Check(note.content)) return StatusCode(403);
 
                 if (formType == BoardWriteFormType.modify)
@@ -101,7 +102,7 @@ namespace Next_Core_Blog.Controllers
         {
             try
             {
-                _logger.LogInformation("ip: "+logmodel.ip+" ,id: "+logmodel.id);
+                _logger.LogInformation("ip: " + logmodel.ip + " ,id: " + logmodel.id);
                 await _noteRepo.postIpLog(logmodel);
                 return Ok();
             }
@@ -328,7 +329,7 @@ namespace Next_Core_Blog.Controllers
         #region [ Security Check ]
         private Boolean XSS_Check(string content)
         {
-            int openTagIndex = -1, closeTagIndex = -1, index =0;
+            int openTagIndex = -1, closeTagIndex = -1, index = 0;
             var arrayValue = content.ToArray();
             foreach (var t in arrayValue)
             {
@@ -341,7 +342,7 @@ namespace Next_Core_Blog.Controllers
                 {
                     var buff = content.Substring(openTagIndex, (closeTagIndex - openTagIndex + 1)).ToLower();
                     if (buff.Contains("typescript")) continue;
-                    else if (buff.Contains("script")) 
+                    else if (buff.Contains("script"))
                         return true;
 
                     openTagIndex = -1;
@@ -356,15 +357,23 @@ namespace Next_Core_Blog.Controllers
         {
             Dictionary<string, string> tokenInto = new Dictionary<string, string>();
 
-            var cookie = opt.CurrentValue.CookieManager.GetRequestCookie(HttpContext, "UserLoginCookie");
-            var dataProtector = opt.CurrentValue.DataProtectionProvider.CreateProtector("Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationMiddleware", CookieAuthenticationDefaults.AuthenticationScheme, "v2");
-            var ticketDataFormat = new TicketDataFormat(dataProtector);
-            var ticket = ticketDataFormat.Unprotect(cookie);
-            foreach (var claim in ticket.Principal.Claims)
+            try
             {
-                tokenInto.Add(claim.Type, claim.Value);
+                var cookie = opt.CurrentValue.CookieManager.GetRequestCookie(HttpContext, "UserLoginCookie");
+                var dataProtector = opt.CurrentValue.DataProtectionProvider.CreateProtector("Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationMiddleware", CookieAuthenticationDefaults.AuthenticationScheme, "v2");
+                var ticketDataFormat = new TicketDataFormat(dataProtector);
+                var ticket = ticketDataFormat.Unprotect(cookie);
+                foreach (var claim in ticket.Principal.Claims)
+                {
+                    tokenInto.Add(claim.Type, claim.Value);
+                }
+                return tokenInto;
             }
-            return tokenInto;
+            catch(Exception e){
+                _logger.LogInformation(e.Message);
+            }
+
+
         }
         #endregion
 

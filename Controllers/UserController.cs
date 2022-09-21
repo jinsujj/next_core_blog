@@ -67,12 +67,14 @@ namespace Next_Core_Blog.Controllers
                     if (LoginMoreThanFiveTimesWithin10min(model.Email))
                         return StatusCode(403);
 
-                    if (_userRepo.IsCorrectUser(model.Email, new Security().EncryptPassword(model.Password))) {
+                    if (_userRepo.IsCorrectUser(model.Email, new Security().EncryptPassword(model.Password)))
+                    {
                         RegisterViewModel userInfo = await _userRepo.GetUserByEmail(model.Email);
                         createCookie(userInfo);
                         return Ok(userInfo);
                     }
-                    else {
+                    else
+                    {
                         _userRepo.TryLogin(model.Email);
                         return StatusCode(401);
                     }
@@ -80,7 +82,8 @@ namespace Next_Core_Blog.Controllers
                 else
                     return BadRequest();
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 return StatusCode(500, ex.Message);
             }
         }
@@ -137,18 +140,26 @@ namespace Next_Core_Blog.Controllers
             var opt = HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>();
             var cookie = opt.CurrentValue.CookieManager.GetRequestCookie(HttpContext, "UserLoginCookie");
             Dictionary<string, string> tokenInfo = new Dictionary<string, string>();
-            if (!string.IsNullOrEmpty(cookie))
+
+            try
             {
-                var dataProtector = opt.CurrentValue.DataProtectionProvider.CreateProtector("Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationMiddleware", CookieAuthenticationDefaults.AuthenticationScheme, "v2");
-                var ticketDataFormat = new TicketDataFormat(dataProtector);
-                var ticket = ticketDataFormat.Unprotect(cookie);
-                foreach (var claim in ticket.Principal.Claims)
+                if (!string.IsNullOrEmpty(cookie))
                 {
-                    tokenInfo.Add(claim.Type, claim.Value);
+                    var dataProtector = opt.CurrentValue.DataProtectionProvider.CreateProtector("Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationMiddleware", CookieAuthenticationDefaults.AuthenticationScheme, "v2");
+                    var ticketDataFormat = new TicketDataFormat(dataProtector);
+                    var ticket = ticketDataFormat.Unprotect(cookie);
+                    foreach (var claim in ticket.Principal.Claims)
+                    {
+                        tokenInfo.Add(claim.Type, claim.Value);
+                    }
+                    return await _userRepo.GetUserByEmail(tokenInfo["Email"]); ;
                 }
-                return await _userRepo.GetUserByEmail(tokenInfo["Email"]);;
             }
-            
+            catch(Exception e){
+                _logger.LogInformation(e.Message);
+            }
+
+
             return null;
         }
         #endregion
