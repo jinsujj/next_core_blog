@@ -10,9 +10,6 @@ jobs:
   build_dotnet:
     runs-on: ubuntu-latest
     steps:
-      - name: 'git Action Start'
-        run: echo 'Hello, Github Actions!'
-
       - name: Checkout
         uses : actions/checkout@v3
 
@@ -24,8 +21,16 @@ jobs:
       - name: Print working directory
         run : pwd
 
-      - name: list files
+      - name: Show list files
         run : ls -al
       
       - name: 'dotnet build'
         run : dotnet build Next_Core_Blog.csproj
+
+      - name: 'ftp file trasmit'
+        uses: SamKirkland/FTP-Deploy-Action@4.3.2
+        with: 
+          ftp-server: ${{ secrets.FTP_HOST }}
+          ftp-username: ${{ secrets.FTP_USERNAME }}
+          ftp-password: ${{ secrets.FTP_PASSWORD }}
+          port: ${{ secrets.PORT }}
