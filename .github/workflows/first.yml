@@ -12,11 +12,12 @@ jobs:
     steps:
       - run: echo 'Hello, Github Actions!'
   
-  pwd-ls:
-    name: PWD & LS
-    runs-on: ubuntu-latest
     steps:
       - name: Print working directory
         run : pwd
+    
+      - name: Checkout
+        uses : actions/checkout@v3
+
       - name: list files
         run : ls -al
