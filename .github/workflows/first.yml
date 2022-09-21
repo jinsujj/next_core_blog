@@ -36,6 +36,6 @@ jobs:
           host: ${{ secrets.FTP_HOST }}
           user: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          localDir: '/home/runner/work/next_core_blog/next_core_blog/bin/Debug/net6.0/Next_Core_Blog.dll'
+          localDir: '/home/runner/work/next_core_blog/next_core_blog/bin/Debug/net6.0/'
           remoteDir: '/home/pi/deploy'
          
