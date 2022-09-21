@@ -3,14 +3,20 @@ name: Our First Workflow
 on : 
   push: 
     branches: ["main"]
-
   pull_request:
-    
 
 
 jobs:
   echo:
     runs-on: ubuntu-latest
-
     steps:
       - run: echo 'Hello, Github Actions!'
+  
+  pwd-ls:
+    name: PWD & LS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print working directory
+        run : pwd
+      - name: list files
+        run : ls -al
