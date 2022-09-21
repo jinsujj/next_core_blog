@@ -33,10 +33,10 @@ jobs:
       - name: 'deploy file trasmit'
         uses: sebastianpopp/ftp-action@releases/v2
         with: 
-          host: '110.8.21.243'
-          user: 'jisoo'
-          password: '8782'
+          host: '110.8.21.243:26'
+          user: 'pi'
+          password: 'wlstncjs1!@#'
           localDir: '/home/runner/work/next_core_blog/next_core_blog/bin/Debug/net6.0/'
-          remoteDir: '/home/'
+          remoteDir: '/home/pi/deploy'
           # port: ${{ secrets.PORT }}
          
