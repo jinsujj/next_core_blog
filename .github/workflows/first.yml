@@ -33,7 +33,7 @@ jobs:
       - name: 'deploy file trasmit'
         uses: SamKirkland/FTP-Deploy-Action@4.3.2
         with: 
-          server: sftp.jinsu-seoul.iptime.org
+          server: sftp://110.8.21.243
           username: jisoo
           password: 8782
           local-dir: /home/runner/work/next_core_blog/next_core_blog/bin/Debug/net6.0/
