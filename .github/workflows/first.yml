@@ -7,7 +7,7 @@ on :
 
 
 jobs:
-  build dotnet:
+  build_dotnet:
     runs-on: ubuntu-latest
     steps:
       - name: 'git Action Start'
