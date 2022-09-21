@@ -7,17 +7,25 @@ on :
 
 
 jobs:
-  echo:
+  build dotnet:
     runs-on: ubuntu-latest
     steps:
       - name: 'git Action Start'
         run: echo 'Hello, Github Actions!'
 
-      - name: Print working directory
-        run : pwd
-    
       - name: Checkout
         uses : actions/checkout@v3
 
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: Print working directory
+        run : pwd
+
       - name: list files
         run : ls -al
+      
+      - name: 'dotnet build'
+        run : dotnet build Next_Core_Blog.csproj
