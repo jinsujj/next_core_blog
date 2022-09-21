@@ -40,7 +40,7 @@ namespace Next_Core_Blog.CommonLibrary
         {
             this._key = key;
         }
-
+/*
 
         #region  [Regacy TripleDES Encrypt]
         public string TripleDESEncrypt(string toEncrypt, bool useHashing)
@@ -185,7 +185,7 @@ namespace Next_Core_Blog.CommonLibrary
             }
         }
         #endregion
-
+*/
         #region [Hasing]
         public string EncryptPassword(string password) => this.SHA256Hash(this.MD5Hash(password));
 
@@ -206,6 +206,8 @@ namespace Next_Core_Blog.CommonLibrary
                 stringBuilder.AppendFormat("{0:x2}", (object)num);
             return stringBuilder.ToString();
         }
+
+        /*
         public string SHA512Hash(string Data)
         {
             byte[] hash = new SHA512Managed().ComputeHash(Encoding.ASCII.GetBytes(Data));
@@ -214,6 +216,7 @@ namespace Next_Core_Blog.CommonLibrary
                 stringBuilder.AppendFormat("{0:x2}", (object)num);
             return stringBuilder.ToString();
         }
+        */
         #endregion
     }
 }
