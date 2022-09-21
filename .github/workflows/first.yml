@@ -36,4 +36,4 @@ jobs:
           sftp_only: true
           port: ${{ secrets.PORT }}
           local_path: './bin/Debug/net6.0/*'
-          remote_path: '~/deploy'
+          remote_path: './deploy'
