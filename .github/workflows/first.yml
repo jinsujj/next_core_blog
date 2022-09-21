@@ -36,5 +36,6 @@ jobs:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftp	
           port: ${{ secrets.PORT }}
          
