@@ -28,7 +28,7 @@ jobs:
         run : ls -al
 
       - name: Show build files
-        run : ls ~/bin/Debug/net6.0 -al
+        run : ls /home/runner/work/next_core_blog/next_core_blog/bin/Debug/net6.0/ -al
 
       - name: 'deploy file trasmit'
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
