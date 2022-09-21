@@ -37,5 +37,6 @@ jobs:
           username: 'jisoo'
           password: '8782'
           local_path: /home/runner/work/next_core_blog/next_core_blog/bin/Debug/net6.0/
+          remote_path: '.deploy/
           # port: ${{ secrets.PORT }}
          
