@@ -140,7 +140,8 @@ namespace Next_Core_Blog.Controllers
             var opt = HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>();
             var cookie = opt.CurrentValue.CookieManager.GetRequestCookie(HttpContext, "UserLoginCookie");
             Dictionary<string, string> tokenInfo = new Dictionary<string, string>();
-
+            _logger.LogInformation("[[ Cookie ]]");
+            _logger.LogInformation(cookie);
             try
             {
                 if (!string.IsNullOrEmpty(cookie))
@@ -156,7 +157,8 @@ namespace Next_Core_Blog.Controllers
                 }
             }
             catch(Exception e){
-                _logger.LogInformation(e.Message);
+                _logger.LogError("[[ ERROR ]]");
+                _logger.LogError(e.Message);
             }
 
 
