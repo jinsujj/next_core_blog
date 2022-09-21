@@ -367,13 +367,13 @@ namespace Next_Core_Blog.Controllers
                 {
                     tokenInto.Add(claim.Type, claim.Value);
                 }
-                return tokenInto;
             }
             catch(Exception e){
                 _logger.LogInformation(e.Message);
+                return null;
             }
 
-
+            return tokenInto;
         }
         #endregion
 
