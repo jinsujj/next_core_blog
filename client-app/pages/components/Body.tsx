@@ -107,6 +107,7 @@ const Body = () => {
       const Notes = noteApi.getNoteAll(userId).then((res) => setPostNotes(res.data||[]));
     }
     dispatch(commonAction.setToggleMode(false));
+    dispatch(commonAction.setSidebarDelay(true));
     dispatch(commonAction.setPostState('read'));
   }, [userId,searchQuery,setCategoryFilter,setSubCategoryFilter]);
 

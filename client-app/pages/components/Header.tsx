@@ -3,12 +3,12 @@ import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import useModal from "../../hooks/useModal";
 import { useSelector } from "../../store";
-import Sidebar from "./Sidebar";
 import { commonAction } from "../../store/common";
 import HeaderAuths from "./HeaderAuth";
 import HeaderProfile from "./HeaderProfile";
 import AuthModal from "./authModal/AuthModal";
 import Router from "next/router";
+import Sidebar from "./Sidebar";
 
 const Container = styled.div`
   border-bottom: 1px solid rgba(0, 0, 0, 0.15);
@@ -26,7 +26,7 @@ const Container = styled.div`
     padding-left: 20px;
     padding-right: 20px;
 
-    @media only screen and (max-width: 768px){
+    @media only screen and (max-width: 768px) {
       width: 100%;
     }
   }
@@ -35,8 +35,7 @@ const Container = styled.div`
     justify-content: center;
     width: 25%;
 
-
-    @media only screen and (max-width: 768px){
+    @media only screen and (max-width: 768px) {
       width: auto;
     }
   }
@@ -48,7 +47,7 @@ const Container = styled.div`
     text-indent: -9999px;
     margin: 28px 0px;
 
-    @media only screen and (max-width: 768px){
+    @media only screen and (max-width: 768px) {
       float: left;
     }
   }
@@ -73,7 +72,7 @@ const Container = styled.div`
     line-height: 29px;
     text-decoration: none;
 
-    @media only screen and (max-width: 768px){
+    @media only screen and (max-width: 768px) {
       padding: 18px 0;
       font-size: 18px;
       font-weight: bold;
@@ -87,7 +86,7 @@ const Container = styled.div`
     align-items: center;
     margin-right: 10px;
 
-    @media only screen and (max-width: 768px){
+    @media only screen and (max-width: 768px) {
       margin-right: 0px;
     }
   }
@@ -106,22 +105,23 @@ const Container = styled.div`
 const Header = () => {
   const isToggle = useSelector((state) => state.common.toggle);
   const isLogged = useSelector((state) => state.user.isLogged);
+  const sidebarDelay = useSelector((state) => state.common.sidebarDelay);
 
-  const {ModalPortal, closeModal } = useModal();
+  const { ModalPortal, closeModal } = useModal();
   const dispatch = useDispatch();
 
   const changeToggle = () => {
     dispatch(commonAction.setToggleMode(!isToggle));
   };
 
-  const goHome = (event: React.MouseEvent<HTMLButtonElement>) =>{
+  const goHome = (event: React.MouseEvent<HTMLButtonElement>) => {
     dispatch(commonAction.initCommonState());
     Router.push("/");
-  }
+  };
 
   return (
     <>
-      <Sidebar/>
+      {sidebarDelay!! && <Sidebar />}
       <Container>
         <div className="inner">
           <div className="wrapper">
@@ -134,7 +134,7 @@ const Header = () => {
           </div>
           <div className="title-group">
             <div className="logo">부엉이</div>
-            <button className="home-button"  onClick={goHome}>
+            <button className="home-button" onClick={goHome}>
               <a>부엉이 개발자</a>
             </button>
           </div>
