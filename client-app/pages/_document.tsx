@@ -39,15 +39,7 @@ class MyDocument extends Document {
             href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;600"
             rel="stylesheet"
           />
-          <link
-            href="https://hangeul.pstatic.net/hangeul_static/css/NanumHimNaeRaNeunMarBoDan.css"
-            rel="stylesheet"
-          />
-          <link
-            href="https://hangeul.pstatic.net/hangeul_static/css/NanumBaReunHiPi.css"
-            rel="stylesheet"
-          ></link>
-
+          
           {/* bootstrap  3.4.1*/}
           <link
             rel="stylesheet"
