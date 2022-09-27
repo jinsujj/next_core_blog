@@ -105,7 +105,6 @@ const Container = styled.div`
 const Header = () => {
   const isToggle = useSelector((state) => state.common.toggle);
   const isLogged = useSelector((state) => state.user.isLogged);
-  const sidebarDelay = useSelector((state) => state.common.sidebarDelay);
 
   const { ModalPortal, closeModal } = useModal();
   const dispatch = useDispatch();
@@ -121,7 +120,7 @@ const Header = () => {
 
   return (
     <>
-      {sidebarDelay!! && <Sidebar />}
+      <Sidebar />
       <Container>
         <div className="inner">
           <div className="wrapper">

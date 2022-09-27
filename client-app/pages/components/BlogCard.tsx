@@ -73,7 +73,7 @@ export interface IProps {
   blog: PostedNote;
 }
 
-const host = process.env.NEXT_PUBLIC_API_URL + "/files/";
+const imgUri = process.env.NEXT_PUBLIC_API_URL + "/files/";
 const BlogCard = ({ blog }: IProps) => {
   if (blog.thumbImage === null) blog.thumbImage = "default.svg";
 
@@ -83,7 +83,7 @@ const BlogCard = ({ blog }: IProps) => {
     <Container isPost={blog.isPost}>
       <div className="imageWrapper">
         <Link href={`/blog/${blog.noteId}`} key={blog.noteId}>
-          <img key={blog.noteId} src={`${host}${blog.thumbImage}`} />
+          <img key={blog.noteId} src={`${imgUri}${blog.thumbImage}`} />
         </Link>
         <div className="blogTitle">
           <p>{blog.title}</p>

@@ -4,7 +4,7 @@ import {CommonState} from "../types/reduxState";
 // 초기상태
 const initialState: CommonState = {
     toggle: false,          // 토글 여부 
-    sidebarDelay: false,    // 사이드바 딜레이
+    headerDelay: false,     // Header 딜레이
     validateMode: false,    // Input 검증 상태 여부 
     postState : "read",     // 글쓰기 상태 여부
     userIdOfNote : 0,       // 현 Note의 작성자 id 
@@ -20,8 +20,8 @@ const common = createSlice({
         setToggleMode(state, action: PayloadAction<boolean>){
             state.toggle = action.payload;
         },
-        setSidebarDelay(state, acition: PayloadAction<boolean>){
-            state.sidebarDelay = acition.payload;
+        setHeaderDelay(state, acition: PayloadAction<boolean>){
+            state.headerDelay = acition.payload;
         },
         setValidateMode(state, action: PayloadAction<boolean>){
             state.validateMode = action.payload;

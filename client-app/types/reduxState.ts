@@ -2,7 +2,7 @@
 
 export type CommonState = {
     toggle: boolean;
-    sidebarDelay: boolean;
+    headerDelay: boolean;
     validateMode: boolean;
     postState: "write" | "modify" | "read";
     userIdOfNote: number;
