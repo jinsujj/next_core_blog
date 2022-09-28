@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import the icons you need
@@ -7,8 +7,24 @@ import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import Link from "next/link";
 import useRouterReady from "../../hooks/useRouterReady";
 
-const Container = styled.footer`
+interface StyledProps {
+  isDark: string;
+}
+
+const Container = styled.footer<StyledProps>`
+${(props) =>
+  props.isDark === "Y" &&
+  css`
+    background-color: #151515 !important;
+    color: #dddddd;
+    .inner {
+      background: #151515 !important;
+      border-top: 1px solid #151515 !important;
+    }
+  `}
+  
   position: relative;
+  background: #242424;
 
   .clearfix::after {
     content: "";
@@ -67,7 +83,7 @@ const Footer = () => {
   }
 
   return (
-    <Container>
+    <Container isDark={"Y"}>
       <div className="inner clearfix">
         <div className="float--left">
           <p>©copyright Sasim</p> <br />

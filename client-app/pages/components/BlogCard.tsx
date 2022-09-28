@@ -9,9 +9,25 @@ import palette from "../../styles/palette";
 
 interface StyledProps {
   isPost: string;
+  isDark: string;
 }
 
 const Container = styled.div<StyledProps>`
+  ${(props) =>
+    props.isDark === "Y" &&
+    css`
+      color: #dcdcdc !important;
+      p {
+        color: #d9d9d9 !important;
+      }
+      img {
+        opacity: 0.5 !important;
+      }
+      img:hover {
+        opacity: 0.8 !important;
+      }
+    `}
+
   .imageWrapper {
     display: block;
     border-radius: 4px;
@@ -80,7 +96,7 @@ const BlogCard = ({ blog }: IProps) => {
   var blogPostDate = blog.postDate.replace(/-/g, "/");
 
   return (
-    <Container isPost={blog.isPost}>
+    <Container isPost={blog.isPost} isDark={"Y"}>
       <div className="imageWrapper">
         <Link href={`/blog/${blog.noteId}`} key={blog.noteId}>
           <img key={blog.noteId} src={`${imgUri}${blog.thumbImage}`} />

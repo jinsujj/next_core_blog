@@ -1,9 +1,13 @@
 import React from 'react'
+import { useSelector } from '../store';
+import common, { commonAction } from '../store/common';
 
 // username/repo format
 const REPO_NAME = "jinsujj/next_core_blog";
 
 export const useUtterances = (commentNodeId: string) => {
+	const isDarkMode = useSelector((state) => state.common.darkMode);
+	
 	React.useEffect(() => {
 		const scriptParentNode = document.getElementById(commentNodeId)
 		if (!scriptParentNode) return
@@ -15,8 +19,12 @@ export const useUtterances = (commentNodeId: string) => {
 		script.setAttribute('repo', REPO_NAME)
 		script.setAttribute('issue-term', 'pathname')
 		script.setAttribute('label', '✨comment✨')
-		script.setAttribute('theme', 'github-light')
 		script.setAttribute('crossorigin', 'anonymous')
+		if(isDarkMode)
+			script.setAttribute('theme', 'github-dark')	
+		else
+			script.setAttribute('theme', 'github-light')
+
 
 		scriptParentNode.appendChild(script)
 

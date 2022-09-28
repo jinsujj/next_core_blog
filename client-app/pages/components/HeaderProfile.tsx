@@ -1,7 +1,7 @@
 import Router from "next/router";
 import React from "react";
 import { useDispatch } from "react-redux";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import kakaoApi from "../../api/kakao";
 import userApi from "../../api/user";
 import { useSelector } from "../../store";
@@ -10,7 +10,15 @@ import { userActions } from "../../store/user";
 import palette from "../../styles/palette";
 import Button from "./common/Button";
 
-const Container = styled.div`
+interface StyledProps {
+  isDark: string;
+}
+const Container = styled.div<StyledProps>`
+${(props) =>
+  props.isDark === "Y" &&
+  css`
+  
+  `}
   position: relative;
 
   .btn-group {
@@ -56,7 +64,7 @@ const HeaderProfile = () => {
   const dispatch = useDispatch();
   const userInfo = useSelector((state) => state.user);
   const postState = useSelector((state) => state.common.postState);
-  const userIfofNote = useSelector((state) => state.common.userIdOfNote);
+  const userIdOfNote = useSelector((state) => state.common.userIdOfNote);
 
   const onClickLogout = () => {
     try {
@@ -73,11 +81,11 @@ const HeaderProfile = () => {
   };
 
   const onClickPostBlog = () => {
-    if (postState === "read" && userIfofNote === userInfo.userId) {
+    if (postState === "read" && userIdOfNote === userInfo.userId) {
       dispatch(commonAction.setPostState("modify"));
       return;
     }
-    if (postState === "read" && userIfofNote !== userInfo.userId) {
+    if (postState === "read" && userIdOfNote !== userInfo.userId) {
       dispatch(commonAction.setPostState("write"));
       return;
     }
@@ -88,14 +96,14 @@ const HeaderProfile = () => {
   };
 
   return (
-    <Container>
+    <Container isDark={"Y"}>
       <div className="btn-group">
-        {postState === "read" && userIfofNote === userInfo.userId && (
+        {postState === "read" && userIdOfNote === userInfo.userId && (
           <Button onClick={onClickPostBlog} width="110px" color="green_8D">
             수정하기
           </Button>
         )}
-        {postState !== "write" && userIfofNote !== userInfo.userId && (
+        {postState !== "write" && userIdOfNote !== userInfo.userId && (
           <Button onClick={onClickPostBlog} width="110px" color="green_8D">
             글쓰기
           </Button>

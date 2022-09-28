@@ -1,7 +1,7 @@
 import { GetServerSideProps, GetServerSidePropsContext, NextPage } from "next";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import noteApi, { PostedNote } from "../../api/note";
 import { useSelector } from "../../store";
 import palette from "../../styles/palette";
@@ -9,7 +9,7 @@ import Editor from "../components/Editor";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarCheck, faEye } from "@fortawesome/free-solid-svg-icons";
+import { faCalendarCheck } from "@fortawesome/free-solid-svg-icons";
 import { commonAction } from "../../store/common";
 import useUtterances from "../../hooks/useUtterances";
 import Router from "next/router";
@@ -28,8 +28,56 @@ import "prismjs/components/prism-java";
 import "prismjs/components/prism-sql";
 import "prismjs/components/prism-bash";
 
-const Container = styled.div`
-  margin-top: 56px;
+interface StyledProps {
+  isDark: string;
+}
+
+const Container = styled.div<StyledProps>`
+  ${(props) =>
+    props.isDark === "Y" &&
+    css`
+      // [ color to dark ]
+      div, td, li, p, a, b {
+        color: ${palette.gray_c4};
+      }
+      h1, h2, h3, h4 {
+        color: ${palette.gray_c4} !important;
+      }
+
+      // [ background color to dark ]
+      background-color: ${palette.dark_19} !important;
+
+      table tr td {
+        background-color: ${palette.dark_19} !important;
+      }
+
+      // [ background highlighter erase ]
+      p span {
+        background-color: ${palette.dark_19} !important;
+      }
+      p b {
+        background-color: ${palette.dark_19} !important;
+      }
+      li span {
+        background-color: ${palette.dark_19} !important;
+      }
+      li b {
+        background-color: ${palette.dark_19} !important;
+      }
+
+      // [ code syntax highlighter ]
+      pre {
+        //background-color: ${palette.dark_19} !important;
+        background-color: (220, 13%, 18%) !important;
+      }
+
+      // [ image to dark ]
+      img {
+        opacity: 0.8 !important;
+      }
+    `}
+
+  padding-top: 56px;
 
   .inner {
     max-width: 940px;
@@ -105,8 +153,9 @@ const Container = styled.div`
   }
 
   .board {
-    width:100%;
+    width: 100%;
     min-height: 500px;
+    padding-top: 4px;
   }
 
   /* FLOAT CLEARFIX */
@@ -195,7 +244,7 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
   if (detailNote.noteId === undefined) {
     return (
       <>
-        <Container>
+        <Container isDark={"Y"}>
           <div className="inner">
             <div className="noAuthority">
               <h1>조회 권한이 없습니다</h1>
@@ -263,7 +312,7 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
         }}
       />
       <Header />
-      <Container>
+      <Container isDark="Y">
         <div className="inner">
           <div className="board">
             {postState === "read" && (
@@ -332,7 +381,7 @@ export const getServerSideProps: GetServerSideProps = async (
       ("" as string)
   );
 
-  noteApi.postIpLog({ip,id});
+  noteApi.postIpLog({ ip, id });
   const { data: detailNote } = await noteApi.getNoteById(id);
 
   return {

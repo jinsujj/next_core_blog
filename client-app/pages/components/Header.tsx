@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import useModal from "../../hooks/useModal";
 import { useSelector } from "../../store";
 import { commonAction } from "../../store/common";
@@ -10,12 +10,27 @@ import AuthModal from "./authModal/AuthModal";
 import Router from "next/router";
 import Sidebar from "./Sidebar";
 import useRouterReady from "../../hooks/useRouterReady";
+import palette from "../../styles/palette";
 
-const Container = styled.div`
+interface StyledProps {
+  isDark: string;
+}
+
+const Container = styled.div<StyledProps>`
+  ${(props) =>
+    props.isDark === "Y" &&
+    css`
+      background-color: ${palette.dark_15} !important;
+      .home-button {
+        background-color: ${palette.dark_15} !important;
+      }
+      a {
+        color: ${palette.gray_c4} !important;
+      }
+    `}
+
   border-bottom: 1px solid rgba(0, 0, 0, 0.15);
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
-  background: white;
-
   position: relative;
 
   .inner {
@@ -128,7 +143,7 @@ const Header = () => {
   return (
     <>
       <Sidebar />
-      <Container>
+      <Container isDark={"Y"}>
         <div className="inner">
           <div className="wrapper">
             <div

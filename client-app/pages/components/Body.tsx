@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import noteApi, { PostedNote } from "../../api/note";
 import { useSelector } from "../../store";
 import palette from "../../styles/palette";
@@ -11,8 +11,21 @@ import { useDispatch } from "react-redux";
 import { commonAction } from "../../store/common";
 import BlogCard from "./BlogCard";
 
-const Container = styled.div`
-  margin-top: 56px;
+interface StyledProps {
+  isDark: string;
+}
+
+const Container = styled.div<StyledProps>`
+  ${(props) =>
+    props.isDark === "Y" &&
+    css`
+      background-color: ${palette.dark_19} !important;
+      .summary__write {
+        color: ${palette.gray_dc};
+      }
+    `}
+
+  padding-top: 56px;
 
   h1 {
     font-size: 24px;
@@ -123,7 +136,7 @@ const Body = () => {
   }, [userId, searchQuery, setCategoryFilter, setSubCategoryFilter]);
 
   return (
-    <Container>
+    <Container isDark={"Y"}>
       <div className="inner">
         <div className="board">
           {setCategoryFilter && postState == "read" && (
