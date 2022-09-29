@@ -9,6 +9,7 @@ import HeaderProfile from "./HeaderProfile";
 import AuthModal from "./authModal/AuthModal";
 import Router from "next/router";
 import Sidebar from "./Sidebar";
+import useRouterReady from "../../hooks/useRouterReady";
 
 const Container = styled.div`
   border-bottom: 1px solid rgba(0, 0, 0, 0.15);
@@ -117,6 +118,12 @@ const Header = () => {
     dispatch(commonAction.initCommonState());
     Router.push("/");
   };
+
+  const view = useRouterReady();
+
+  if (!view) {
+    return null;
+  }
 
   return (
     <>

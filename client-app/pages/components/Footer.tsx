@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import the icons you need
 import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import Link from "next/link";
+import useRouterReady from "../../hooks/useRouterReady";
 
 const Container = styled.footer`
   position: relative;
@@ -48,17 +49,23 @@ const Container = styled.footer`
     float: right;
   }
 
-  p{
-      margin: 0;
-      padding: 0;
-      border: 0;
-      font-size: 100%;
-      font: inherit;
-      vertical-align: baseline;
+  p {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
   }
 `;
 
 const Footer = () => {
+  const view = useRouterReady();
+
+  if (!view) {
+    return null;
+  }
+
   return (
     <Container>
       <div className="inner clearfix">
@@ -69,7 +76,7 @@ const Footer = () => {
         <ul className="site-links float--right">
           <li>
             <Link href="https://github.com/jinsujj">
-              <a target='_blank'>
+              <a target="_blank">
                 <FontAwesomeIcon
                   icon={faGithub}
                   style={{ fontSize: 30, color: "black" }}
@@ -78,8 +85,8 @@ const Footer = () => {
             </Link>
           </li>
           <li>
-            <Link  href="https://www.linkedin.com/in/jinsu-jang-0b2269107/">
-              <a target='_blank'>
+            <Link href="https://www.linkedin.com/in/jinsu-jang-0b2269107/">
+              <a target="_blank">
                 <FontAwesomeIcon
                   icon={faLinkedin}
                   style={{ fontSize: 30, color: "black" }}
