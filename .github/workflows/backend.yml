@@ -1,0 +1,53 @@
+name: backend deploy
+
+on:
+  push:
+    branches: ["feat/github-actions"]
+    # branches: ["main"]
+  pull_request:
+
+jobs:
+  build_dotnet:
+    runs-on: ubuntu-latest
+    steps:
+      # - name: Checkout
+      #   uses: actions/checkout@v3
+
+      # - name: Setup .NET Core SDK
+      #   uses: actions/setup-dotnet@v2
+      #   with:
+      #     dotnet-version: "6.0.x"
+
+      # - name: "dotnet build"
+      #   run: dotnet build Next_Core_Blog.csproj
+
+      # - name: Print working directory
+      #   run: pwd
+
+      # - name: Show list files
+      #   run: ls -al
+
+      # - name: Show build files
+      #   run: ls /home/runner/work/next_core_blog/next_core_blog/bin/Debug/net6.0/ -al
+
+      # - name: "deploy file trasmit"
+      #   uses: sebastianpopp/ftp-action@releases/v2
+      #   with:
+      #     host: ${{ secrets.FTP_HOST }}
+      #     user: ${{ secrets.FTP_USERNAME }}
+      #     password: ${{ secrets.FTP_PASSWORD }}
+      #     localDir: "/home/runner/work/next_core_blog/next_core_blog/bin/Debug/net6.0/"
+      #     remoteDir: "/home/pi/deploy"
+      - name: hello world
+        uses: ./
+        with:
+          host: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+            whoami
+            pwd
+            ls -al
+            echo "hello world"
+            ps -ef
