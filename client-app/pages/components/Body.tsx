@@ -86,12 +86,6 @@ const Container = styled.div<StyledProps>`
     clear: both;
     display: block;
   }
-  .float--left {
-    float: left;
-  }
-  .float--right {
-    float: right;
-  }
 `;
 
 const Body = () => {

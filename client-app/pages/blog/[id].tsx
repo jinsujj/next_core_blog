@@ -67,7 +67,6 @@ const Container = styled.div<StyledProps>`
 
       // [ code syntax highlighter ]
       pre {
-        //background-color: ${palette.dark_19} !important;
         background-color: (220, 13%, 18%) !important;
       }
 

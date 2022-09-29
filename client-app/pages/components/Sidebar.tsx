@@ -26,13 +26,13 @@ const Container = styled.div<StyledProps>`
       background-color: ${palette.dark_15} !important;
       a,
       li {
-        color: ${palette.gray_dc}
+        color: ${palette.gray_c4};
       }
       .visit--count ul li:first-child {
-        color: ${palette.gray_dc} !important;
+        color: ${palette.gray_c4} !important;
       }
       .category .count {
-        color: ${palette.red_57}
+        color: ${palette.red_57};
       }
     `}
     
@@ -46,13 +46,13 @@ const Container = styled.div<StyledProps>`
     `}
   
     ${(props) =>
-    props.istoggle &&
-    css`
-      visibility: visible;
-      width: 330px;
-      left: 0px;
-      transition: all 0.5s;
-    `}
+      props.istoggle &&
+      css`
+        visibility: visible;
+        width: 330px;
+        left: 0px;
+        transition: all 0.5s;
+      `}
 
   width: 330px;
   height: 100%;
