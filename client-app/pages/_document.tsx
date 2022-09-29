@@ -84,7 +84,7 @@ class MyDocument extends Document {
           />
           {/* google Adsense */}
           <script
-            async
+            defer
             src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2309486098831986"
           />
         </body>
