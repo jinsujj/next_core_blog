@@ -11,12 +11,11 @@ import { useDispatch } from "react-redux";
 import { commonAction } from "../../store/common";
 import BlogCard from "./BlogCard";
 
-
 const Container = styled.div`
   margin-top: 56px;
-  
-  h1{
-    font-size:24px;
+
+  h1 {
+    font-size: 24px;
   }
   .inner {
     max-width: 940px;
@@ -87,58 +86,67 @@ const Body = () => {
   const [postNotes, setPostNotes] = useState<PostedNote[]>([]);
   const postState = useSelector((state) => state.common.postState);
   const searchQuery = useSelector((state) => state.common.search);
-  const setCategoryFilter = useSelector((state) => state.common.sideBarCategory);
-  const setSubCategoryFilter = useSelector((state) => state.common.sideBarSubCategory);
+  const setCategoryFilter = useSelector(
+    (state) => state.common.sideBarCategory
+  );
+  const setSubCategoryFilter = useSelector(
+    (state) => state.common.sideBarSubCategory
+  );
 
   const dispatch = useDispatch();
-  useMemo(()=>{
+  useMemo(() => {
     dispatch(commonAction.setPostUserIdOfNote(0));
-  },[]);
+  }, []);
 
-  // Get BlogCard data 
+  // Get BlogCard data
   useEffect(() => {
     // Search
-    if(searchQuery.length >0){
-      const Notes = noteApi.getNoteBySearch(searchQuery).then((res) => setPostNotes(res.data||[]));
+    if (searchQuery.length > 0) {
+      const Notes = noteApi
+        .getNoteBySearch(searchQuery)
+        .then((res) => setPostNotes(res.data || []));
     }
     // Category Click
-    else if(setCategoryFilter.length >0 || setSubCategoryFilter.length>0 ){
-      const Notes = noteApi.getNoteByCategory(userId, setCategoryFilter,setSubCategoryFilter).then((res) => setPostNotes(res.data||[]));
+    else if (setCategoryFilter.length > 0 || setSubCategoryFilter.length > 0) {
+      const Notes = noteApi
+        .getNoteByCategory(userId, setCategoryFilter, setSubCategoryFilter)
+        .then((res) => setPostNotes(res.data || []));
     }
     // Default
-    else{
-      const Notes = noteApi.getNoteAll(userId).then((res) => setPostNotes(res.data||[]));
+    else {
+      const Notes = noteApi
+        .getNoteAll(userId)
+        .then((res) => setPostNotes(res.data || []));
     }
     dispatch(commonAction.setToggleMode(false));
-    dispatch(commonAction.setHeaderDelay(true));
-    dispatch(commonAction.setPostState('read'));
-  }, [userId,searchQuery,setCategoryFilter,setSubCategoryFilter]);
+    dispatch(commonAction.setPostState("read"));
+  }, [userId, searchQuery, setCategoryFilter, setSubCategoryFilter]);
 
   return (
     <Container>
       <div className="inner">
         <div className="board">
-          {setCategoryFilter && postState =="read" && (
+          {setCategoryFilter && postState == "read" && (
             <h1 className="summary__write">
-            {setCategoryFilter} , {setSubCategoryFilter} List.
+              {setCategoryFilter} , {setSubCategoryFilter} List.
             </h1>
           )}
           {postState == "read" && (
             <ResponsiveMasonry
-              columnsCountBreakPoints={{ 350: 1, 450: 2, 650:3, 900: 4 }}
+              columnsCountBreakPoints={{ 350: 1, 450: 2, 650: 3, 900: 4 }}
             >
               <Masonry columnsCount={5} gutter={20}>
                 {postNotes.map((blog, index) => (
-                      <BlogCard blog={blog} key={index}/>
-                  ))}
+                  <BlogCard blog={blog} key={index} />
+                ))}
               </Masonry>
             </ResponsiveMasonry>
           )}
-          {postState =="write" && (
+          {postState == "write" && (
             <>
               <div className="board clearfix">
                 <div className="board">
-                  <Editor NoteInfo={undefined}/>
+                  <Editor NoteInfo={undefined} />
                 </div>
               </div>
             </>
