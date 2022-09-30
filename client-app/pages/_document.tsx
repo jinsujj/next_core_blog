@@ -39,7 +39,7 @@ class MyDocument extends Document {
             href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;600"
             rel="stylesheet"
           />
-          
+
           {/* bootstrap  3.4.1*/}
           <link
             rel="stylesheet"
@@ -58,14 +58,26 @@ class MyDocument extends Document {
           <NextScript />
           {/* jquery 3.6.1 */}
           <script src="https://code.jquery.com/jquery-3.6.1.slim.min.js" />
-          <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+          <script
+            async
+            src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+          ></script>
           {/* fontawesom */}
-          <script src="https://kit.fontawesome.com/3ec141240c.js"></script>
+          <script
+            async
+            src="https://kit.fontawesome.com/3ec141240c.js"
+          ></script>
           {/* bootstrap */}
-          <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+          <script
+            async
+            src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
+          ></script>
           {/* summernote */}
-          <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
-          <script src="../js/summernote-ext-syntax.js"></script>
+          <script
+            async
+            src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"
+          ></script>
+          <script async src="../js/summernote-ext-syntax.js"></script>
           {/* Global Site Tag (gtag.js) - Google Analytics */}
           <script
             async
