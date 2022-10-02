@@ -9,6 +9,73 @@ import Button from "./common/Button";
 import Input from "./common/Input";
 
 const Container = styled.form`
+  ${(props) =>
+    props.isDark &&
+    css`
+      .note-editing-area .note-editable {
+        background-color: ${palette.dark_19} !important;
+      }
+
+      // [ color to dark ]
+      color: ${palette.blue_b2} !important;
+
+      a,
+      h1,
+      h2,
+      h3,
+      h4 {
+        color: ${palette.blue_b2} !important;
+      }
+
+      // [ background color to dark ]
+      background-color: ${palette.dark_19} !important;
+
+      table tr td b {
+        background-color: ${palette.dark_19} !important;
+      }
+
+      // [ background highlighter erase ]
+      p span {
+        background-color: ${palette.dark_19} !important;
+      }
+      p b {
+        background-color: ${palette.dark_19} !important;
+      }
+      li span {
+        background-color: ${palette.dark_19} !important;
+      }
+      li b {
+        background-color: ${palette.dark_19} !important;
+      }
+
+      // [ image to dark ]
+      img {
+        opacity: 0.8 !important;
+      }
+    `}
+
+  pre {
+    color: ${palette.gray_80};
+    background-color: (220, 13%, 18%) !important;
+  }
+
+  .iframe {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  }
+  .note-video-clip {
+    position: absolute;
+    top: 10;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
   .title_input {
     align-items: center;
     border: 1px solid ${palette.gray_cd};
@@ -36,15 +103,6 @@ const Container = styled.form`
 
   ol li {
     margin-bottom: 0.5rem;
-  }
-
-  .note-editor.note-airframe
-    .note-editing-area
-    .note-editable[contenteditable="false"],
-  .note-editor.note-frame
-    .note-editing-area
-    .note-editable[contenteditable="false"] {
-    background: white !important;
   }
 
   .note-editor.note-airframe,
@@ -83,8 +141,8 @@ const Container = styled.form`
       height: 40px;
       padding: 0 10px;
       vertical-align: middle;
-      border: 1px solid #dddddd;
-      color: #999999;
+      border: 1px solid ${palette.gray_dd};
+      color: ${palette.color_99};
     }
 
     label {
@@ -92,7 +150,7 @@ const Container = styled.form`
       padding: 10px 20px;
       color: white;
       vertical-align: middle;
-      background-color: #cdcdcd;
+      background-color: ${palette.gray_cd};
       cursor: pointer;
       height: 40px;
       margin-left: 10px;
@@ -129,6 +187,7 @@ const Editor = ({ NoteInfo }) => {
   const [content, setContent] = useState();
   const postState = useSelector((state) => state.common.postState);
   const userId = useSelector((state) => state.user.userId);
+  const isDarkMode = useSelector((state) => state.common.isDark);
 
   const { openModal, ModalPortal, closeModal } = useModal();
 
@@ -218,28 +277,30 @@ const Editor = ({ NoteInfo }) => {
         tabsize: 3,
         toolbar: toolbar,
         buttons: {
-          myVideo: function(context) {
+          myVideo: function (context) {
             var ui = $.summernote.ui;
             var button = ui.button({
               contents: '<i class="fa fa-video-camera"/>',
-              tooltip: 'video',
-              click: function() {
-              var div = document.createElement('div');
-              div.classList.add('iframe');
-              var iframe = document.createElement('iframe');
-              iframe.src = prompt('Enter video url:');
-              iframe.src =" https://www.youtube.com/embed/" + iframe.src.split("=")[1];
-              iframe.setAttribute('frameborder', 0);
-              iframe.setAttribute('width', '100%');
-              iframe.classList.add('note-video-clip')
-              iframe.setAttribute('allowfullscreen', true);
-              div.appendChild(iframe);
-              context.invoke('editor.insertNode', div);
-                }
+              tooltip: "video",
+              click: function () {
+                var div = document.createElement("div");
+                div.classList.add("iframe");
+                var iframe = document.createElement("iframe");
+                iframe.src = prompt("Enter video url:");
+                iframe.src =
+                  " https://www.youtube.com/embed/" + iframe.src.split("=")[1];
+                iframe.setAttribute("frameborder", 0);
+                iframe.setAttribute("width", "100%");
+                iframe.classList.add("note-video-clip");
+                iframe.setAttribute("allowfullscreen", true);
+                div.appendChild(iframe);
+                context.invoke("editor.insertNode", div);
+              },
             });
-    
+
             return button.render();
-          }},
+          },
+        },
         focus: true,
         fontNames: [
           "Arial",
@@ -300,27 +361,29 @@ const Editor = ({ NoteInfo }) => {
         tabsize: 3,
         toolbar: toolbar,
         buttons: {
-          myVideo: function(context) {
+          myVideo: function (context) {
             var ui = $.summernote.ui;
             var button = ui.button({
               contents: '<i class="fa fa-video-camera"/>',
-              tooltip: 'video',
-              click: function() {
-                var div = document.createElement('div');
-                div.classList.add('iframe');
-                var iframe = document.createElement('iframe');
-                iframe.src = prompt('Enter video url:');
-                iframe.src =" https://www.youtube.com/embed/" + iframe.src.split("=")[1];
-                iframe.setAttribute('frameborder', 0);
-                iframe.setAttribute('width', '100%');
-                iframe.classList.add('note-video-clip')
-                iframe.setAttribute('allowfullscreen', true);
+              tooltip: "video",
+              click: function () {
+                var div = document.createElement("div");
+                div.classList.add("iframe");
+                var iframe = document.createElement("iframe");
+                iframe.src = prompt("Enter video url:");
+                iframe.src =
+                  " https://www.youtube.com/embed/" + iframe.src.split("=")[1];
+                iframe.setAttribute("frameborder", 0);
+                iframe.setAttribute("width", "100%");
+                iframe.classList.add("note-video-clip");
+                iframe.setAttribute("allowfullscreen", true);
                 div.appendChild(iframe);
-                context.invoke('editor.insertNode', div);
-                  }
+                context.invoke("editor.insertNode", div);
+              },
             });
             return button.render();
-          }},
+          },
+        },
         focus: true,
         fontNames: [
           "Arial",
@@ -378,7 +441,11 @@ const Editor = ({ NoteInfo }) => {
   }, []);
 
   return (
-    <Container onSubmit={openCategoryModal} postState={postState}>
+    <Container
+      onSubmit={openCategoryModal}
+      postState={postState}
+      isDark={isDarkMode}
+    >
       {/* title */}
       <div className="title_input">
         <Input
@@ -450,5 +517,5 @@ const toolbar = [
   ["insert", ["picture", "link"]],
   ["view", ["fullscreen", "codeview"]],
   ["help", ["help"]],
-  ['mybutton', ['myVideo']]
+  ["mybutton", ["myVideo"]],
 ];

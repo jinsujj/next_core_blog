@@ -37,13 +37,14 @@ const Container = styled.div<StyledProps>`
     props.isDark &&
     css`
       // [ color to dark ]
-      color: ${palette.gray_c4};
+      color: ${palette.blue_b2} !important;
 
+      a,
       h1,
       h2,
       h3,
       h4 {
-        color: ${palette.gray_c4} !important;
+        color: ${palette.blue_b2} !important;
       }
 
       // [ background color to dark ]
@@ -74,7 +75,7 @@ const Container = styled.div<StyledProps>`
 
       // [ blog Date]
       .post_info ul li {
-        color: ${palette.gray_c4} !important;
+        color: ${palette.blue_b2} !important;
       }
     `}
 

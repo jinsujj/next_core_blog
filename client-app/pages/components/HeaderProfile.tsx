@@ -14,7 +14,14 @@ interface StyledProps {
   isDark: string;
 }
 const Container = styled.div<StyledProps>`
-  ${(props) => props.isDark === "Y" && css``}
+  ${(props) =>
+    props.isDark &&
+    css`
+      .userInfo {
+        color: ${palette.gray_c4} !important;
+      }
+    `}
+
   position: relative;
 
   .btn-group {

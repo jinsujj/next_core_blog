@@ -11,7 +11,7 @@ import { useDispatch } from "react-redux";
 import { commonAction } from "../store/common";
 import { NextSeo } from "next-seo";
 import { useEffect } from "react";
-import kakaoApi, { kakaoToken, kakaoTokenResponse } from "../api/kakao";
+import kakaoApi from "../api/kakao";
 
 config.autoAddCss = false; // Tell Font Awesome to skip adding the CSS automatically since it's being imported above
 
