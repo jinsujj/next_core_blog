@@ -6,25 +6,27 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import Link from "next/link";
 import useRouterReady from "../../hooks/useRouterReady";
+import { useSelector } from "../../store";
+import palette from "../../styles/palette";
+import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 
 interface StyledProps {
-  isDark: string;
+  isDark: boolean;
 }
 
 const Container = styled.footer<StyledProps>`
-${(props) =>
-  props.isDark === "Y" &&
-  css`
-    background-color: #151515 !important;
-    color: #dddddd;
-    .inner {
-      background: #151515 !important;
-      border-top: 1px solid #151515 !important;
-    }
-  `}
-  
+  ${(props) =>
+    props.isDark &&
+    css`
+      background-color: ${palette.dark_15} !important;
+      color: ${palette.gray_dd} !important;
+      .inner {
+        background: ${palette.dark_15} !important;
+        border-top: 1px solid ${palette.dark_15} !important;
+      }
+    `}
+
   position: relative;
-  background: #242424;
 
   .clearfix::after {
     content: "";
@@ -38,8 +40,8 @@ ${(props) =>
     box-sizing: border-box;
     position: relative;
     padding: 30px 20px;
-    border-top: 1px solid #eee;
-    background: #f5f5f5;
+    border-top: 1px solid ${palette.gray_ee};
+    background: ${palette.gray_f5};
   }
 
   .site-links {
@@ -77,13 +79,14 @@ ${(props) =>
 
 const Footer = () => {
   const view = useRouterReady();
-
+  const isDarkMode = useSelector((state) => state.common.isDark);
+  const iconColor = isDarkMode === true ? "white" : "black";
   if (!view) {
     return null;
   }
 
   return (
-    <Container isDark={"Y"}>
+    <Container isDark={isDarkMode}>
       <div className="inner clearfix">
         <div className="float--left">
           <p>©copyright Sasim</p> <br />
@@ -95,7 +98,7 @@ const Footer = () => {
               <a target="_blank">
                 <FontAwesomeIcon
                   icon={faGithub}
-                  style={{ fontSize: 30, color: "black" }}
+                  style={{ fontSize: 30, color: iconColor }}
                 />
               </a>
             </Link>
@@ -105,7 +108,7 @@ const Footer = () => {
               <a target="_blank">
                 <FontAwesomeIcon
                   icon={faLinkedin}
-                  style={{ fontSize: 30, color: "black" }}
+                  style={{ fontSize: 30, color: iconColor }}
                 />
               </a>
             </Link>

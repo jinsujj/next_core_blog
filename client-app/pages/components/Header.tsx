@@ -13,12 +13,12 @@ import useRouterReady from "../../hooks/useRouterReady";
 import palette from "../../styles/palette";
 
 interface StyledProps {
-  isDark: string;
+  isDark: boolean;
 }
 
 const Container = styled.div<StyledProps>`
   ${(props) =>
-    props.isDark === "Y" &&
+    props.isDark &&
     css`
       background-color: ${palette.dark_15} !important;
       .home-button {
@@ -46,6 +46,7 @@ const Container = styled.div<StyledProps>`
       width: 100%;
     }
   }
+
   .wrapper {
     display: block;
     justify-content: center;
@@ -55,6 +56,7 @@ const Container = styled.div<StyledProps>`
       width: auto;
     }
   }
+
   .toggle-btn {
     background: url("../img/toggle_blue.svg");
     width: 27px;
@@ -67,6 +69,7 @@ const Container = styled.div<StyledProps>`
       float: left;
     }
   }
+
   .title-group {
     display: flex;
     justify-content: center;
@@ -121,6 +124,7 @@ const Container = styled.div<StyledProps>`
 const Header = () => {
   const isToggle = useSelector((state) => state.common.toggle);
   const isLogged = useSelector((state) => state.user.isLogged);
+  const isDarkMode = useSelector((state) => state.common.isDark);
 
   const { ModalPortal, closeModal } = useModal();
   const dispatch = useDispatch();
@@ -143,7 +147,7 @@ const Header = () => {
   return (
     <>
       <Sidebar />
-      <Container isDark={"Y"}>
+      <Container isDark={isDarkMode}>
         <div className="inner">
           <div className="wrapper">
             <div

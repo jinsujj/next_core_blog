@@ -29,25 +29,27 @@ import "prismjs/components/prism-sql";
 import "prismjs/components/prism-bash";
 
 interface StyledProps {
-  isDark: string;
+  isDark: boolean;
 }
 
 const Container = styled.div<StyledProps>`
   ${(props) =>
-    props.isDark === "Y" &&
+    props.isDark &&
     css`
       // [ color to dark ]
-      div, td, li, p, a, b {
-        color: ${palette.gray_c4};
-      }
-      h1, h2, h3, h4 {
+      color: ${palette.gray_c4};
+
+      h1,
+      h2,
+      h3,
+      h4 {
         color: ${palette.gray_c4} !important;
       }
 
       // [ background color to dark ]
       background-color: ${palette.dark_19} !important;
 
-      table tr td {
+      table tr td b {
         background-color: ${palette.dark_19} !important;
       }
 
@@ -65,17 +67,21 @@ const Container = styled.div<StyledProps>`
         background-color: ${palette.dark_19} !important;
       }
 
-      // [ code syntax highlighter ]
-      pre {
-        background-color: (220, 13%, 18%) !important;
-      }
-
       // [ image to dark ]
       img {
         opacity: 0.8 !important;
       }
+
+      // [ blog Date]
+      .post_info ul li {
+        color: ${palette.gray_c4} !important;
+      }
     `}
 
+  pre {
+    color: ${palette.gray_80};
+    background-color: (220, 13%, 18%) !important;
+  }
   padding-top: 56px;
 
   .inner {
@@ -210,7 +216,7 @@ const Container = styled.div<StyledProps>`
   ul li {
     padding: 5px 0px 5px 5px;
     margin-bottom: 5px;
-    border-bottom: 1px solid #efefef;
+    border-bottom: 1px solid ${palette.gray_ef};
   }
 
   ol li {
@@ -240,10 +246,13 @@ interface IProps {
 }
 
 const blogDetail: NextPage<IProps> = ({ detailNote }) => {
+  const isDarkMode = useSelector((state) => state.common.isDark);
+  const iconColor = isDarkMode === true ? "white" : "black";
+
   if (detailNote.noteId === undefined) {
     return (
       <>
-        <Container isDark={"Y"}>
+        <Container isDark={isDarkMode}>
           <div className="inner">
             <div className="noAuthority">
               <h1>조회 권한이 없습니다</h1>
@@ -311,7 +320,7 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
         }}
       />
       <Header />
-      <Container isDark="Y">
+      <Container isDark={isDarkMode}>
         <div className="inner">
           <div className="board">
             {postState === "read" && (
@@ -324,7 +333,7 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
                     <li>
                       <FontAwesomeIcon
                         icon={faCalendarCheck}
-                        style={{ fontSize: 12, color: "black" }}
+                        style={{ fontSize: 12, color: iconColor }}
                       />
                     </li>
                     <li>

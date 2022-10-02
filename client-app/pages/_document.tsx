@@ -41,11 +41,8 @@ class MyDocument extends Document {
           />
 
           {/* bootstrap  3.4.1*/}
-          <link
-            rel="stylesheet"
-            href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
-          />
-          {/* summmernote 0.8.20 */}
+          <link rel="stylesheet" href="../css/bootstrap.min.css" />
+          {/* summmernote 0.8.18 */}
           <link
             href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css"
             rel="stylesheet"

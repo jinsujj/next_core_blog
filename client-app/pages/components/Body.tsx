@@ -12,12 +12,12 @@ import { commonAction } from "../../store/common";
 import BlogCard from "./BlogCard";
 
 interface StyledProps {
-  isDark: string;
+  isDark: boolean;
 }
 
 const Container = styled.div<StyledProps>`
   ${(props) =>
-    props.isDark === "Y" &&
+    props.isDark &&
     css`
       background-color: ${palette.dark_19} !important;
       .summary__write {
@@ -46,7 +46,6 @@ const Container = styled.div<StyledProps>`
     border-bottom: 2px solid ${palette.green_53};
     padding-bottom: 4px;
   }
-
   .post_info {
     margin-top: 12px;
   }
@@ -99,6 +98,7 @@ const Body = () => {
   const setSubCategoryFilter = useSelector(
     (state) => state.common.sideBarSubCategory
   );
+  const isDarkMode = useSelector((state) => state.common.isDark);
 
   const dispatch = useDispatch();
   useMemo(() => {
@@ -130,7 +130,7 @@ const Body = () => {
   }, [userId, searchQuery, setCategoryFilter, setSubCategoryFilter]);
 
   return (
-    <Container isDark={"Y"}>
+    <Container isDark={isDarkMode}>
       <div className="inner">
         <div className="board">
           {setCategoryFilter && postState == "read" && (
