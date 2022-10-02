@@ -22,23 +22,24 @@ const app = ({ Component, pageProps }: AppProps) => {
   useEffect(() => {
     // kakao Login check
     const parameterCheck = decodeURI(window.location.href).split("?")[1];
-    const KAKAO_ACCESS_CODE = new URLSearchParams(parameterCheck).get("code") || "";
+    const kakao_access_code =
+      new URLSearchParams(parameterCheck).get("code") || "";
 
-    if (KAKAO_ACCESS_CODE.length > 1) {
-      kakaoLogin(KAKAO_ACCESS_CODE);
+    if (kakao_access_code.length > 1) {
+      kakaoLogin(kakao_access_code);
     }
   }, []);
 
-  const kakaoLogin = async (KAKAO_ACCESS_CODE :string) => {
-    const Token = await kakaoApi.postAccesCode({
+  const kakaoLogin = async (kakao_access_code: string) => {
+    const kakaoToken = await kakaoApi.postAccesCode({
       client_id: process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID || "",
       redirect_uri: process.env.NEXT_PUBLIC_REDIRECT_URI || "",
-      code: KAKAO_ACCESS_CODE,
+      code: kakao_access_code,
       client_secret: process.env.NEXT_PUBLIC_KAKAO_CLIENT_SECRET || "",
     });
 
     try {
-      const {data} = await kakaoApi.postkakaoLogin(Token.access_token);
+      const { data } = await kakaoApi.postkakaoLogin(kakaoToken.access_token);
       console.log(data);
       dispatch(userActions.setLoggedUser(data));
     } catch (e: any) {
@@ -89,14 +90,12 @@ app.getInitialProps = wrapper.getInitialAppProps((store) => async (context) => {
   const appInitalProps = await App.getInitialProps(context);
 
   try {
-    axios.defaults.headers.common["Cookie"] = context.ctx.req?.headers.cookie || "";
+    axios.defaults.headers.common["Cookie"] =
+      context.ctx.req?.headers.cookie || "";
     const data = await userApi.meAPI();
 
-    if (data.data.userId) 
-      store.dispatch(userActions.setLoggedUser(data.data));
-    else 
-      store.dispatch(userActions.initUser());
-
+    if (data.data.userId) store.dispatch(userActions.setLoggedUser(data.data));
+    else store.dispatch(userActions.initUser());
   } catch (e: any) {
     console.log(e.message);
   }

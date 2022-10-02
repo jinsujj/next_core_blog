@@ -13,12 +13,52 @@ import Button from "./common/Button";
 import Input from "./common/Input";
 import Router from "next/router";
 import palette from "../../styles/palette";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 
 interface StyledProps {
   istoggle: boolean;
+  isDark: boolean;
 }
 
 const Container = styled.div<StyledProps>`
+  ${(props) =>
+    props.isDark &&
+    css`
+      background-color: ${palette.dark_15} !important;
+      a,
+      li {
+        color: ${palette.gray_c4};
+      }
+      .visit--count ul li:first-child {
+        color: ${palette.gray_c4} !important;
+      }
+      .category .count {
+        color: ${palette.red_57};
+      }
+      .darkModeIcon {
+        background-color: ${palette.dark_15} !important;
+      }
+    `}
+
+  ${(props) =>
+    !props.istoggle &&
+    css`
+      visibility: hidden;
+      width: 0px;
+      left: -500px;
+      transition: all 0.5s;
+    `}
+  
+    ${(props) =>
+    props.istoggle &&
+    css`
+      visibility: visible;
+      width: 330px;
+      left: 0px;
+      transition: all 0.5s;
+    `}
+
   width: 330px;
   height: 100%;
   overflow-y: auto;
@@ -38,24 +78,6 @@ const Container = styled.div<StyledProps>`
     z-index: 1;
     background: #fff;
   }
-
-  ${(props) =>
-    !props.istoggle &&
-    css`
-      visibility: hidden;
-      width: 0px;
-      left: -500px;
-      transition: all 0.5s;
-    `}
-
-  ${(props) =>
-    props.istoggle &&
-    css`
-      visibility: visible;
-      width: 330px;
-      left: 0px;
-      transition: all 0.5s;
-    `}
 
   .inner {
     margin-left: 28px;
@@ -129,25 +151,6 @@ const Container = styled.div<StyledProps>`
     cursor: pointer;
   }
 
-  .input--text {
-    width: 100%;
-    height: 40px;
-    padding: 2px 10px;
-    border: 1px solid #18a0fb;
-    border-radius: 4px;
-    box-sizing: border-box;
-    outline: none;
-    font-size: 16px;
-    font-weight: 200;
-    line-height: 20px;
-  }
-
-  .input--text:focus {
-    border-color: #51a7e8;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075),
-      0 0 5px rgba(81, 167, 232, 0.5);
-  }
-
   .btn-group {
     display: none;
 
@@ -178,12 +181,12 @@ const Container = styled.div<StyledProps>`
     font-weight: normal;
     font-size: 12px;
     line-height: 15px;
-    color: #219653;
+    color: ${palette.green_53};
   }
 
   .category {
     margin: 8px 0;
-    border-top: 1px solid #219653;
+    border-top: 1px solid ${palette.green_53};
   }
   .category .menu {
     margin-top: 24px;
@@ -197,7 +200,7 @@ const Container = styled.div<StyledProps>`
   .category .menu .count {
     font-size: 12px;
     line-height: 29px;
-    color: #eb5757;
+    color: ${palette.red_57};
     margin-left: 8px;
   }
   .category .sub--menu {
@@ -210,15 +213,35 @@ const Container = styled.div<StyledProps>`
   .category .sub--menu .count {
     font-size: 12px;
     line-height: 29px;
-    color: #eb5757;
+    color: ${palette.red_57};
     margin-left: 4px;
+  }
+
+  .darkModeIcon {
+    margin-top: 4px;
+    border: none;
+    background-color: white;
+  }
+
+  /* FLOAT CLEARFIX */
+  .clearfix::after {
+    content: "";
+    clear: both;
+    display: block;
+  }
+  .float--left {
+    float: left;
+  }
+  .float--right {
+    float: right;
   }
 `;
 
 const Sidebar = () => {
   const [categoryList, setCategoryList] = useState<string[]>([]);
   const [categoryMap, setCategoryMap] = useState<Map<string, number>>();
-  const [subCategoryMap, setSubCategoryMap] =useState<Map<string, Map<string, number>[]>>();
+  const [subCategoryMap, setSubCategoryMap] =
+    useState<Map<string, Map<string, number>[]>>();
   const [search, setSearch] = useState("");
 
   const [todayCount, setTodayCount] = useState(0);
@@ -227,10 +250,16 @@ const Sidebar = () => {
   const dispatch = useDispatch();
   const isToggle = useSelector((state) => state.common.toggle);
   const userInfo = useSelector((state) => state.user);
+  const isDarkMode = useSelector((state) => state.common.isDark);
+  const iconColor = isDarkMode === true ? "yellow" : "ff9500";
   const { openModal, ModalPortal, closeModal } = useModal();
 
   const changeToggle = () => {
     dispatch(commonAction.setToggleMode(!isToggle));
+  };
+
+  const changeDarkMode = () => {
+    dispatch(commonAction.setDarkMode(!isDarkMode));
   };
 
   const onChangeSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -321,9 +350,9 @@ const Sidebar = () => {
   }, []);
 
   return (
-    <Container istoggle={isToggle}>
+    <Container istoggle={isToggle} isDark={isDarkMode}>
       <div className="inner">
-        <div className={`toggle-btn`} onClick={changeToggle}>
+        <div className="toggle-btn" onClick={changeToggle}>
           {userInfo.isLogged && <div className="userInfo">{userInfo.name}</div>}
         </div>
         <form id="search-form" method="post" action="#">
@@ -346,15 +375,35 @@ const Sidebar = () => {
             </>
           )}
         </div>
-        <div className="visit--count">
-          <ul>
-            <li>Total visit</li>
-            <li>{totalCount}</li>
-          </ul>
-          <ul>
-            <li>Today visit</li>
-            <li>{todayCount}</li>
-          </ul>
+        <div className="visit--count clearfix">
+          <div className="float--left">
+            <ul>
+              <li>Total visit</li>
+              <li>{totalCount}</li>
+            </ul>
+            <ul>
+              <li>Today visit</li>
+              <li>{todayCount}</li>
+            </ul>
+          </div>
+          <div className="float--right">
+            {isDarkMode && (
+              <button className="darkModeIcon" onClick={changeDarkMode}>
+                <FontAwesomeIcon
+                  icon={faMoon}
+                  style={{ fontSize: 25, color: iconColor }}
+                />
+              </button>
+            )}
+            {!isDarkMode && (
+              <button className="darkModeIcon" onClick={changeDarkMode}>
+                <FontAwesomeIcon
+                  icon={faSun}
+                  style={{ fontSize: 25, color: iconColor }}
+                />
+              </button>
+            )}
+          </div>
         </div>
         {categoryList.map((category, index) => (
           <div className="category" key={index}>
@@ -404,7 +453,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-function debounce(arg0: () => void) {
-  throw new Error("Function not implemented.");
-}
-

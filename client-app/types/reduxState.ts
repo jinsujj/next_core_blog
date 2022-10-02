@@ -1,5 +1,6 @@
 export type CommonState = {
   toggle: boolean;
+  isDark: boolean;
   validateMode: boolean;
   postState: "write" | "modify" | "read";
   userIdOfNote: number;
