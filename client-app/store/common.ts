@@ -1,9 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { CommonState } from "../types/reduxState";
 
+const getInitDarkMode = () => {
+  const date = new Date();
+  date.toLocaleString("ko-kr");
+  if (18 <= date.getHours()) return true;
+  return false;
+};
+
 // 초기상태
 const initialState: CommonState = {
   toggle: false, // 토글 여부
+  isDark: getInitDarkMode(), // 다크 몯,
   validateMode: false, // Input 검증 상태 여부
   postState: "read", // 글쓰기 상태 여부
   userIdOfNote: 0, // 현 Note의 작성자 id
@@ -18,6 +26,9 @@ const common = createSlice({
   reducers: {
     setToggleMode(state, action: PayloadAction<boolean>) {
       state.toggle = action.payload;
+    },
+    setDarkMode(state, acition: PayloadAction<boolean>) {
+      state.isDark = acition.payload;
     },
     setValidateMode(state, action: PayloadAction<boolean>) {
       state.validateMode = action.payload;

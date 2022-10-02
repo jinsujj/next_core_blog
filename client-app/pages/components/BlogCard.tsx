@@ -5,13 +5,30 @@ import Link from "next/link";
 import React from "react";
 import styled, { css } from "styled-components";
 import { PostedNote } from "../../api/note";
+import { useSelector } from "../../store";
 import palette from "../../styles/palette";
 
 interface StyledProps {
   isPost: string;
+  isDark: boolean;
 }
 
 const Container = styled.div<StyledProps>`
+  ${(props) =>
+    props.isDark &&
+    css`
+      color: ${palette.gray_dc} !important;
+      p {
+        color: ${palette.gray_d9} !important;
+      }
+      img {
+        opacity: 0.5 !important;
+      }
+      img:hover {
+        opacity: 0.8 !important;
+      }
+    `}
+
   .imageWrapper {
     display: block;
     border-radius: 4px;
@@ -73,14 +90,15 @@ export interface IProps {
   blog: PostedNote;
 }
 
-const imgUri = process.env.NEXT_PUBLIC_API_URL + "/files/";
 const BlogCard = ({ blog }: IProps) => {
-  if (blog.thumbImage === null) blog.thumbImage = "default.svg";
+  const isDarkMode = useSelector((state) => state.common.isDark);
+  const imgUri = process.env.NEXT_PUBLIC_API_URL + "/files/";
 
+  if (blog.thumbImage === null) blog.thumbImage = "default.svg";
   var blogPostDate = blog.postDate.replace(/-/g, "/");
 
   return (
-    <Container isPost={blog.isPost}>
+    <Container isPost={blog.isPost} isDark={isDarkMode}>
       <div className="imageWrapper">
         <Link href={`/blog/${blog.noteId}`} key={blog.noteId}>
           <img key={blog.noteId} src={`${imgUri}${blog.thumbImage}`} />

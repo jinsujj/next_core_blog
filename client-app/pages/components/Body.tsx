@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import noteApi, { PostedNote } from "../../api/note";
 import { useSelector } from "../../store";
 import palette from "../../styles/palette";
@@ -11,8 +11,21 @@ import { useDispatch } from "react-redux";
 import { commonAction } from "../../store/common";
 import BlogCard from "./BlogCard";
 
-const Container = styled.div`
-  margin-top: 56px;
+interface StyledProps {
+  isDark: boolean;
+}
+
+const Container = styled.div<StyledProps>`
+  ${(props) =>
+    props.isDark &&
+    css`
+      background-color: ${palette.dark_19} !important;
+      .summary__write {
+        color: ${palette.gray_dc};
+      }
+    `}
+
+  padding-top: 56px;
 
   h1 {
     font-size: 24px;
@@ -33,7 +46,6 @@ const Container = styled.div`
     border-bottom: 2px solid ${palette.green_53};
     padding-bottom: 4px;
   }
-
   .post_info {
     margin-top: 12px;
   }
@@ -73,12 +85,6 @@ const Container = styled.div`
     clear: both;
     display: block;
   }
-  .float--left {
-    float: left;
-  }
-  .float--right {
-    float: right;
-  }
 `;
 
 const Body = () => {
@@ -92,6 +98,7 @@ const Body = () => {
   const setSubCategoryFilter = useSelector(
     (state) => state.common.sideBarSubCategory
   );
+  const isDarkMode = useSelector((state) => state.common.isDark);
 
   const dispatch = useDispatch();
   useMemo(() => {
@@ -123,7 +130,7 @@ const Body = () => {
   }, [userId, searchQuery, setCategoryFilter, setSubCategoryFilter]);
 
   return (
-    <Container>
+    <Container isDark={isDarkMode}>
       <div className="inner">
         <div className="board">
           {setCategoryFilter && postState == "read" && (
