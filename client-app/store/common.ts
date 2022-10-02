@@ -4,14 +4,15 @@ import { CommonState } from "../types/reduxState";
 const getInitDarkMode = () => {
   const date = new Date();
   date.toLocaleString("ko-kr");
-  if (18 <= date.getHours()) return true;
+  if (18 <= date.getHours() || date.getHours() <= 6) return true;
+
   return false;
 };
 
 // 초기상태
 const initialState: CommonState = {
   toggle: false, // 토글 여부
-  isDark: getInitDarkMode(), // 다크 몯,
+  isDark: getInitDarkMode(), // 다크 모드,
   validateMode: false, // Input 검증 상태 여부
   postState: "read", // 글쓰기 상태 여부
   userIdOfNote: 0, // 현 Note의 작성자 id

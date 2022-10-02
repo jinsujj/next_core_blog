@@ -39,6 +39,10 @@ const Container = styled.div<StyledProps>`
       .darkModeIcon {
         background-color: ${palette.dark_15} !important;
       }
+
+      .userInfo {
+        color: ${palette.gray_c4} !important;
+      }
     `}
 
   ${(props) =>

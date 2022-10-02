@@ -11,6 +11,8 @@ export default {
   charcoal: "#484848",
   snow: "#FFF8F6",
   red_57: "#eb5757",
+  color_99: "#999999",
+  blue_b2: "#95a1b2",
   dark_15: "#151515",
   dark_19: "#191919",
   gray_dc: "#dcdcdc",
