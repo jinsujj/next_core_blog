@@ -1,0 +1,23 @@
+name: front-ssh-deploy
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: front-deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy
+        run: |
+          CMDS=$(cat <<CMD 
+            nohup ./front-server-deploy.sh > nohup.out 2>&1 &
+          CMD
+          )
+          sshpass -p ${{ secrets.FTP_PASSWORD }} \
+            ssh -o 'StrictHostKeyChecking no' \
+              -p ${{ secrets.PORT }} \
+              ${{secrets.FTP_USERNAME}}@${{secrets.FTP_HOST}} \
+              -t "$CMDS" \
+          && exit
