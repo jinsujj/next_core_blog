@@ -1,15 +1,15 @@
-name: backend-ssh-deploy
+name: front-ssh-deploy
 on: [push]
 
 jobs:
   build:
-    name: backend-deploy
+    name: front-deploy
     runs-on: ubuntu-latest
     steps:
       - name: Deploy
         run: |
           CMDS=$(cat <<CMD 
-              nohup ./backend-server-deploy.sh > nohup.out 2>&1 &
+            nohup ./front-server-deploy.sh > nohup.out 2>&1 &
           CMD
           )
           sshpass -p ${{ secrets.FTP_PASSWORD }} \
