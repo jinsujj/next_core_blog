@@ -7,6 +7,7 @@ using Next_Core_Blog.Model.BlogNote;
 using Dapper;
 using Next_Core_Blog.Context;
 using System.Data;
+using Next_core_blog.Model.BlogNote;
 
 namespace Next_Core_Blog.Repository.BlogNote
 {

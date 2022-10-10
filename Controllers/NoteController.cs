@@ -17,6 +17,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
+using Next_core_blog.Model.BlogNote;
 using Next_Core_Blog.Model.BlogNote;
 using Next_Core_Blog.Model.User;
 using Next_Core_Blog.Repository.BlogNote;
