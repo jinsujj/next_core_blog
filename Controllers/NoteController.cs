@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -11,12 +12,11 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Next_Core_Blog.CommonLibrary;
+using Newtonsoft.Json.Linq;
 using Next_Core_Blog.Model.BlogNote;
 using Next_Core_Blog.Model.User;
 using Next_Core_Blog.Repository.BlogNote;
@@ -51,7 +51,8 @@ namespace Next_Core_Blog.Controllers
         {
             _logger.LogInformation("PostNote: " + note.title + " " + formType + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
             note.postIp = HttpContext.Connection.RemoteIpAddress.ToString();
-            try {
+            try
+            {
                 if (XSS_Check(note.content)) return StatusCode(403);
 
                 if (formType == BoardWriteFormType.modify)
@@ -101,8 +102,11 @@ namespace Next_Core_Blog.Controllers
         {
             try
             {
-                _logger.LogInformation("ip: "+logmodel.ip+" ,id: "+logmodel.id);
-                await _noteRepo.postIpLog(logmodel);
+                _logger.LogInformation("ip: " + logmodel.ip + " ,id: " + logmodel.id);
+
+                IpLocationInfo ipInfo = getIpLocation(logmodel.ip);
+                ipInfo.id = logmodel.id;
+                await _noteRepo.postIpLog(ipInfo);
                 return Ok();
             }
             catch (Exception ex)
@@ -110,6 +114,22 @@ namespace Next_Core_Blog.Controllers
                 _logger.LogError("error" + ex.Message);
                 return StatusCode(500, ex.Message);
             }
+        }
+
+        private IpLocationInfo getIpLocation(string ip)
+        {
+            IpLocationInfo ipInfo = new IpLocationInfo();
+            string requestURL = "http://ip-api.com/json/" + ip;
+            WebRequest request = WebRequest.Create(requestURL);
+            request.Method = "GET";
+            request.ContentType = "application/json";
+            Stream stream = request.GetResponse().GetResponseStream();
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                JObject jsonObject = JObject.Parse(reader.ReadToEnd());
+                ipInfo = jsonObject.ToObject<IpLocationInfo>();
+            }
+            return ipInfo;
         }
         #endregion
 
@@ -328,7 +348,7 @@ namespace Next_Core_Blog.Controllers
         #region [ Security Check ]
         private Boolean XSS_Check(string content)
         {
-            int openTagIndex = -1, closeTagIndex = -1, index =0;
+            int openTagIndex = -1, closeTagIndex = -1, index = 0;
             var arrayValue = content.ToArray();
             foreach (var t in arrayValue)
             {
@@ -341,7 +361,7 @@ namespace Next_Core_Blog.Controllers
                 {
                     var buff = content.Substring(openTagIndex, (closeTagIndex - openTagIndex + 1)).ToLower();
                     if (buff.Contains("typescript")) continue;
-                    else if (buff.Contains("script")) 
+                    else if (buff.Contains("script"))
                         return true;
 
                     openTagIndex = -1;

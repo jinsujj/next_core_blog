@@ -58,7 +58,7 @@ namespace Next_Core_Blog.Repository.BlogNote
 
             using (var con = _context.CreateConnection())
             {
-                var notes = await con.QueryAsync<GetNote>(sql, new {UserId = userId});
+                var notes = await con.QueryAsync<GetNote>(sql, new { UserId = userId });
                 return notes.ToList();
             }
         }
@@ -67,7 +67,7 @@ namespace Next_Core_Blog.Repository.BlogNote
         {
             string ParamSubCategory = "";
 
-            if (!string.IsNullOrEmpty(subCategory) && subCategory.Length >1) 
+            if (!string.IsNullOrEmpty(subCategory) && subCategory.Length > 1)
                 ParamSubCategory = "AND a.subcategory = @subCategory";
 
             string sql = string.Format(@"SELECT *
@@ -76,7 +76,7 @@ namespace Next_Core_Blog.Repository.BlogNote
                             {0}
                             AND (IsPost ='Y' OR (userId = @userId AND IsPost ='N'))
                             ORDER BY readCount DESC, postDate DESC
-                        ",  ParamSubCategory);
+                        ", ParamSubCategory);
 
             using (var con = _context.CreateConnection())
             {
@@ -98,9 +98,10 @@ namespace Next_Core_Blog.Repository.BlogNote
                         ";
 
 
-            using (var con = _context.CreateConnection()){
-                await con.QueryAsync(updataCount, new {id});
-                return con.QuerySingleOrDefault<GetNote>(sql, new {id, userId});
+            using (var con = _context.CreateConnection())
+            {
+                await con.QueryAsync(updataCount, new { id });
+                return con.QuerySingleOrDefault<GetNote>(sql, new { id, userId });
             }
         }
 
@@ -136,13 +137,14 @@ namespace Next_Core_Blog.Repository.BlogNote
 
         public async Task<IEnumerable<SidebarCategoryViewModel>> GetSidebarCategoryList()
         {
-           string sql = @"SELECT a.Name, a.Count as MainCount, b.subName, b.Count as SubCount
+            string sql = @"SELECT a.Name, a.Count as MainCount, b.subName, b.Count as SubCount
                             FROM category a left OUTER JOIN subcategory b
                             ON a.Name = b.name";
 
-            using (var con = _context.CreateConnection()){
+            using (var con = _context.CreateConnection())
+            {
                 var categoryList = await con.QueryAsync<SidebarCategoryViewModel>(sql);
-                 return categoryList;
+                return categoryList;
             }
         }
 
@@ -158,7 +160,7 @@ namespace Next_Core_Blog.Repository.BlogNote
             using (var con = _context.CreateConnection())
             {
                 string isCategoryExist = con.QueryFirstOrDefault<string>(sql, new { Category });
-                 _logger.LogInformation("isCategoryExist" + isCategoryExist);
+                _logger.LogInformation("isCategoryExist" + isCategoryExist);
                 // Category new create
                 if (string.IsNullOrEmpty(isCategoryExist))
                 {
@@ -184,8 +186,8 @@ namespace Next_Core_Blog.Repository.BlogNote
             var param = new DynamicParameters();
             string userPasswordSql = @"SELECT password FROM user WHERE userId = @UserId";
             string postNotesql = "";
-            string categoryUpdateSql ="";
-            string subCategoryUpdateSql ="";
+            string categoryUpdateSql = "";
+            string subCategoryUpdateSql = "";
             string thumbImageBuff = "";
 
             param.Add("@Title", value: note.title, dbType: DbType.String);
@@ -197,7 +199,7 @@ namespace Next_Core_Blog.Repository.BlogNote
 
             using (var con = _context.CreateConnection())
             {
-                string password = con.QueryFirstOrDefault<string>(userPasswordSql, new {UserId = note.userId});
+                string password = con.QueryFirstOrDefault<string>(userPasswordSql, new { UserId = note.userId });
 
                 if (formType == BoardWriteFormType.create)
                 {
@@ -217,8 +219,8 @@ namespace Next_Core_Blog.Repository.BlogNote
                                              AND subName = @SubCategory;
                                              ";
 
-                    con.Execute(categoryUpdateSql, new {Category = note.category});
-                    con.Execute(subCategoryUpdateSql, new {Category = note.category , SubCategory = note.subCategory});
+                    con.Execute(categoryUpdateSql, new { Category = note.category });
+                    con.Execute(subCategoryUpdateSql, new { Category = note.category, SubCategory = note.subCategory });
                 }
                 else if (formType == BoardWriteFormType.modify)
                 {
@@ -235,26 +237,28 @@ namespace Next_Core_Blog.Repository.BlogNote
                                         FROM note
                                         WHERE noteId = @id
                                         AND (IsPost ='Y' OR (userId = @userId AND IsPost ='N'))";
-                    var noteInfo = con.QuerySingleOrDefault<GetNote>(noteSql, new {userId = note.userId,  id = note.noteId});
+                    var noteInfo = con.QuerySingleOrDefault<GetNote>(noteSql, new { userId = note.userId, id = note.noteId });
 
                     // Update Category
-                    if(noteInfo.Category != note.category){
+                    if (noteInfo.Category != note.category)
+                    {
                         categoryUpdateSql = @"UPDATE category SET Count = Count + 1 WHERE name = @Category";
-                        con.Execute(categoryUpdateSql, new {Category = note.category});
+                        con.Execute(categoryUpdateSql, new { Category = note.category });
                         categoryUpdateSql = @"UPDATE category SET Count = Count -1 WHERE name = @Category";
-                        con.Execute(categoryUpdateSql, new {Category = noteInfo.Category});
+                        con.Execute(categoryUpdateSql, new { Category = noteInfo.Category });
                     }
-                    if(noteInfo.SubCategory != note.subCategory && note.subCategory.Length >0 ){
+                    if (noteInfo.SubCategory != note.subCategory && note.subCategory.Length > 0)
+                    {
                         subCategoryUpdateSql = @"UPDATE subcategory SET Count = Count +1 
                                                  WHERE name = @Category
                                                  AND subName = @SubCategory";
-                        con.Execute(subCategoryUpdateSql, new {Category = note.category , SubCategory = note.subCategory});
+                        con.Execute(subCategoryUpdateSql, new { Category = note.category, SubCategory = note.subCategory });
                         subCategoryUpdateSql = @"UPDATE subcategory SET Count = Count -1 
                                                  WHERE name = @Category
                                                  AND subName = @SubCategory";
-                        con.Execute(subCategoryUpdateSql, new {Category = noteInfo.Category, SubCategory = noteInfo.SubCategory});                                                
+                        con.Execute(subCategoryUpdateSql, new { Category = noteInfo.Category, SubCategory = noteInfo.SubCategory });
                     }
-                    if(noteInfo.SubCategory.Length >0 && note.subCategory.Length == 0)
+                    if (noteInfo.SubCategory.Length > 0 && note.subCategory.Length == 0)
                     {
                         subCategoryUpdateSql = @"UPDATE subcategory SET Count = Count - 1 
                                                  WHERE name = @Category
@@ -285,7 +289,8 @@ namespace Next_Core_Blog.Repository.BlogNote
         {
             string sql = @"SELECT SUM(readCount) FROM note";
 
-            using (var con = _context.CreateConnection()){
+            using (var con = _context.CreateConnection())
+            {
                 int count = await con.QueryFirstOrDefaultAsync<int>(sql);
                 return count;
             }
@@ -296,31 +301,65 @@ namespace Next_Core_Blog.Repository.BlogNote
             string sql = @"SELECT COUNT(*)
                             FROM userlog
                             Where date_format(Date,'%Y%m%d') = date_format(NOW(),'%Y%m%d')";
-            
-            using (var con  = _context.CreateConnection()){
-                 int count = await con.QueryFirstOrDefaultAsync<int>(sql);
+
+            using (var con = _context.CreateConnection())
+            {
+                int count = await con.QueryFirstOrDefaultAsync<int>(sql);
                 return count;
             }
         }
 
-        public async Task<int> postIpLog(IpLogModel logModel){
-            string Content = string.Format("{0}",logModel.id);
+        public async Task<int> postIpLog(IpLocationInfo ipInfo)
+        {
+            string Content = string.Format("ipinfo.id {0}", ipInfo.id);
 
             // Ignore GoogleBot And Local Log
-            if(logModel.ip.StartsWith("66.249") ||
-                logModel.ip.StartsWith("192.") ||
-                logModel.ip.StartsWith("127.")
-            ){
+            if (ipInfo.query.StartsWith("66.249") || ipInfo.query.StartsWith("192.") ||
+                ipInfo.query.StartsWith("127.") || ipInfo.query.StartsWith(":")
+            )
                 return 1;
-            }
+
 
             string sql = "SELECT COUNT(*) FROM note WHERE noteId= @id AND isPost ='Y'";
+            string InsertSql = @"INSERT INTO ipInfo (query, status, country, countryCode, region, regionName, city, zip, lat, lon, timezone, isp)
+                                    VALUES (
+                                         @query,
+                                         @status,
+                                         @country,
+                                         @countryCode,
+                                         @region,
+                                         @regionName,
+                                         @city,
+                                         @zip,
+                                         @lat,
+                                         @lon,
+                                         @timezone,
+                                         @isp
+                                    )";
             using (var con = _context.CreateConnection())
             {
-                int isPosted = con.QueryFirstOrDefault<int>(sql, new {id = logModel.id});
-                if(isPosted == 1){
-                    await con.QueryAsync(@"INSERT INTO userlog SET Content= @Content, Ip = @Ip, Date =NOW()", new { Content, Ip = logModel.ip });    
-                }
+                int isPosted = con.QueryFirstOrDefault<int>(sql, new { id = ipInfo.id });
+
+                if (isPosted == 1)
+                    await con.QueryAsync(@"INSERT INTO userlog SET Content= @Content, Ip = @Ip, Date =NOW()", new { Content, Ip = ipInfo.query });
+
+
+                await con.QueryAsync(InsertSql, new
+                {
+                    query = ipInfo.query,
+                    status = ipInfo.status,
+                    country = ipInfo.country,
+                    countryCode = ipInfo.countryCode,
+                    region = ipInfo.region,
+                    regionName = ipInfo.regionName,
+                    city = ipInfo.city,
+                    zip = ipInfo.zip,
+                    lat = ipInfo.lat,
+                    lon = ipInfo.lon,
+                    timezone = ipInfo.timezone,
+                    isp = ipInfo.isp,
+                    org = ipInfo.org
+                });
                 return 1;
             }
         }
