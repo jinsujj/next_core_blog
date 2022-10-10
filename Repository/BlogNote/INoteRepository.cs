@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Next_core_blog.Model.BlogNote;
 using Next_Core_Blog.Model.BlogNote;
 
 namespace Next_Core_Blog.Repository.BlogNote
