@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Next_Core_Blog.Model.BlogNote;
 
@@ -9,9 +7,9 @@ namespace Next_Core_Blog.Repository.BlogNote
     public interface INoteRepository
     {
         // Note CRUD
-        int PostNote(PostNoteView note, BoardWriteFormType formType) ;
+        int PostNote(PostNoteView note, BoardWriteFormType formType);
         int PostCategory(string Category, string SubCateghory);
-        int DeleteNode (int id);
+        int DeleteNode(int id);
 
         // Get Note
         Task<IEnumerable<GetNote>> GetNoteAll(int userId);
@@ -25,6 +23,6 @@ namespace Next_Core_Blog.Repository.BlogNote
         Task<int> GetCountAll();
         Task<int> getTotalReadCount();
         Task<int> getTodayReadCount();
-        Task<int> postIpLog(IpLogModel logModel);
+        Task<int> postIpLog(IpLocationInfo logModel);
     }
 }
