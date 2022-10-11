@@ -312,6 +312,7 @@ namespace Next_Core_Blog.Repository.BlogNote
 
         public async Task<int> postIpLog(IpLocationInfo ipInfo)
         {
+            _logger.LogInformation("ipSave: " + ipInfo.query);
             string Content = string.Format("ipinfo.id {0}", ipInfo.id);
 
             // Ignore GoogleBot And Local Log
@@ -321,51 +322,39 @@ namespace Next_Core_Blog.Repository.BlogNote
                 return 1;
 
 
-            string sql = "SELECT COUNT(*) FROM note WHERE noteId= @id AND isPost ='Y'";
-            string InsertSql = @"INSERT INTO ipInfo (query, status, country, countryCode, region, regionName, city, zip, lat, lon, timezone, isp)
+            string isExistIpSql = @"SELECT COUNT(*) FROM ipInfo WHERE query = @query";
+            string insertSql = @"INSERT INTO ipInfo (query, status, country, countryCode, region, regionName, city, zip, lat, lon, timezone, isp)
                                     VALUES (
-                                         @query,
-                                         @status,
-                                         @country,
-                                         @countryCode,
-                                         @region,
-                                         @regionName,
-                                         @city,
-                                         @zip,
-                                         @lat,
-                                         @lon,
-                                         @timezone,
-                                         @isp
+                                         @query, @status, @country, @countryCode, @region, @regionName,
+                                         @city, @zip, @lat, @lon, @timezone, @isp
                                     )";
+
             using (var con = _context.CreateConnection())
             {
-                int isPosted = con.QueryFirstOrDefault<int>(sql, new { id = ipInfo.id });
-
-                if (isPosted == 1)
-                    await con.QueryAsync(@"INSERT INTO userlog SET Content= @Content, Ip = @Ip, Date =NOW()", new { Content, Ip = ipInfo.query });
-
-
-                await con.QueryAsync(InsertSql, new
+                int result = await con.QueryFirstOrDefaultAsync<int>(isExistIpSql, new { query = ipInfo.query });
+                if (result == 0)
                 {
-                    query = ipInfo.query,
-                    status = ipInfo.status,
-                    country = ipInfo.country,
-                    countryCode = ipInfo.countryCode,
-                    region = ipInfo.region,
-                    regionName = ipInfo.regionName,
-                    city = ipInfo.city,
-                    zip = ipInfo.zip,
-                    lat = ipInfo.lat,
-                    lon = ipInfo.lon,
-                    timezone = ipInfo.timezone,
-                    isp = ipInfo.isp,
-                    org = ipInfo.org
-                });
-                return 1;
+                    await con.QueryAsync(insertSql, new
+                    {
+                        query = ipInfo.query,
+                        status = ipInfo.status,
+                        country = ipInfo.country,
+                        countryCode = ipInfo.countryCode,
+                        region = ipInfo.region,
+                        regionName = ipInfo.regionName,
+                        city = ipInfo.city,
+                        zip = ipInfo.zip,
+                        lat = ipInfo.lat,
+                        lon = ipInfo.lon,
+                        timezone = ipInfo.timezone,
+                        isp = ipInfo.isp,
+                        org = ipInfo.org
+                    });
+                }
             }
+            return 0;
         }
     }
-
     public enum BoardWriteFormType
     {
         create,
