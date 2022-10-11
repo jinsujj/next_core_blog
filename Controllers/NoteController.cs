@@ -143,7 +143,7 @@ namespace Next_Core_Blog.Controllers
 
             try
             {
-                var result = _noteRepo.DeleteNode(id);
+                var result = _noteRepo.DeleteNote(id);
                 return Ok(result);
             }
             catch (Exception ex)

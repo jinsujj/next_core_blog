@@ -10,7 +10,7 @@ namespace Next_Core_Blog.Repository.BlogNote
         // Note CRUD
         int PostNote(PostNoteView note, BoardWriteFormType formType);
         int PostCategory(string Category, string SubCateghory);
-        int DeleteNode(int id);
+        int DeleteNote(int id);
 
         // Get Note
         Task<IEnumerable<GetNote>> GetNoteAll(int userId);

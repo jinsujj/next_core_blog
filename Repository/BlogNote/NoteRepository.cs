@@ -23,7 +23,7 @@ namespace Next_Core_Blog.Repository.BlogNote
         }
 
 
-        public int DeleteNode(int id)
+        public int DeleteNote(int id)
         {
             string sql = @"UPDATE note SET IsPost = 'D' WHERE noteId = @id
                         ";
@@ -321,7 +321,14 @@ namespace Next_Core_Blog.Repository.BlogNote
             )
                 return 1;
 
+            // save 'userLog, ipInfo' table
+            await saveLog(ipInfo);
+            return 0;
+        }
 
+        private async Task saveLog(IpLocationInfo ipInfo)
+        {
+            string insertUserLogSql = @"INSERT INTO userlog SET Content= @Content, Ip = @Ip, Date =NOW()";
             string isExistIpSql = @"SELECT COUNT(*) FROM ipInfo WHERE query = @query";
             string insertSql = @"INSERT INTO ipInfo (query, status, country, countryCode, region, regionName, city, zip, lat, lon, timezone, isp)
                                     VALUES (
@@ -331,6 +338,10 @@ namespace Next_Core_Blog.Repository.BlogNote
 
             using (var con = _context.CreateConnection())
             {
+                // save userlog
+                await con.QueryAsync(insertUserLogSql, new { Content = ipInfo.id, Ip = ipInfo.query });
+
+                // save ipInfo
                 int result = await con.QueryFirstOrDefaultAsync<int>(isExistIpSql, new { query = ipInfo.query });
                 if (result == 0)
                 {
@@ -352,7 +363,6 @@ namespace Next_Core_Blog.Repository.BlogNote
                     });
                 }
             }
-            return 0;
         }
     }
     public enum BoardWriteFormType

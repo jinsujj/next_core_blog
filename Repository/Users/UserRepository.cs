@@ -31,24 +31,27 @@ namespace Next_Core_Blog.Repository.Users
 
             using (var con = _context.CreateConnection())
             {
-                var checkResult = con.QueryFirstOrDefault<int>(checkSql, new {Email = model.Email});
+                var checkResult = con.QueryFirstOrDefault<int>(checkSql, new { Email = model.Email });
 
-                if(checkResult != 0 ){
+                if (checkResult != 0)
+                {
                     _logger.LogError("Email already exist");
                     return false;
                 }
-                var result = con.Execute(sql, new { name = model.Name, email = model.Email, password = model.Password ,Oauth = model.Oauth });
+                var result = con.Execute(sql, new { name = model.Name, email = model.Email, password = model.Password, Oauth = model.Oauth });
             }
 
             return true;
         }
 
-        public async void UpdateKakaoProfile (string Email, string Name, string Token, string thumbnail_image_url, string profile_image_url){
+        public async void UpdateKakaoProfile(string Email, string Name, string Token, string thumbnail_image_url, string profile_image_url)
+        {
             string sql = @"UPDATE user SET password = @Token , name = @Name, thumbnail_image_url =@thumbnail_image_url, image_url =@profile_image_url
                             WHERE email = @Email
                             ";
-            using (var con = _context.CreateConnection()){
-                var result = await con.ExecuteAsync(sql, new { Email , Name, Token, thumbnail_image_url, profile_image_url});
+            using (var con = _context.CreateConnection())
+            {
+                var result = await con.ExecuteAsync(sql, new { Email, Name, Token, thumbnail_image_url, profile_image_url });
             }
         }
 
@@ -73,7 +76,7 @@ namespace Next_Core_Blog.Repository.Users
 
             using (var con = _context.CreateConnection())
             {
-                var result =  con.QueryFirstOrDefault<RegisterViewModel>(sql, new { UserId });
+                var result = con.QueryFirstOrDefault<RegisterViewModel>(sql, new { UserId });
                 return result;
             }
         }
@@ -83,9 +86,10 @@ namespace Next_Core_Blog.Repository.Users
             string sql = @"SELECT 1
                             FROM user
                             WHERE Email = @Email_or_Id";
-            
-            using (var con = _context.CreateConnection()){
-                var result = con.QueryFirstOrDefault<bool>(sql, new{Email_or_Id});
+
+            using (var con = _context.CreateConnection())
+            {
+                var result = con.QueryFirstOrDefault<bool>(sql, new { Email_or_Id });
                 return result;
             }
         }
@@ -112,7 +116,7 @@ namespace Next_Core_Blog.Repository.Users
                            WHERE Email = @Email
                            AND Password = @Password
                            ";
-            
+
             string lastLoginSql = @"UPDATE user SET LastLoggined = NOW() 
                                     WHERE Email = @Email";
 
@@ -120,10 +124,11 @@ namespace Next_Core_Blog.Repository.Users
             {
                 result = con.QueryFirstOrDefault<bool>(sql, new { Email, Password });
 
-                if(result){
+                if (result)
+                {
                     sql = @"UPDATE user SET LastLoggined = NOW() 
                             WHERE Email = @Email";
-                    con.Execute(lastLoginSql, new {Email});
+                    con.Execute(lastLoginSql, new { Email });
                 }
                 return result;
             }
@@ -134,10 +139,12 @@ namespace Next_Core_Blog.Repository.Users
             string sql = @"SELECT FailedPasswordAttemptCount
                             FROM user
                             WHERE Email = @Email";
-            
-            using (var con = _context.CreateConnection()){
-                int count = con.QueryFirstOrDefault<int>(sql, new {Email});
-                if(count >= 5){
+
+            using (var con = _context.CreateConnection())
+            {
+                int count = con.QueryFirstOrDefault<int>(sql, new { Email });
+                if (count >= 5)
+                {
                     return true;
                 }
             }
@@ -147,14 +154,16 @@ namespace Next_Core_Blog.Repository.Users
 
         public bool IsLastLoginWithinTenMinute(string Email)
         {
-            string sql =@" SELECT TIMESTAMPDIFF(MINUTE, FailedPasswordAttemptTime, NOW())
+            string sql = @" SELECT TIMESTAMPDIFF(MINUTE, FailedPasswordAttemptTime, NOW())
                             FROM user
                             WHERE Email = @Email
                         ";
 
-            using (var con = _context.CreateConnection()){
-                var timediff = con.QueryFirstOrDefault<int>(sql, new {Email});
-                if(timediff <= 10){
+            using (var con = _context.CreateConnection())
+            {
+                var timediff = con.QueryFirstOrDefault<int>(sql, new { Email });
+                if (timediff <= 10)
+                {
                     return true;
                 }
             }
@@ -163,10 +172,11 @@ namespace Next_Core_Blog.Repository.Users
         }
 
 
-        public void Log(string Content, string Ip)
+        public void SetLog(string Content, string Ip)
         {
-            using(var con = _context.CreateConnection()){
-                con.Execute(@"INSERT INTO userlog SET Content=@Content, Ip =@Ip, Date =NOW()", new {Content, Ip});
+            using (var con = _context.CreateConnection())
+            {
+                con.Execute(@"INSERT INTO userlog SET Content=@Content, Ip =@Ip, Date =NOW()", new { Content, Ip });
             }
         }
 
@@ -177,8 +187,9 @@ namespace Next_Core_Blog.Repository.Users
                                 Password =@Password
                             WHERE Email = @Email
                             ";
-            using (var con = _context.CreateConnection()){
-                con.Execute(sql, new {Name = Model.Name, Password = Model.Password, Email = Model.Email});
+            using (var con = _context.CreateConnection())
+            {
+                con.Execute(sql, new { Name = Model.Name, Password = Model.Password, Email = Model.Email });
             }
         }
 
@@ -191,8 +202,9 @@ namespace Next_Core_Blog.Repository.Users
                             WHERE Email = @Email
                             ";
 
-            using(var con = _context.CreateConnection()){
-                con.Execute(sql, new {Email});
+            using (var con = _context.CreateConnection())
+            {
+                con.Execute(sql, new { Email });
             }
         }
 
@@ -202,9 +214,10 @@ namespace Next_Core_Blog.Repository.Users
                             SET failedpasswordattemptcount =0,
                                 FailedPasswordAttemptTime = NOW()
                             WHERE Email = @Email";
-            
-            using (var con = _context.CreateConnection()){
-                con.Execute(sql, new {Email});
+
+            using (var con = _context.CreateConnection())
+            {
+                con.Execute(sql, new { Email });
             }
         }
 
@@ -213,8 +226,9 @@ namespace Next_Core_Blog.Repository.Users
             string sql = @"SELECT password as Token, Oauth
                             FROM user
                             WHERE email =@Email";
-            using (var con = _context.CreateConnection()){
-                return  await con.QueryFirstAsync<string>(sql, new {Email});
+            using (var con = _context.CreateConnection())
+            {
+                return await con.QueryFirstAsync<string>(sql, new { Email });
             }
         }
     }
