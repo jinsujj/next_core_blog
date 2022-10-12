@@ -10,19 +10,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
-    - name: Setup .NET Core SDK
-      uses: actions/setup-dotnet@v2
-      with:
-        dotnet-version: "6.0.x"
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: "6.0.x"
 
-    - name: "dotnet build"
-      run: dotnet build Next_Core_Blog.csproj
+      - name: "dotnet build"
+        run: dotnet build Next_Core_Blog.csproj
 
-        
-    steps:
       - name: Deploy
         run: |
           CMDS=$(cat <<CMD 
