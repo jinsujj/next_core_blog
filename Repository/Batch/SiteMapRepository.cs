@@ -9,8 +9,7 @@ using Next_Core_Blog.Context;
 
 namespace Next_core_blog.Repository.Batch
 {
-    public class SiteMapRepository
-     : ISiteMapRepository
+    public class SiteMapRepository : ISiteMapRepository
     {
         private readonly DapperContext _context;
         private ILogger<SiteMapRepository> _logger;
