@@ -25,8 +25,7 @@ namespace Next_Core_Blog.Repository.BlogNote
 
         public int DeleteNote(int id)
         {
-            string sql = @"UPDATE note SET IsPost = 'D' WHERE noteId = @id
-                        ";
+            string sql = @"UPDATE note SET IsPost = 'D' WHERE noteId = @id";
 
             using (var con = _context.CreateConnection())
             {
@@ -38,8 +37,7 @@ namespace Next_Core_Blog.Repository.BlogNote
         {
             string sql = @"SELECT COUNT(*)
                             FROM note
-                            WHERE isPost ='Y'
-                        ";
+                            WHERE isPost ='Y'";
 
             using (var con = _context.CreateConnection())
             {
@@ -50,12 +48,13 @@ namespace Next_Core_Blog.Repository.BlogNote
 
         public async Task<IEnumerable<GetNote>> GetNoteAll(int userId)
         {
-            string sql = @"SELECT noteId, title, userId, content, postDate, modifyDate, thumbImage, category, subCategory, readCount, postIp, modifyIp, isPost
-                            FROM note
-                            WHERE isPost = 'Y'
-                            OR (userId = @UserId AND isPost ='N')
-                            ORDER BY readCount DESC, postDate DESC
-                        ";
+            string sql = @"
+            SELECT noteId, title, userId, content, postDate, modifyDate, thumbImage, category, 
+                    subCategory, readCount, postIp, modifyIp, isPost
+            FROM note
+            WHERE isPost = 'Y'
+            OR (userId = @UserId AND isPost ='N')
+            ORDER BY readCount DESC, postDate DESC";
 
             using (var con = _context.CreateConnection())
             {
@@ -71,7 +70,8 @@ namespace Next_Core_Blog.Repository.BlogNote
             if (!string.IsNullOrEmpty(subCategory) && subCategory.Length > 1)
                 ParamSubCategory = "AND a.subcategory = @subCategory";
 
-            string sql = string.Format(@"SELECT *
+            string sql = string.Format(@"
+                            SELECT *
                             FROM note a
                             WHERE a.category = @category
                             {0}
@@ -92,11 +92,12 @@ namespace Next_Core_Blog.Repository.BlogNote
                                     WHERE noteId =@id 
                                     AND isPost ='Y'";
 
-            string sql = @"SELECT noteId, title, userId, content, postDate, modifyDate, thumbImage, category, subCategory, readCount, postIp, modifyIp
-                            FROM note
-                            WHERE NoteId = @id
-                            AND (IsPost ='Y' OR (userId = @userId AND IsPost ='N'))
-                        ";
+            string sql =
+            @"SELECT noteId, title, userId, content, postDate, modifyDate, thumbImage, category, 
+                        subCategory, readCount, postIp, modifyIp
+                FROM note
+                WHERE NoteId = @id
+                AND (IsPost ='Y' OR (userId = @userId AND IsPost ='N'))";
 
 
             using (var con = _context.CreateConnection())
@@ -123,7 +124,7 @@ namespace Next_Core_Blog.Repository.BlogNote
             }
         }
 
-        public async Task<IEnumerable<CategoryViewModel>> getNoteCategoryList()
+        public async Task<IEnumerable<CategoryViewModel>> GetNoteCategoryList()
         {
             string sql = @"SELECT a.name as category , NVL(b.subName,'') as subCategory
                             FROM category a LEFT OUTER JOIN subcategory b
@@ -154,9 +155,12 @@ namespace Next_Core_Blog.Repository.BlogNote
         {
             _logger.LogInformation("categort: " + Category + " " + "subcategory: " + SubCategory);
             // Category 유무 Check
-            string sql = @"SELECT Name FROM category WHERE Name = @Category";
-            string insertCategory = @"INSERT INTO category (Name, Count) VALUES (@Category, 0)";
-            string insertSubCategory = @"INSERT INTO subcategory (Name, subName, Count) VALUES (@Category ,@SubCategory, 0)";
+            string sql =
+            @"SELECT Name FROM category WHERE Name = @Category";
+            string insertCategory =
+            @"INSERT INTO category (Name, Count) VALUES (@Category, 0)";
+            string insertSubCategory =
+            @"INSERT INTO subcategory (Name, subName, Count) VALUES (@Category ,@SubCategory, 0)";
 
             using (var con = _context.CreateConnection())
             {
@@ -166,7 +170,8 @@ namespace Next_Core_Blog.Repository.BlogNote
                 if (string.IsNullOrEmpty(isCategoryExist))
                 {
                     con.QueryFirstOrDefault<int>(insertCategory, new { Category });
-                    if (!string.IsNullOrEmpty(SubCategory)) con.QueryFirstOrDefault(insertSubCategory, new { Category, SubCategory });
+                    if (!string.IsNullOrEmpty(SubCategory))
+                        con.QueryFirstOrDefault(insertSubCategory, new { Category, SubCategory });
                     return 1;
                 }
                 // Category add  
@@ -209,12 +214,16 @@ namespace Next_Core_Blog.Repository.BlogNote
                     param.Add("@ThumbImage", value: note.thumbImage, dbType: DbType.String);
 
                     // Insert Note
-                    postNotesql = @"INSERT INTO note (Title, UserId, Content, Password, ThumbImage, IsPost, PostDate, PostIp, Category, SubCategory, ReadCount)
-                        VALUES (@Title, @UserId, @Content, @Password, @ThumbImage, @IsPost, Now(), @PostIp, @Category, @SubCategory, 0)";
+                    postNotesql = @"
+                    INSERT INTO note (Title, UserId, Content, Password, ThumbImage, IsPost, 
+                                      PostDate, PostIp, Category, SubCategory, ReadCount)
+                    VALUES (@Title, @UserId, @Content, @Password, @ThumbImage, @IsPost, Now(), 
+                            @PostIp, @Category, @SubCategory, 0)";
 
 
                     // Update Category
-                    categoryUpdateSql = @"UPDATE category SET Count = Count + 1 WHERE name = @Category";
+                    categoryUpdateSql =
+                    @"UPDATE category SET Count = Count + 1 WHERE name = @Category";
                     subCategoryUpdateSql = @"UPDATE subcategory SET Count = Count +1
                                              WHERE Name = @Category
                                              AND subName = @SubCategory;
@@ -241,44 +250,55 @@ namespace Next_Core_Blog.Repository.BlogNote
                     var noteInfo = con.QuerySingleOrDefault<GetNote>(noteSql, new { userId = note.userId, id = note.noteId });
 
                     // Update Category
-                    if (noteInfo.Category != note.category)
+                    if (noteInfo.category != note.category)
                     {
-                        categoryUpdateSql = @"UPDATE category SET Count = Count + 1 WHERE name = @Category";
+                        categoryUpdateSql =
+                         @"UPDATE category SET Count = Count + 1 WHERE name = @Category";
                         con.Execute(categoryUpdateSql, new { Category = note.category });
-                        categoryUpdateSql = @"UPDATE category SET Count = Count -1 WHERE name = @Category";
-                        con.Execute(categoryUpdateSql, new { Category = noteInfo.Category });
+
+                        categoryUpdateSql =
+                        @"UPDATE category SET Count = Count -1 WHERE name = @Category";
+                        con.Execute(categoryUpdateSql, new { Category = noteInfo.category });
                     }
-                    if (noteInfo.SubCategory != note.subCategory && note.subCategory.Length > 0)
+                    // update subCategory to other
+                    if (noteInfo.subCategory != note.subCategory && note.subCategory.Length > 0)
                     {
                         subCategoryUpdateSql = @"UPDATE subcategory SET Count = Count +1 
                                                  WHERE name = @Category
                                                  AND subName = @SubCategory";
-                        con.Execute(subCategoryUpdateSql, new { Category = note.category, SubCategory = note.subCategory });
+                        con.Execute(
+                            subCategoryUpdateSql,
+                            new { Category = note.category, SubCategory = note.subCategory });
+
                         subCategoryUpdateSql = @"UPDATE subcategory SET Count = Count -1 
                                                  WHERE name = @Category
                                                  AND subName = @SubCategory";
-                        con.Execute(subCategoryUpdateSql, new { Category = noteInfo.Category, SubCategory = noteInfo.SubCategory });
+                        con.Execute(subCategoryUpdateSql,
+                        new { Category = noteInfo.category, SubCategory = noteInfo.subCategory });
                     }
-                    if (noteInfo.SubCategory.Length > 0 && note.subCategory.Length == 0)
+                    // create subCategory
+                    if (noteInfo.subCategory.Length > 0 && note.subCategory.Length == 0)
                     {
                         subCategoryUpdateSql = @"UPDATE subcategory SET Count = Count - 1 
                                                  WHERE name = @Category
                                                  AND subName = @SubCategory";
-                        con.Execute(subCategoryUpdateSql, new { Category = noteInfo.Category, SubCategory = noteInfo.SubCategory });
+                        con.Execute(subCategoryUpdateSql,
+                        new { Category = noteInfo.category, SubCategory = noteInfo.subCategory });
                     }
 
                     // Update Note
-                    postNotesql = string.Format(@"UPDATE note
-                        SET title = @Title,
-                            Content = @Content,
-                            Userid = @UserId,
-                            {0}
-                            ModifyDate = NOW(),
-                            ModifyIp = @ModifyIp,
-                            Category = @Category,
-                            SubCategory = @SubCategory,
-                            IsPost = @IsPost
-                        WHERE noteId = @NoteId
+                    postNotesql = string.Format(
+                        @"UPDATE note
+                            SET title = @Title,
+                                Content = @Content,
+                                Userid = @UserId,
+                                {0}
+                                ModifyDate = NOW(),
+                                ModifyIp = @ModifyIp,
+                                Category = @Category,
+                                SubCategory = @SubCategory,
+                                IsPost = @IsPost
+                            WHERE noteId = @NoteId
                         ", thumbImageBuff);
                 }
                 con.Execute(postNotesql, param, commandType: CommandType.Text);
@@ -286,7 +306,7 @@ namespace Next_Core_Blog.Repository.BlogNote
             }
         }
 
-        public async Task<int> getTotalReadCount()
+        public async Task<int> GetTotalReadCount()
         {
             string sql = @"SELECT SUM(readCount) FROM note";
 
@@ -297,7 +317,7 @@ namespace Next_Core_Blog.Repository.BlogNote
             }
         }
 
-        public async Task<int> getTodayReadCount()
+        public async Task<int> GetTodayReadCount()
         {
             string sql = @"SELECT COUNT(*)
                             FROM userlog
@@ -310,7 +330,7 @@ namespace Next_Core_Blog.Repository.BlogNote
             }
         }
 
-        public async Task<int> postIpLog(IpLocationInfo ipInfo)
+        public async Task<int> PostIpLog(IpLocationInfo ipInfo)
         {
             _logger.LogInformation("ipSave: " + ipInfo.query);
             string Content = string.Format("ipinfo.id {0}", ipInfo.id);
@@ -328,21 +348,26 @@ namespace Next_Core_Blog.Repository.BlogNote
 
         private async Task saveLog(IpLocationInfo ipInfo)
         {
-            string insertUserLogSql = @"INSERT INTO userlog SET Content= @Content, Ip = @Ip, Date =NOW()";
-            string isExistIpSql = @"SELECT COUNT(*) FROM ipInfo WHERE query = @query";
-            string insertSql = @"INSERT INTO ipInfo (query, status, country, countryCode, region, regionName, city, zip, lat, lon, timezone, isp)
-                                    VALUES (
-                                         @query, @status, @country, @countryCode, @region, @regionName,
-                                         @city, @zip, @lat, @lon, @timezone, @isp
-                                    )";
+            string insertUserLogSql =
+            @"INSERT INTO userlog SET Content= @Content, Ip = @Ip, Date =NOW()";
+            string isExistIpSql =
+            @"SELECT COUNT(*) FROM ipInfo WHERE query = @query";
+            string insertSql =
+            @"INSERT INTO ipInfo (query, status, country, countryCode, region, regionName, 
+                                    city, zip, lat, lon, timezone, isp)
+                VALUES (@query, @status, @country, @countryCode, @region, @regionName,@city, @zip,
+                        @lat, @lon, @timezone, @isp)";
 
             using (var con = _context.CreateConnection())
             {
                 // save userlog
-                await con.QueryAsync(insertUserLogSql, new { Content = ipInfo.id, Ip = ipInfo.query });
+                await con.QueryAsync(
+                    insertUserLogSql, new { Content = ipInfo.id, Ip = ipInfo.query });
 
                 // save ipInfo
-                int result = await con.QueryFirstOrDefaultAsync<int>(isExistIpSql, new { query = ipInfo.query });
+                int result = await con.QueryFirstOrDefaultAsync<int>(
+                    isExistIpSql, new { query = ipInfo.query });
+
                 if (result == 0)
                 {
                     await con.QueryAsync(insertSql, new

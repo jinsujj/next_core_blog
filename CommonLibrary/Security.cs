@@ -73,7 +73,6 @@ namespace Next_Core_Blog.CommonLibrary
                 return hex;
             }
         }
-
         #endregion
     }
 }

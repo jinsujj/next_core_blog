@@ -22,16 +22,18 @@ namespace Next_Core_Blog.CommonLibrary
             string strName = Path.GetFileNameWithoutExtension(name);
             string strExt = Path.GetExtension(name);
             strName = strName.Substring(1);
-            strExt =  strExt.Substring(0,4);
+            strExt = strExt.Substring(0, 4);
             name = string.Format(strName + strExt);
 
             bool blnExist = true;
             int i = 0;
-            while (blnExist){
+            while (blnExist)
+            {
                 string fullPath = @Path.Combine(dir, name);
                 if (File.Exists(fullPath))
-                    name = strName + "(" + ++i +")" + strExt;
-                else{
+                    name = strName + "(" + ++i + ")" + strExt;
+                else
+                {
                     blnExist = false;
                     name = fullPath;
                 }

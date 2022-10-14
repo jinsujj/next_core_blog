@@ -30,15 +30,15 @@ namespace Next_core_blog.Repository.Batch
 
             using (var con = _context.CreateConnection())
             {
-                var noteList = con.Query<noteInfo>(sql).ToArray();
+                var noteList = con.Query<NoteInfo>(sql).ToArray();
                 XmlDocument xmlDoc = new XmlDocument();
                 XmlNode root = SetRootTag(xmlDoc);
 
                 SetDefaultUrl(xmlDoc, noteList, root);
                 for (int i = 0; i < noteList.Length; i++)
                 {
-                    if (noteList[i].ModifyDate.Length == 0)
-                        noteList[i].ModifyDate = noteList[i].PostDate;
+                    if (noteList[i].modifyDate.Length == 0)
+                        noteList[i].modifyDate = noteList[i].postDate;
                     SetBlogUrl(noteList, xmlDoc, root, i);
                 }
                 SaveXml(xmlDoc);
@@ -54,7 +54,7 @@ namespace Next_core_blog.Repository.Batch
             xmlDoc.AppendChild(root);
             return root;
         }
-        private static void SetBlogUrl(noteInfo[] count, XmlDocument xmlDoc, XmlNode root, int idx)
+        private static void SetBlogUrl(NoteInfo[] count, XmlDocument xmlDoc, XmlNode root, int idx)
         {
             XmlNode url = xmlDoc.CreateElement("url");
             XmlNode loc = xmlDoc.CreateElement("loc");
@@ -62,11 +62,11 @@ namespace Next_core_blog.Repository.Batch
             url.AppendChild(loc);
 
             XmlNode lastmod = xmlDoc.CreateElement("lastmod");
-            lastmod.InnerText = count[idx].ModifyDate.Split(" ")[0].ToString();
+            lastmod.InnerText = count[idx].modifyDate.Split(" ")[0].ToString();
             url.AppendChild(lastmod);
             root.AppendChild(url);
         }
-        private static void SetDefaultUrl(XmlDocument xmlDoc, noteInfo[] count, XmlNode root)
+        private static void SetDefaultUrl(XmlDocument xmlDoc, NoteInfo[] count, XmlNode root)
         {
             XmlNode defaultUrl = xmlDoc.CreateElement("url");
             XmlNode defaultLoc = xmlDoc.CreateElement("loc");
@@ -74,7 +74,7 @@ namespace Next_core_blog.Repository.Batch
             defaultUrl.AppendChild(defaultLoc);
 
             XmlNode defaultLastmod = xmlDoc.CreateElement("lastmod");
-            defaultLastmod.InnerText = count[0].ModifyDate;
+            defaultLastmod.InnerText = count[0].modifyDate;
             defaultUrl.AppendChild(defaultLastmod);
             root.AppendChild(defaultUrl);
         }

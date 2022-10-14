@@ -28,18 +28,18 @@ namespace Next_Core_Blog.Controllers
 {
     [Route("api/Note")]
     [ApiController]
-    public class NoteController : ControllerBase
+    public class noteController : ControllerBase
     {
         private const string ipLocationUrl = "http://ip-api.com/json/";
         private IWebHostEnvironment _enviorment;
         private readonly IConfiguration _config;
-        private readonly ILogger<NoteController> _logger;
+        private readonly ILogger<noteController> _logger;
         private readonly INoteRepository _noteRepo;
         private readonly IUserRepository _userRepo;
         private readonly ISiteMapRepository _siteRepo;
 
 
-        public NoteController(IWebHostEnvironment environment, IConfiguration config, ILogger<NoteController> logger, INoteRepository noteRepo, IUserRepository userRepo, ISiteMapRepository siteRepo)
+        public noteController(IWebHostEnvironment environment, IConfiguration config, ILogger<noteController> logger, INoteRepository noteRepo, IUserRepository userRepo, ISiteMapRepository siteRepo)
         {
             _enviorment = environment;
             _config = config;
@@ -62,7 +62,10 @@ namespace Next_Core_Blog.Controllers
 
                 if (formType == BoardWriteFormType.modify)
                 {
-                    var parameterModulationCheck = DecryptTokenInfo(HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>());
+                    var parameterModulationCheck = DecryptTokenInfo(
+                        HttpContext.RequestServices
+                        .GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>());
+
                     if (note.userId != Convert.ToInt32(parameterModulationCheck["userId"]))
                         return StatusCode(403);
                 }
@@ -85,13 +88,17 @@ namespace Next_Core_Blog.Controllers
         {
             _logger.LogInformation("Category: " + categoryView.category + " SubCateghory:  " + categoryView.subCategory + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
-            var parameterModulationCheck = DecryptTokenInfo(HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>());
+            var parameterModulationCheck = DecryptTokenInfo(
+                HttpContext.RequestServices
+                .GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>());
+
             RegisterViewModel userInfo = _userRepo.GetUserByUserId(categoryView.userId);
-            if (userInfo.Role != parameterModulationCheck["Role"]) return StatusCode(403);
+            if (userInfo.role != parameterModulationCheck["Role"]) return StatusCode(403);
 
             try
             {
-                var result = _noteRepo.PostCategory(categoryView.category, categoryView.subCategory);
+                var result = _noteRepo.PostCategory(
+                    categoryView.category, categoryView.subCategory);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -104,15 +111,15 @@ namespace Next_Core_Blog.Controllers
 
         #region [ Save Log ]
         [HttpPost("postIpLog")]
-        public async Task<IActionResult> postIpLog([FromBody] IpLogModel logmodel)
+        public async Task<IActionResult> PostIpLog([FromBody] IpLogModel logmodel)
         {
             try
             {
                 _logger.LogInformation("ip: " + logmodel.ip + " ,id: " + logmodel.id);
 
-                IpLocationInfo ipInfo = getIpLocation(logmodel.ip).Result;
+                IpLocationInfo ipInfo = GetIpLocation(logmodel.ip).Result;
                 ipInfo.id = logmodel.id;
-                await _noteRepo.postIpLog(ipInfo);
+                await _noteRepo.PostIpLog(ipInfo);
                 return Ok();
             }
             catch (Exception ex)
@@ -122,13 +129,14 @@ namespace Next_Core_Blog.Controllers
             }
         }
 
-        private async Task<IpLocationInfo> getIpLocation(string requestIp)
+        private async Task<IpLocationInfo> GetIpLocation(string requestIp)
         {
             string requestURL = ipLocationUrl + requestIp;
 
             using (var client = new HttpClient())
             {
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
                 HttpResponseMessage response = await client.GetAsync(requestURL);
                 Stream stream = response.Content.ReadAsStream();
 
@@ -241,12 +249,12 @@ namespace Next_Core_Blog.Controllers
 
         [HttpGet("getCategoryList")]
         [Produces("application/json")]
-        public async Task<IActionResult> getCategoryList()
+        public async Task<IActionResult> GetCategoryList()
         {
             _logger.LogInformation("getCategoryList" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
             try
             {
-                var categoryList = await _noteRepo.getNoteCategoryList();
+                var categoryList = await _noteRepo.GetNoteCategoryList();
                 return Ok(categoryList);
             }
             catch (Exception ex)
@@ -257,7 +265,7 @@ namespace Next_Core_Blog.Controllers
         }
 
         [HttpGet("getSidebarCategoryList")]
-        public async Task<IActionResult> getSidebarCategoryList()
+        public async Task<IActionResult> GetSidebarCategoryList()
         {
             _logger.LogInformation("getSidebarCategoryList" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
             try
@@ -276,7 +284,7 @@ namespace Next_Core_Blog.Controllers
         #region [ SaveImage ]
         [HttpPost("saveImage")]
         [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
-        public async Task<string> saveImage(IFormFile file)
+        public async Task<string> SaveImage(IFormFile file)
         {
             string fileName = "";
             try
@@ -285,7 +293,7 @@ namespace Next_Core_Blog.Controllers
                     return "Err.. Check file Ext Type ";
 
                 if ((file != null) && (file.Length > 0))
-                    fileName = await saveImageFile(Path.Combine(_enviorment.WebRootPath, "files"), file);
+                    fileName = await SaveImageFile(Path.Combine(_enviorment.WebRootPath, "files"), file);
 
                 return fileName;
             }
@@ -295,7 +303,7 @@ namespace Next_Core_Blog.Controllers
             }
         }
 
-        private async Task<String> saveImageFile(string uploadDir, IFormFile file)
+        private async Task<String> SaveImageFile(string uploadDir, IFormFile file)
         {
             string fileFullPath = CommonLibrary.FileUtility.GetFileNameWithNumbering(uploadDir,
                                 Path.GetFileName(ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.ToString()));
@@ -325,11 +333,11 @@ namespace Next_Core_Blog.Controllers
         }
 
         [HttpGet("totalReadCount")]
-        public async Task<IActionResult> getTotalReadCount()
+        public async Task<IActionResult> GetTotalReadCount()
         {
             try
             {
-                return Ok(await _noteRepo.getTotalReadCount());
+                return Ok(await _noteRepo.GetTotalReadCount());
             }
             catch (Exception ex)
             {
@@ -339,11 +347,11 @@ namespace Next_Core_Blog.Controllers
         }
 
         [HttpGet("todayReadCount")]
-        public async Task<IActionResult> getTodayReadCount()
+        public async Task<IActionResult> GetTodayReadCount()
         {
             try
             {
-                return Ok(await _noteRepo.getTodayReadCount());
+                return Ok(await _noteRepo.GetTodayReadCount());
             }
             catch (Exception ex)
             {
@@ -384,8 +392,12 @@ namespace Next_Core_Blog.Controllers
         {
             Dictionary<string, string> tokenInto = new Dictionary<string, string>();
 
-            var cookie = opt.CurrentValue.CookieManager.GetRequestCookie(HttpContext, "UserLoginCookie");
-            var dataProtector = opt.CurrentValue.DataProtectionProvider.CreateProtector("Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationMiddleware", CookieAuthenticationDefaults.AuthenticationScheme, "v2");
+            var cookie = opt.CurrentValue.CookieManager.GetRequestCookie(
+                HttpContext, "UserLoginCookie");
+
+            var dataProtector = opt.CurrentValue.DataProtectionProvider.CreateProtector(
+                "Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationMiddleware", CookieAuthenticationDefaults.AuthenticationScheme, "v2");
+
             var ticketDataFormat = new TicketDataFormat(dataProtector);
             var ticket = ticketDataFormat.Unprotect(cookie);
             foreach (var claim in ticket.Principal.Claims)
@@ -399,6 +411,7 @@ namespace Next_Core_Blog.Controllers
         [HttpPost("sitemapGenerator")]
         public void SitemapXmlGenerator()
         {
+            _logger.LogInformation("SitemapXmlGenerator" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
             _siteRepo.SitemapXmlGenerator();
         }
 

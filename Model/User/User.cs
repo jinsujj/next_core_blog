@@ -7,13 +7,13 @@ namespace Next_Core_Blog.Model.BlogNote
 {
     public class User
     {
-        public int UserId {get;set;}
-        public string Name {get;set;}
-        public string Email {get;set;}
-        public string Password {get;set;}
-        public DateTime CreatedDate {get;set;}
-        public DateTime LastLoggined {get;set;}
-        public int FailedPasswordAttemptCount {get;set;}
-        public DateTime FailedPasswordAttemptTime {get;set;}
+        public int userId { get; set; }
+        public string name { get; set; }
+        public string email { get; set; }
+        public string password { get; set; }
+        public DateTime createdDate { get; set; }
+        public DateTime lastLoggined { get; set; }
+        public int failedPasswordAttemptCount { get; set; }
+        public DateTime failedPasswordAttemptTime { get; set; }
     }
 }

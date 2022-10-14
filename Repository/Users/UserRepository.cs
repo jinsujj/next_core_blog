@@ -26,19 +26,21 @@ namespace Next_Core_Blog.Repository.Users
         {
             string checkSql = "SELECT COUNT(*) FROM user WHERE Email = @Email";
 
-            string sql = @"INSERT INTO user (Name, Email, Password, FailedPasswordAttemptCount, Role, CreatedDate, Oauth)
-                            VALUES(@Name, @Email, @Password, 0, 'USER', NOW(), @Oauth);";
+            string sql =
+            @"INSERT INTO user (Name, Email, Password, FailedPasswordAttemptCount, Role,     
+                                CreatedDate, Oauth)
+            VALUES(@Name, @Email, @Password, 0, 'USER', NOW(), @Oauth);";
 
             using (var con = _context.CreateConnection())
             {
-                var checkResult = con.QueryFirstOrDefault<int>(checkSql, new { Email = model.Email });
+                var checkResult = con.QueryFirstOrDefault<int>(checkSql, new { Email = model.email });
 
                 if (checkResult != 0)
                 {
                     _logger.LogError("Email already exist");
                     return false;
                 }
-                var result = con.Execute(sql, new { name = model.Name, email = model.Email, password = model.Password, Oauth = model.Oauth });
+                var result = con.Execute(sql, new { name = model.name, email = model.email, password = model.password, Oauth = model.oauth });
             }
 
             return true;
@@ -189,7 +191,7 @@ namespace Next_Core_Blog.Repository.Users
                             ";
             using (var con = _context.CreateConnection())
             {
-                con.Execute(sql, new { Name = Model.Name, Password = Model.Password, Email = Model.Email });
+                con.Execute(sql, new { Name = Model.name, Password = Model.password, Email = Model.email });
             }
         }
 
@@ -221,7 +223,7 @@ namespace Next_Core_Blog.Repository.Users
             }
         }
 
-        public async Task<string> getKakaoToken(string Email)
+        public async Task<string> GetKakaoToken(string Email)
         {
             string sql = @"SELECT password as Token, Oauth
                             FROM user

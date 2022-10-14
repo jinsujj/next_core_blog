@@ -6,14 +6,15 @@ using System.Threading.Tasks;
 
 namespace next_core_blog.Model.Oauth
 {
-    public class kakaoPrimaryKey
+    public class KakaoEmail
     {
-        public string Email {get;set;}
-        public string Id {get;set;}
+        public string email { get; set; }
+        public string id { get; set; }
 
-        public kakaoPrimaryKey(string email, string id){
-            this.Email = email;
-            this.Id = id;
+        public KakaoEmail(string email, string id)
+        {
+            this.email = email;
+            this.id = id;
         }
     }
 }

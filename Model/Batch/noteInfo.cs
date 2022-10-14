@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace next_core_blog.Model.Batch
 {
-    public class noteInfo
+    public class NoteInfo
     {
         public String noteId;
-        public String PostDate;
-        public String ModifyDate;
+        public String postDate;
+        public String modifyDate;
     }
 }

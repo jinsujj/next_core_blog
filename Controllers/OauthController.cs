@@ -45,24 +45,25 @@ namespace next_core_blog.Controllers
         #region [ kakao Login ]
         [HttpPost("Kakao/Login")]
         [Produces("application/json")]
-        public async Task<IActionResult> GetKaKaoProfileInfo([FromBody] kakaoToken kakaoToken)
+        public async Task<IActionResult> GetKaKaoProfileInfo([FromBody] KakaoToken kakaoToken)
         {
-            _logger.LogInformation("GetKaKaoProfileInfo" + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + "  |  Token: " + kakaoToken.Token);
+            _logger.LogInformation("GetKaKaoProfileInfo" + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + "  |  Token: " + kakaoToken.token);
             try
             {
-                var response = kakaoRequest(kakaoLogin, kakaoToken.Token).Result;
-                var kakaoProfile = JsonConvert.DeserializeObject<kakaoProfile>(JsonToString(response));
+                var response = KakaoRequest(kakaoLogin, kakaoToken.token).Result;
+                var kakaoProfile = JsonConvert.DeserializeObject<KakaoProfile>(
+                    JsonToString(response));
 
                 //카카오 로그인 시, 카카오 이메일 없는 경우가 있어서 로직 분기 처리함.
                 if (String.IsNullOrEmpty(kakaoProfile.kakao_account.email))
                 {
-                    AccountCheckById(kakaoProfile, kakaoToken.Token);
-                    return await CreateCookie(new kakaoPrimaryKey("", kakaoProfile.id.ToString()));
+                    AccountCheckById(kakaoProfile, kakaoToken.token);
+                    return await CreateCookie(new KakaoEmail("", kakaoProfile.id.ToString()));
                 }
                 else
                 {
-                    AccountCheckByEmail(kakaoProfile, kakaoToken.Token);
-                    return await CreateCookie(new kakaoPrimaryKey(kakaoProfile.kakao_account.email, ""));
+                    AccountCheckByEmail(kakaoProfile, kakaoToken.token);
+                    return await CreateCookie(new KakaoEmail(kakaoProfile.kakao_account.email, ""));
                 }
             }
             catch (Exception ex)
@@ -72,7 +73,7 @@ namespace next_core_blog.Controllers
             }
         }
 
-        private void AccountCheckById(kakaoProfile kakaoProfile, string token)
+        private void AccountCheckById(KakaoProfile kakaoProfile, string token)
         {
             if (!_userRepo.IsRegistedUser(kakaoProfile.id.ToString()))
                 RegistUserById(kakaoProfile, token);
@@ -84,7 +85,7 @@ namespace next_core_blog.Controllers
                         , kakaoProfile.kakao_account.profile.profile_image_url);
         }
 
-        private void AccountCheckByEmail(kakaoProfile kakaoProfile, String token)
+        private void AccountCheckByEmail(KakaoProfile kakaoProfile, String token)
         {
             if (!_userRepo.IsRegistedUser(kakaoProfile.kakao_account.email))
                 RegistUserByEmail(kakaoProfile, token);
@@ -100,13 +101,14 @@ namespace next_core_blog.Controllers
         #region [ kakao Logout ]
         [HttpPost("Kakao/Logout")]
         [Produces("application/json")]
-        public async Task<IActionResult> PostKakaoLogout([FromBody] kakaoPrimaryKey email)
+        public async Task<IActionResult> PostKakaoLogout([FromBody] KakaoEmail email)
         {
-            _logger.LogInformation("PostKakaoLogout" + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + "  |  email: " + email.Email);
-            string kakaoToken = await _userRepo.getKakaoToken(email.Email);
+            _logger.LogInformation(
+                "PostKakaoLogout" + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + "  |  email: " + email.email);
+            string kakaoToken = await _userRepo.GetKakaoToken(email.email);
             try
             {
-                HttpResponseMessage response = kakaoRequest(kakaoLogout, kakaoToken).Result;
+                HttpResponseMessage response = KakaoRequest(kakaoLogout, kakaoToken).Result;
                 return Ok(JsonToString(response));
             }
             catch (Exception ex)
@@ -118,28 +120,28 @@ namespace next_core_blog.Controllers
         #endregion
 
         #region [ user Regist ]
-        private void RegistUserById(kakaoProfile profile, string Token)
+        private void RegistUserById(KakaoProfile profile, string Token)
         {
             // kakao regist
             RegisterViewModel model = new RegisterViewModel();
-            model.Email = profile.id.ToString();
-            model.Name = profile.properties.nickname;
-            model.Password = Token;
-            model.Role = "USER";
-            model.Oauth = "KAKAO";
+            model.email = profile.id.ToString();
+            model.name = profile.properties.nickname;
+            model.password = Token;
+            model.role = "USER";
+            model.oauth = "KAKAO";
             var data = _userRepo.AddUser(model);
 
             _logger.LogInformation("RegistUser: " + data);
         }
-        private void RegistUserByEmail(kakaoProfile profile, string Token)
+        private void RegistUserByEmail(KakaoProfile profile, string Token)
         {
             // kakao regist
             RegisterViewModel model = new RegisterViewModel();
-            model.Email = profile.kakao_account.email;
-            model.Name = profile.properties.nickname;
-            model.Password = Token;
-            model.Role = "USER";
-            model.Oauth = "KAKAO";
+            model.email = profile.kakao_account.email;
+            model.name = profile.properties.nickname;
+            model.password = Token;
+            model.role = "USER";
+            model.oauth = "KAKAO";
             var data = _userRepo.AddUser(model);
 
             _logger.LogInformation("RegistUser: " + data);
@@ -147,15 +149,18 @@ namespace next_core_blog.Controllers
         #endregion
 
         #region [ cookie Create ]
-        private async Task<IActionResult> CreateCookie([FromBody] kakaoPrimaryKey email_or_id)
+        private async Task<IActionResult> CreateCookie([FromBody] KakaoEmail email_or_id)
         {
             try
             {
-                string primaryKey = email_or_id.Email == "" ? email_or_id.Id : email_or_id.Email;
-                RegisterViewModel userInfo = await _userRepo.GetUserByEmail(primaryKey);
-                var claims = makeTokenClaims(userInfo);
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity)).Wait();
+                string primaryKey = email_or_id.email == "" ? email_or_id.id : email_or_id.email;
+                var userInfo = await _userRepo.GetUserByEmail(primaryKey);
+                var claims = MakeTokenClaims(userInfo);
+                var claimsIdentity = new ClaimsIdentity(
+                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity)).Wait();
                 return Ok(userInfo);
             }
             catch (Exception ex)
@@ -164,21 +169,21 @@ namespace next_core_blog.Controllers
             }
         }
 
-        private List<System.Security.Claims.Claim> makeTokenClaims(RegisterViewModel userInfo)
+        private List<System.Security.Claims.Claim> MakeTokenClaims(RegisterViewModel userInfo)
         {
             var claims = new List<Claim>()
                         {
                             new Claim("userId", userInfo.userId.ToString()),
-                            new Claim("name", userInfo.Name),
-                            new Claim("Email", userInfo.Email),
-                            new Claim("Role", userInfo.Role)
+                            new Claim("name", userInfo.name),
+                            new Claim("Email", userInfo.email),
+                            new Claim("Role", userInfo.role)
                         };
             return claims;
         }
         #endregion
 
         #region [ Http Control ]
-        private static async Task<HttpResponseMessage> kakaoRequest(string url, string token)
+        private static async Task<HttpResponseMessage> KakaoRequest(string url, string token)
         {
             var httpClientHandler = new HttpClientHandler()
             {
@@ -189,11 +194,12 @@ namespace next_core_blog.Controllers
 
             using (var client = new HttpClient(httpClientHandler))
             {
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
+                client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
                 client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
                 client.Timeout = new TimeSpan(0, 3, 0);
 
-                StringContent tokenContent = new StringContent(token, Encoding.UTF8, "application/json");
+                var tokenContent = new StringContent(token, Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await client.PostAsync(url, tokenContent);
                 response.EnsureSuccessStatusCode();
                 return response;

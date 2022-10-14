@@ -18,17 +18,20 @@ namespace Next_Core_Blog.Context
         private readonly IConfiguration _config;
         private readonly string _ConnectionString;
 
-        public DapperContext(IConfiguration config){
+        public DapperContext(IConfiguration config)
+        {
             // Access for root Dir appsettings.json
             _config = config;
             _ConnectionString = _config.GetConnectionString("SuwonConnection");
         }
-        
-        public IDbConnection CreateConnection(){
+
+        public IDbConnection CreateConnection()
+        {
             return new MySqlConnection(_ConnectionString);
         }
 
-        public IConfiguration getConfig(){
+        public IConfiguration GetConfig()
+        {
             return _config;
         }
     }

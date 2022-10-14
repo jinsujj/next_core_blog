@@ -23,7 +23,7 @@ namespace Next_Core_Blog.Repository.Users
         void ClearLogin(string Email);
         bool IsFiveOverCount(string Email);
         bool IsLastLoginWithinTenMinute(string Email);
-        Task<string> getKakaoToken(string Email);
+        Task<string> GetKakaoToken(string Email);
     }
 
 }

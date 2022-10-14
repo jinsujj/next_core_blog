@@ -40,8 +40,8 @@ namespace Next_Core_Blog.Controllers
             _logger.LogInformation("Register:" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
             if (ModelState.IsValid)
             {
-                model.Name = model.Name.Trim();
-                model.Password = new Security().EncryptPassword(model.Password);
+                model.name = model.name.Trim();
+                model.password = new Security().EncryptPassword(model.password);
 
                 bool result = _userRepo.AddUser(model);
                 if (result)
@@ -64,23 +64,27 @@ namespace Next_Core_Blog.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    if (LoginMoreThanFiveTimesWithin10min(model.Email))
+                    if (LoginMoreThanFiveTimesWithin10min(model.email))
                         return StatusCode(403);
 
-                    if (_userRepo.IsCorrectUser(model.Email, new Security().EncryptPassword(model.Password))) {
-                        RegisterViewModel userInfo = await _userRepo.GetUserByEmail(model.Email);
+                    string password = new Security().EncryptPassword(model.password);
+                    if (_userRepo.IsCorrectUser(model.email, password))
+                    {
+                        RegisterViewModel userInfo = await _userRepo.GetUserByEmail(model.email);
                         createCookie(userInfo);
                         return Ok(userInfo);
                     }
-                    else {
-                        _userRepo.TryLogin(model.Email);
+                    else
+                    {
+                        _userRepo.TryLogin(model.email);
                         return StatusCode(401);
                     }
                 }
                 else
                     return BadRequest();
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 return StatusCode(500, ex.Message);
             }
         }
@@ -102,11 +106,12 @@ namespace Next_Core_Blog.Controllers
             var claims = new List<Claim>()
                         {
                             new Claim("userId", userInfo.userId.ToString()),
-                            new Claim("name", userInfo.Name),
-                            new Claim("Email", userInfo.Email),
-                            new Claim("Role", userInfo.Role)
+                            new Claim("name", userInfo.name),
+                            new Claim("Email", userInfo.email),
+                            new Claim("Role", userInfo.role)
                         };
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var claimsIdentity = new ClaimsIdentity(
+                claims, CookieAuthenticationDefaults.AuthenticationScheme);
             HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity)).Wait();
         }
         #endregion
@@ -135,7 +140,8 @@ namespace Next_Core_Blog.Controllers
         {
             // Get the encrypted cookie value
             var opt = HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>();
-            var cookie = opt.CurrentValue.CookieManager.GetRequestCookie(HttpContext, "UserLoginCookie");
+            var cookie = opt.CurrentValue.CookieManager.GetRequestCookie(
+                HttpContext, "UserLoginCookie");
             Dictionary<string, string> tokenInfo = new Dictionary<string, string>();
             if (!string.IsNullOrEmpty(cookie))
             {
@@ -146,9 +152,9 @@ namespace Next_Core_Blog.Controllers
                 {
                     tokenInfo.Add(claim.Type, claim.Value);
                 }
-                return await _userRepo.GetUserByEmail(tokenInfo["Email"]);;
+                return await _userRepo.GetUserByEmail(tokenInfo["Email"]); ;
             }
-            
+
             return null;
         }
         #endregion

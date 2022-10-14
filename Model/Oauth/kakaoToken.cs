@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace next_core_blog.Model.Oauth
 {
-    public class kakaoToken
+    public class KakaoToken
     {
-        public string Token {get;set;}
-        public string Oauth {get;set;}
+        public string token { get; set; }
+        public string oauth { get; set; }
     }
 }

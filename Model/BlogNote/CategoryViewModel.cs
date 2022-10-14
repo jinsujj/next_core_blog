@@ -7,8 +7,8 @@ namespace Next_Core_Blog.Model.BlogNote
 {
     public class CategoryViewModel
     {
-        public int userId {get;set;}
-        public string category {get;set;}
-        public string subCategory {get;set;}
+        public int userId { get; set; }
+        public string category { get; set; }
+        public string subCategory { get; set; }
     }
 }

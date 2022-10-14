@@ -9,22 +9,22 @@ namespace Next_Core_Blog.Model.BlogNote
     public class GetNote
     {
         [Display(Name = "번호")]
-        public int NoteId { get; set; }
+        public int noteId { get; set; }
         [Display(Name = "제목")]
         [Required(ErrorMessage = "* 제목을 작성해 주세요")]
-        public string Title { get; set; }
+        public string title { get; set; }
         [Display(Name = "내용")]
         [Required(ErrorMessage = "* 내용을 작성해 주세요")]
-        public string Content { get; set; }
-        public int userId {get;set;}
-        public string PostDate { get; set; }
-        public string ModifyDate { get; set; }
-        public string ThumbImage { get; set; }
-        public string Category { get; set; }
-        public string SubCategory { get; set; }
-        public int ReadCount { get; set; }
-        public string PostIp { get; set; }
-        public string ModifyIp { get; set; }
-        public string isPost {get;set;}
+        public string content { get; set; }
+        public int userId { get; set; }
+        public string postDate { get; set; }
+        public string modifyDate { get; set; }
+        public string thumbImage { get; set; }
+        public string category { get; set; }
+        public string subCategory { get; set; }
+        public int readCount { get; set; }
+        public string postIp { get; set; }
+        public string modifyIp { get; set; }
+        public string isPost { get; set; }
     }
 }

@@ -7,8 +7,8 @@ namespace Next_Core_Blog.Model.BlogNote
 {
     public class UserLog
     {
-        public string Ip {get;set;}
-        public string Content {get;set;}
-        public DateTime Date {get;set;}
+        public string ip { get; set; }
+        public string content { get; set; }
+        public DateTime date { get; set; }
     }
 }
