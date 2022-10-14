@@ -396,6 +396,12 @@ namespace Next_Core_Blog.Controllers
         }
         #endregion
 
+        [HttpPost("sitemapGenerator")]
+        public void SitemapXmlGenerator()
+        {
+            _siteRepo.SitemapXmlGenerator();
+        }
+
         public IEnumerable<string> fileExtensionType = new List<string>{
             ".jpg",".jpeg",".png"
         };
