@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Next_core_blog.Repository.Batch;
 using Next_Core_Blog.Context;
 using Next_Core_Blog.Repository.BlogNote;
 using Next_Core_Blog.Repository.Users;
@@ -22,6 +23,7 @@ builder.Services.AddControllers();
 builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddScoped<INoteRepository, NoteRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ISiteMapRepository, SiteMapRepository>();
 
 // Controller loop Handling
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
@@ -57,7 +59,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.ExpireTimeSpan = new TimeSpan(6, 0, 0); // 6 hour
         options.Cookie.HttpOnly = true;
         options.Cookie.SameSite = SameSiteMode.None;
-        options.Cookie.Domain =".owl-dev.me";
+        options.Cookie.Domain = ".owl-dev.me";
     });
 
 // Swagger Generateç
@@ -67,15 +69,15 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 
- builder.WebHost.ConfigureKestrel((context, options) =>
-  {
-    options.Listen(System.Net.IPAddress.Any, 5001, listenOptions =>
-    {
-      // Use HTTP/3
-      listenOptions.Protocols = HttpProtocols.Http1AndHttp2AndHttp3;
-      listenOptions.UseHttps();
-    });
-  });
+builder.WebHost.ConfigureKestrel((context, options) =>
+ {
+     options.Listen(System.Net.IPAddress.Any, 5001, listenOptions =>
+      {
+          // Use HTTP/3
+          listenOptions.Protocols = HttpProtocols.Http1AndHttp2AndHttp3;
+          listenOptions.UseHttps();
+      });
+ });
 
 
 var app = builder.Build();
