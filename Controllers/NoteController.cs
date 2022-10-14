@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -29,6 +29,7 @@ namespace Next_Core_Blog.Controllers
     [ApiController]
     public class NoteController : ControllerBase
     {
+        private const string ipLocationUrl = "http://ip-api.com/json/";
         private IWebHostEnvironment _enviorment;
         private readonly IConfiguration _config;
         private readonly ILogger<NoteController> _logger;
@@ -105,7 +106,7 @@ namespace Next_Core_Blog.Controllers
             {
                 _logger.LogInformation("ip: " + logmodel.ip + " ,id: " + logmodel.id);
 
-                IpLocationInfo ipInfo = getIpLocation(logmodel.ip);
+                IpLocationInfo ipInfo = getIpLocation(logmodel.ip).Result;
                 ipInfo.id = logmodel.id;
                 await _noteRepo.postIpLog(ipInfo);
                 return Ok();
@@ -117,20 +118,22 @@ namespace Next_Core_Blog.Controllers
             }
         }
 
-        private IpLocationInfo getIpLocation(string ip)
+        private async Task<IpLocationInfo> getIpLocation(string requestIp)
         {
-            IpLocationInfo ipInfo = new IpLocationInfo();
-            string requestURL = "http://ip-api.com/json/" + ip;
-            WebRequest request = WebRequest.Create(requestURL);
-            request.Method = "GET";
-            request.ContentType = "application/json";
-            Stream stream = request.GetResponse().GetResponseStream();
-            using (StreamReader reader = new StreamReader(stream))
+            string requestURL = ipLocationUrl + requestIp;
+            
+            using (var client = new HttpClient())
             {
-                JObject jsonObject = JObject.Parse(reader.ReadToEnd());
-                ipInfo = jsonObject.ToObject<IpLocationInfo>();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                HttpResponseMessage response = await client.GetAsync(requestURL);
+                Stream stream = response.Content.ReadAsStream();
+
+                using (StreamReader sr = new StreamReader(stream))
+                {
+                    JObject jsonResult = JObject.Parse(sr.ReadToEnd());
+                    return jsonResult.ToObject<IpLocationInfo>();
+                }
             }
-            return ipInfo;
         }
         #endregion
 
@@ -284,7 +287,7 @@ namespace Next_Core_Blog.Controllers
             }
             catch (Exception ex)
             {
-                return "Err.. Check file Type";
+                return "Err.. Check file Type " + ex.Message;
             }
         }
 
