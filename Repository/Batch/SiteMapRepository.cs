@@ -62,7 +62,7 @@ namespace Next_core_blog.Repository.Batch
             url.AppendChild(loc);
 
             XmlNode lastmod = xmlDoc.CreateElement("lastmod");
-            lastmod.InnerText = count[idx].ModifyDate;
+            lastmod.InnerText = count[idx].ModifyDate.Split(" ")[0].ToString();
             url.AppendChild(lastmod);
             root.AppendChild(url);
         }
