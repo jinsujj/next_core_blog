@@ -18,6 +18,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using Next_core_blog.Model.BlogNote;
+using Next_core_blog.Repository.Batch;
 using Next_Core_Blog.Model.BlogNote;
 using Next_Core_Blog.Model.User;
 using Next_Core_Blog.Repository.BlogNote;
@@ -35,15 +36,17 @@ namespace Next_Core_Blog.Controllers
         private readonly ILogger<NoteController> _logger;
         private readonly INoteRepository _noteRepo;
         private readonly IUserRepository _userRepo;
+        private readonly ISiteMapRepository _siteRepo;
 
 
-        public NoteController(IWebHostEnvironment environment, IConfiguration config, ILogger<NoteController> logger, INoteRepository noteRepo, IUserRepository userRepo)
+        public NoteController(IWebHostEnvironment environment, IConfiguration config, ILogger<NoteController> logger, INoteRepository noteRepo, IUserRepository userRepo, ISiteMapRepository siteRepo)
         {
             _enviorment = environment;
             _config = config;
             _logger = logger;
             _noteRepo = noteRepo;
             _userRepo = userRepo;
+            _siteRepo = siteRepo;
         }
 
         #region [ Post Note ]
@@ -63,7 +66,8 @@ namespace Next_Core_Blog.Controllers
                     if (note.userId != Convert.ToInt32(parameterModulationCheck["userId"]))
                         return StatusCode(403);
                 }
-
+                // sitemap.xml update
+                _siteRepo.SitemapXmlGenerator();
                 return Ok(_noteRepo.PostNote(note, formType));
             }
             catch (Exception ex)
@@ -121,7 +125,7 @@ namespace Next_Core_Blog.Controllers
         private async Task<IpLocationInfo> getIpLocation(string requestIp)
         {
             string requestURL = ipLocationUrl + requestIp;
-            
+
             using (var client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
