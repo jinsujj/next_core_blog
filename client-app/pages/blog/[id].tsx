@@ -250,6 +250,11 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
   const isDarkMode = useSelector((state) => state.common.isDark);
   const iconColor = isDarkMode === true ? "white" : "black";
 
+  if (detailNote.modifyDate !== undefined)
+    var blogDate = detailNote.modifyDate.replace(/-/g, "/");
+  else
+    var blogDate = detailNote.postDate.replace(/-/g, "/");
+
   if (detailNote.noteId === undefined) {
     return (
       <>
@@ -339,7 +344,7 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
                     </li>
                     <li>
                       {format(
-                        new Date(detailNote.postDate.replace(/-/g, "/")),
+                        new Date(blogDate.replace(/-/g, "/")),
                         "yyyy-MM-dd"
                       )}
                     </li>
@@ -386,8 +391,8 @@ export const getServerSideProps: GetServerSideProps = async (
   let id = Number(context.query.id as string);
   let ip = String(
     context.req.headers["x-real-ip"] ||
-      context.req.connection.remoteAddress ||
-      ("" as string)
+    context.req.connection.remoteAddress ||
+    ("" as string)
   );
 
   noteApi.postIpLog({ ip, id });
