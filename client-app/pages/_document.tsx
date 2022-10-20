@@ -21,10 +21,10 @@ class MyDocument extends Document {
           <link
             rel="shortcut icon"
             type="image/x-icon"
-            href="/public/img/owl.svg"
+            href="/img/owl.svg"
           />
-          <link rel="icon" href="/public/img/owl.svg" />
-          <link rel="apple-touch-icon" href="/public/img/owl.svg" />
+          <link rel="icon" href="/img/owl.svg" />
+          <link rel="apple-touch-icon" href="/img/owl.svg" />
 
           {/* Standard Font */}
           <link
