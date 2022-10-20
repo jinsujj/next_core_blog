@@ -95,7 +95,10 @@ const BlogCard = ({ blog }: IProps) => {
   const imgUri = process.env.NEXT_PUBLIC_API_URL + "/files/";
 
   if (blog.thumbImage === null) blog.thumbImage = "default.svg";
-  var blogPostDate = blog.postDate.replace(/-/g, "/");
+  if(blog.modifyDate !== undefined)
+    var blogDate = blog.modifyDate.replace(/-/g, "/");
+  else 
+    var blogDate =blog.postDate.replace(/-/g, "/");
 
   return (
     <Container isPost={blog.isPost} isDark={isDarkMode}>
@@ -113,7 +116,7 @@ const BlogCard = ({ blog }: IProps) => {
               style={{ fontSize: 14, color: `${palette.gray_bb}` }}
             />
             <p>
-              {formatDistance(new Date(), new Date(blogPostDate), {
+              {formatDistance(new Date(), new Date(blogDate), {
                 addSuffix: true,
               })}
             </p>
