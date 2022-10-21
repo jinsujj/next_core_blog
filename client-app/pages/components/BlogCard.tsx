@@ -2,9 +2,11 @@ import { faCalendarCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { formatDistance } from "date-fns";
 import Link from "next/link";
+import { format } from "path";
 import React from "react";
 import styled, { css } from "styled-components";
 import { PostedNote } from "../../api/note";
+import useDateFormat from "../../hooks/useDateFormat";
 import { useSelector } from "../../store";
 import palette from "../../styles/palette";
 
@@ -35,8 +37,8 @@ const Container = styled.div<StyledProps>`
     position: relative;
 
     ${(props) =>
-      props.isPost === "N" &&
-      css`
+    props.isPost === "N" &&
+    css`
         border: 1px solid ${palette.gray_f5};
         background-color: ${palette.gray_f5};
       `}
@@ -46,8 +48,8 @@ const Container = styled.div<StyledProps>`
     width: 100%;
     height: 100%;
     ${(props) =>
-      props.isPost === "N" &&
-      css`
+    props.isPost === "N" &&
+    css`
         opacity: 0.2;
       `}
   }
@@ -60,7 +62,7 @@ const Container = styled.div<StyledProps>`
     text-align: center;
     font-weight: bold;
     color: ${(props) =>
-      props.isPost === "N" ? `${palette.gray_7d}` : `${palette.black}`};
+    props.isPost === "N" ? `${palette.gray_7d}` : `${palette.black}`};
     margin: 4px 0;
   }
 
@@ -95,10 +97,10 @@ const BlogCard = ({ blog }: IProps) => {
   const imgUri = process.env.NEXT_PUBLIC_API_URL + "/files/";
 
   if (blog.thumbImage === null) blog.thumbImage = "default.svg";
-  if(blog.modifyDate !== undefined)
-    var blogDate = blog.modifyDate.replace(/-/g, "/");
-  else 
-    var blogDate =blog.postDate.replace(/-/g, "/");
+
+  var blogDate = blog.postDate.replace(/-/g, "/");
+  if (blog.modifyDate !== null && blog.modifyDate !== undefined)
+     blogDate = blog.modifyDate?.replace(/-/g, "/");
 
   return (
     <Container isPost={blog.isPost} isDark={isDarkMode}>
@@ -116,7 +118,7 @@ const BlogCard = ({ blog }: IProps) => {
               style={{ fontSize: 14, color: `${palette.gray_bb}` }}
             />
             <p>
-              {formatDistance(new Date(), new Date(blogDate), {
+            {formatDistance(new Date(), new Date(blogDate), {
                 addSuffix: true,
               })}
             </p>

@@ -27,6 +27,7 @@ import "prismjs/components/prism-csharp";
 import "prismjs/components/prism-java";
 import "prismjs/components/prism-sql";
 import "prismjs/components/prism-bash";
+import useDateFormat from "../../hooks/useDateFormat";
 
 interface StyledProps {
   isDark: boolean;
@@ -250,10 +251,9 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
   const isDarkMode = useSelector((state) => state.common.isDark);
   const iconColor = isDarkMode === true ? "white" : "black";
 
-  if (detailNote.modifyDate !== undefined)
-    var blogDate = detailNote.modifyDate.replace(/-/g, "/");
-  else
-    var blogDate = detailNote.postDate.replace(/-/g, "/");
+  var blogDate = detailNote.postDate.replace(/-/g, "/");
+  if (detailNote.modifyDate !== null && detailNote.modifyDate !== undefined)
+    blogDate = detailNote.modifyDate?.replace(/-/g, "/");
 
   if (detailNote.noteId === undefined) {
     return (
