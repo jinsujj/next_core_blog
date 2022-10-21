@@ -162,6 +162,7 @@ const Container = styled.div<StyledProps>`
     width: 100%;
     min-height: 500px;
     padding-top: 4px;
+    line-height: 1.5;
   }
 
   /* FLOAT CLEARFIX */
