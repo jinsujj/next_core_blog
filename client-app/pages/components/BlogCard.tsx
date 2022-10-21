@@ -6,7 +6,6 @@ import { format } from "path";
 import React from "react";
 import styled, { css } from "styled-components";
 import { PostedNote } from "../../api/note";
-import useDateFormat from "../../hooks/useDateFormat";
 import { useSelector } from "../../store";
 import palette from "../../styles/palette";
 

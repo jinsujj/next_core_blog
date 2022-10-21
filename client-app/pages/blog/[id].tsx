@@ -27,7 +27,6 @@ import "prismjs/components/prism-csharp";
 import "prismjs/components/prism-java";
 import "prismjs/components/prism-sql";
 import "prismjs/components/prism-bash";
-import useDateFormat from "../../hooks/useDateFormat";
 
 interface StyledProps {
   isDark: boolean;
