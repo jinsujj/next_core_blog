@@ -74,7 +74,7 @@ namespace Next_core_blog.Repository.Batch
             defaultUrl.AppendChild(defaultLoc);
 
             XmlNode defaultLastmod = xmlDoc.CreateElement("lastmod");
-            defaultLastmod.InnerText = count[0].modifyDate;
+            defaultLastmod.InnerText = count[0].modifyDate.Split(" ")[0].ToString();
             defaultUrl.AppendChild(defaultLastmod);
             root.AppendChild(defaultUrl);
         }
