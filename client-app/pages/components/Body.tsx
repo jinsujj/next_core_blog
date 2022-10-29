@@ -103,31 +103,29 @@ const Body = () => {
   const dispatch = useDispatch();
   useMemo(() => {
     dispatch(commonAction.setPostUserIdOfNote(0));
-  }, []);
+  }, [dispatch]);
 
   // Get BlogCard data
   useEffect(() => {
     // Search
     if (searchQuery.length > 0) {
-      const Notes = noteApi
+      noteApi
         .getNoteBySearch(searchQuery)
         .then((res) => setPostNotes(res.data || []));
     }
     // Category Click
     else if (setCategoryFilter.length > 0 || setSubCategoryFilter.length > 0) {
-      const Notes = noteApi
+      noteApi
         .getNoteByCategory(userId, setCategoryFilter, setSubCategoryFilter)
         .then((res) => setPostNotes(res.data || []));
     }
     // Default
     else {
-      const Notes = noteApi
-        .getNoteAll(userId)
-        .then((res) => setPostNotes(res.data || []));
+      noteApi.getNoteAll(userId).then((res) => setPostNotes(res.data || []));
     }
     dispatch(commonAction.setToggleMode(false));
     dispatch(commonAction.setPostState("read"));
-  }, [userId, searchQuery, setCategoryFilter, setSubCategoryFilter]);
+  }, [dispatch, userId, searchQuery, setCategoryFilter, setSubCategoryFilter]);
 
   return (
     <Container isDark={isDarkMode}>

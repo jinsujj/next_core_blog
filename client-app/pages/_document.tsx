@@ -5,6 +5,7 @@ import Document, {
   NextScript,
   DocumentContext,
 } from "next/document";
+import React from "react";
 import { GA_TRACKING_ID } from "../utils/gtag";
 
 class MyDocument extends Document {
@@ -18,11 +19,7 @@ class MyDocument extends Document {
       <Html>
         <Head>
           {/* favIcon */}
-          <link
-            rel="shortcut icon"
-            type="image/x-icon"
-            href="/img/owl.svg"
-          />
+          <link rel="shortcut icon" type="image/x-icon" href="/img/owl.svg" />
           <link rel="icon" href="/img/owl.svg" />
           <link rel="apple-touch-icon" href="/img/owl.svg" />
 

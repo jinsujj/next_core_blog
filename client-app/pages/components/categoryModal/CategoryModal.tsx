@@ -1,5 +1,4 @@
-import { userInfo } from "os";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import noteApi from "../../../api/note";
@@ -100,8 +99,8 @@ const CategoryModal = ({ postNoteForm, closeModal }: IProps) => {
     let category = "";
     let subCategory = "";
 
-    if(userRole !== 'ADMIN' ){
-      alert("관리자만 추가할 수 있습니다")
+    if (userRole !== "ADMIN") {
+      alert("관리자만 추가할 수 있습니다");
       return;
     }
 
@@ -120,8 +119,8 @@ const CategoryModal = ({ postNoteForm, closeModal }: IProps) => {
       }
     }
 
-    const categoryList = { userId , category, subCategory };
-    const { data } = await noteApi.postCategory(categoryList);
+    const categoryList = { userId, category, subCategory };
+    await noteApi.postCategory(categoryList);
     alert("저장 되었습니다");
     closeModal();
   };
@@ -141,9 +140,9 @@ const CategoryModal = ({ postNoteForm, closeModal }: IProps) => {
 
   // 카테고리 조회
   const getCategoryList = async () => {
-    let { data } = await noteApi.getCategoryList();
-    let category: string[] = [];
-    let dictionary = new Map<string, string[]>();
+    const { data } = await noteApi.getCategoryList();
+    const category: string[] = [];
+    const dictionary = new Map<string, string[]>();
     data.map((t) => {
       // key set
       if (!category.some((data) => data === t.category)) {
@@ -151,8 +150,8 @@ const CategoryModal = ({ postNoteForm, closeModal }: IProps) => {
         dictionary.set(t.category, [""]);
       }
       // value set
-      var buff = dictionary.get(t.category);
-      if (!!buff) {
+      const buff = dictionary.get(t.category);
+      if (buff) {
         buff.push(t.subCategory);
         dictionary.set(t.category, buff);
       }
@@ -166,18 +165,19 @@ const CategoryModal = ({ postNoteForm, closeModal }: IProps) => {
   const saveCategory = async (mode: string) => {
     postNoteForm.category = selectedCategory;
     postNoteForm.subCategory = selectedSubCategory;
+    mode === "save" ? (postNoteForm.isPost = "Y") : (postNoteForm.isPost = "N");
 
-    mode === 'save' ? postNoteForm.isPost ='Y' : postNoteForm.isPost ='N';
+    let data: Number = -1;
     if (postState === "write") {
-      var { data } = await noteApi.postNote(0, postNoteForm);
+      data = (await noteApi.postNote(0, postNoteForm)).data;
     } else if (postState === "modify") {
-      var { data } = await noteApi.postNote(1, postNoteForm);
+      data = (await noteApi.postNote(1, postNoteForm)).data;
     }
+
     if (data === 1) {
-      if(mode === 'save'){
-        alert("저장 되었습니다");  
-      }
-      else if(mode ==='temp'){
+      if (mode === "save") {
+        alert("저장 되었습니다");
+      } else if (mode === "temp") {
         alert("임시저장 되었습니다");
       }
       closeModal();
@@ -191,22 +191,22 @@ const CategoryModal = ({ postNoteForm, closeModal }: IProps) => {
   // subCategory 초가화
   useEffect(() => {
     // subCategory index init
-    var Element = document.getElementById("subCategory") as HTMLSelectElement;
+    const Element = document.getElementById("subCategory") as HTMLSelectElement;
     if (!!Element) Element.selectedIndex = 0;
 
     // subCategory renew
     if (!!dictionary) {
-      var subCategyList = dictionary
+      const subCategyList = dictionary
         .get(selectedCategory)
         ?.filter((t) => t !== "");
       !!subCategyList ? setSubOptions(subCategyList) : undefined;
     }
-  }, [selectedCategory]);
+  }, [dictionary, selectedCategory]);
 
   useEffect(() => {
     dispatch(categoryAction.initCategory());
     getCategoryList();
-  }, []);
+  }, [dispatch]);
 
   return (
     <Container>
@@ -249,8 +249,16 @@ const CategoryModal = ({ postNoteForm, closeModal }: IProps) => {
       )}
       {selectedCategory && !addCategoryInput && !addSubCategoryInput && (
         <div className="save-button">
-          <Button onClick={() =>saveCategory('temp')} color="green_8D" width="110px">임시 저장</Button>
-          <Button onClick={() =>saveCategory('save')} width="110px">저장</Button>
+          <Button
+            onClick={() => saveCategory("temp")}
+            color="green_8D"
+            width="110px"
+          >
+            임시 저장
+          </Button>
+          <Button onClick={() => saveCategory("save")} width="110px">
+            저장
+          </Button>
         </div>
       )}
     </Container>

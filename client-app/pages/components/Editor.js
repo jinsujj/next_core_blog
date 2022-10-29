@@ -265,8 +265,6 @@ const Editor = ({ NoteInfo }) => {
 
   // summernote Editor init
   useEffect(() => {
-    host = process.env.NEXT_PUBLIC_API_URL;
-
     if (postState === "modify") {
       setTitle(NoteInfo.title);
       $("#summernote").summernote({
@@ -438,7 +436,7 @@ const Editor = ({ NoteInfo }) => {
       $("#summernote").summernote("reset");
       $("#summernote").summernote("focus");
     }
-  }, []);
+  }, [NoteInfo, postState]);
 
   return (
     <Container

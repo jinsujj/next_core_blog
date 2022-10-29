@@ -117,7 +117,7 @@ const SignUpModal = ({ closeModal }: IProps) => {
     }
 
     try {
-      const { data } = await userApi.AddUser({
+      await userApi.AddUser({
         name: name,
         email: email,
         password: password,
@@ -146,7 +146,7 @@ const SignUpModal = ({ closeModal }: IProps) => {
       setValidateMode(false);
       setEmailErrorMsg("");
     };
-  }, [email]);
+  }, [email, setValidateMode]);
 
   return (
     <Container onSubmit={onSubmiRegister}>
