@@ -133,7 +133,7 @@ const Header = () => {
     dispatch(commonAction.setToggleMode(!isToggle));
   };
 
-  const goHome = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const goHome = () => {
     dispatch(commonAction.initCommonState());
     Router.push("/");
   };

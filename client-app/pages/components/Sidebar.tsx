@@ -271,14 +271,14 @@ const Sidebar = () => {
   };
 
   const getCategoryList = async () => {
-    let { data } = await noteApi.getSidebarCategoryList();
-    let categoryList: string[] = [];
-    let category = new Map<string, number>();
-    let dictionary = new Map<string, Map<string, number>[]>();
+    const { data } = await noteApi.getSidebarCategoryList();
+    const categoryList: string[] = [];
+    const category = new Map<string, number>();
+    const dictionary = new Map<string, Map<string, number>[]>();
 
     data.map((t) => {
-      let subCategoryArr = Array<Map<string, number>>();
-      let subCategory = new Map<string, number>();
+      const subCategoryArr = Array<Map<string, number>>();
+      const subCategory = new Map<string, number>();
       // key set
       if (!category.has(t.name)) {
         categoryList.push(t.name);
@@ -290,7 +290,7 @@ const Sidebar = () => {
       // value set
       else {
         subCategory.set(t.subName, t.subCount);
-        var buff = dictionary.get(t.name);
+        const buff = dictionary.get(t.name);
         if (!!buff) {
           buff?.push(subCategory);
           dictionary.set(t.name, buff);

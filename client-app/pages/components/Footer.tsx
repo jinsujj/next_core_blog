@@ -8,7 +8,6 @@ import Link from "next/link";
 import useRouterReady from "../../hooks/useRouterReady";
 import { useSelector } from "../../store";
 import palette from "../../styles/palette";
-import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 
 interface StyledProps {
   isDark: boolean;

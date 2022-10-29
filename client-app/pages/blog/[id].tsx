@@ -251,7 +251,7 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
   const isDarkMode = useSelector((state) => state.common.isDark);
   const iconColor = isDarkMode === true ? "white" : "black";
 
-  var blogDate = detailNote.postDate.replace(/-/g, "/");
+  let blogDate = detailNote.postDate.replace(/-/g, "/");
   if (detailNote.modifyDate !== null && detailNote.modifyDate !== undefined)
     blogDate = detailNote.modifyDate?.replace(/-/g, "/");
 
@@ -296,7 +296,7 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
         Router.push("/");
       }
     };
-  }, [sideBarCategory, sideBarSubCategory, SearchQuery]);
+  }, [detailNote, sideBarCategory, sideBarSubCategory, SearchQuery]);
 
   return (
     <>
@@ -388,11 +388,11 @@ export default blogDetail;
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  let id = Number(context.query.id as string);
-  let ip = String(
+  const id = Number(context.query.id as string);
+  const ip = String(
     context.req.headers["x-real-ip"] ||
-    context.req.connection.remoteAddress ||
-    ("" as string)
+      context.req.connection.remoteAddress ||
+      ("" as string)
   );
 
   noteApi.postIpLog({ ip, id });

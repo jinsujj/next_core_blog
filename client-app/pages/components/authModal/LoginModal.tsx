@@ -125,13 +125,9 @@ const LoginModal = ({ closeModal }: IProps) => {
     event.preventDefault();
     setValidateMode(true);
 
-    if (stayLogin) 
-      localStorage.setItem("Email", email);
-    
+    if (stayLogin) localStorage.setItem("Email", email);
 
-    if (!email || !password) 
-      alert("Email 과 비밀번호를 입력해 주세요");
-    
+    if (!email || !password) alert("Email 과 비밀번호를 입력해 주세요");
     else {
       const loginBody = { email, password };
       try {
@@ -151,7 +147,9 @@ const LoginModal = ({ closeModal }: IProps) => {
           return;
         }
         if (errorMessage.includes("403")) {
-          setEmailErrorMsg("5회 이상 틀렸습니다. 10분 뒤에 재 로그인 바랍니다.");
+          setEmailErrorMsg(
+            "5회 이상 틀렸습니다. 10분 뒤에 재 로그인 바랍니다."
+          );
           return;
         }
       }
@@ -170,7 +168,7 @@ const LoginModal = ({ closeModal }: IProps) => {
       setEmail(email);
       setStayLogin(true);
     }
-  }, []);
+  }, [setValidateMode]);
 
   return (
     <Container onSubmit={onSubmitLogin}>
@@ -207,11 +205,7 @@ const LoginModal = ({ closeModal }: IProps) => {
         로그인
       </Button>
       <div className="login-provider">
-        <a
-          href={KAKAO_LOGIN_URI}
-          className="kakao-login"
-          type="button"
-        />
+        <a href={KAKAO_LOGIN_URI} className="kakao-login" type="button" />
       </div>
       <div className="route-menu">
         <div className="float--left">비밀번호 찾기</div>

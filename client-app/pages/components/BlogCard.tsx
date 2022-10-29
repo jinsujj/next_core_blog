@@ -2,7 +2,6 @@ import { faCalendarCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { formatDistance } from "date-fns";
 import Link from "next/link";
-import { format } from "path";
 import React from "react";
 import styled, { css } from "styled-components";
 import { PostedNote } from "../../api/note";
@@ -36,8 +35,8 @@ const Container = styled.div<StyledProps>`
     position: relative;
 
     ${(props) =>
-    props.isPost === "N" &&
-    css`
+      props.isPost === "N" &&
+      css`
         border: 1px solid ${palette.gray_f5};
         background-color: ${palette.gray_f5};
       `}
@@ -47,8 +46,8 @@ const Container = styled.div<StyledProps>`
     width: 100%;
     height: 100%;
     ${(props) =>
-    props.isPost === "N" &&
-    css`
+      props.isPost === "N" &&
+      css`
         opacity: 0.2;
       `}
   }
@@ -61,7 +60,7 @@ const Container = styled.div<StyledProps>`
     text-align: center;
     font-weight: bold;
     color: ${(props) =>
-    props.isPost === "N" ? `${palette.gray_7d}` : `${palette.black}`};
+      props.isPost === "N" ? `${palette.gray_7d}` : `${palette.black}`};
     margin: 4px 0;
   }
 
@@ -97,15 +96,19 @@ const BlogCard = ({ blog }: IProps) => {
 
   if (blog.thumbImage === null) blog.thumbImage = "default.svg";
 
-  var blogDate = blog.postDate.replace(/-/g, "/");
+  let blogDate = blog.postDate.replace(/-/g, "/");
   if (blog.modifyDate !== null && blog.modifyDate !== undefined)
-     blogDate = blog.modifyDate?.replace(/-/g, "/");
+    blogDate = blog.modifyDate?.replace(/-/g, "/");
 
   return (
     <Container isPost={blog.isPost} isDark={isDarkMode}>
       <div className="imageWrapper">
-        <Link href={`/blog/${blog.noteId}`} key={blog.noteId}>
-          <img key={blog.noteId} src={`${imgUri}${blog.thumbImage}`} />
+        <Link href={`/blog/${blog.noteId}`} key={blog.noteId} passHref>
+          <img
+            key={blog.noteId}
+            src={`${imgUri}${blog.thumbImage}`}
+            alt={blog.thumbImage}
+          />
         </Link>
         <div className="blogTitle">
           <p>{blog.title}</p>
@@ -117,7 +120,7 @@ const BlogCard = ({ blog }: IProps) => {
               style={{ fontSize: 14, color: `${palette.gray_bb}` }}
             />
             <p>
-            {formatDistance(new Date(), new Date(blogDate), {
+              {formatDistance(new Date(), new Date(blogDate), {
                 addSuffix: true,
               })}
             </p>
