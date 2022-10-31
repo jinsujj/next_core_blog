@@ -2,9 +2,11 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { CommonState } from "../types/reduxState";
 
 const getInitDarkMode = () => {
-  const date = new Date();
-  date.toLocaleString("ko-kr");
-  if (18 <= date.getHours() || date.getHours() <= 6) return true;
+  const now = new Date();
+  const utcNow = now.getTime() + (now.getTimezoneOffset() * 60 * 1000); // UTC 시간 밀리세컨드로 변환
+  const koreanTimeDiff = 9 * 60 * 60 * 1000 ; // 한국시간은 UTC 보다 9시간 빠름
+  const koreaNow = new Date(utcNow + koreanTimeDiff) ;
+  if (18 <= koreaNow.getHours() || koreaNow.getHours() <= 6) return true;
 
   return false;
 };
