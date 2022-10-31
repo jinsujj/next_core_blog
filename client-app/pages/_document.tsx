@@ -8,6 +8,8 @@ import Document, {
 import React from "react";
 import { GA_TRACKING_ID } from "../utils/gtag";
 
+
+const NaverMapClientId = process.env.NEXT_PUBLIC_CREACT_APP_MAP_CLIENT_ID;
 class MyDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {
     const initialProps = await Document.getInitialProps(ctx);
@@ -92,6 +94,11 @@ class MyDocument extends Document {
           <script
             defer
             src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2309486098831986"
+          />
+          {/* NaverMap */}
+          <script
+            type="text/javascript"
+            src={`https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${NaverMapClientId}`}
           />
         </body>
       </Html>
