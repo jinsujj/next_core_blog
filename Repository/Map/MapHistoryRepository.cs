@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Extensions.Logging;
-using next_core_blog.Model.Map;
+using Next_core_blog.Model.Map;
 using Next_Core_Blog.Context;
 
-namespace next_core_blog.Repository.Map
+namespace Next_core_blog.Repository.Map
 {
     public class MapHistoryRepository : IMapHistoryRepository
     {
@@ -20,7 +20,7 @@ namespace next_core_blog.Repository.Map
             _logger = logger;
         }
 
-        public async Task<IEnumerable<mapHistory>> getLogHistoryAll()
+        public async Task<IEnumerable<MapHistory>> GetLogHistoryAll()
         {
             String sql = @"SELECT a.ip, a.date, b.title ,c.country, c.countryCode,
                                  c.city, c.lat, c.lon, c.timezone, c.isp
@@ -33,12 +33,12 @@ namespace next_core_blog.Repository.Map
 
             using (var con = _context.CreateConnection())
             {
-                var mapHistoryList = await con.QueryAsync<mapHistory>(sql);
+                var mapHistoryList = await con.QueryAsync<MapHistory>(sql);
                 return mapHistoryList.ToList();
             }
         }
 
-        public async Task<IEnumerable<mapHistory>> getLogHistoryDaily()
+        public async Task<IEnumerable<MapHistory>> GetLogHistoryDaily()
         {
             string sql = @"SELECT ip, date, title, country, countryCode, city, lat, lon, timezone, isp
                             FROM (
@@ -56,8 +56,23 @@ namespace next_core_blog.Repository.Map
 
             using (var con = _context.CreateConnection())
             {
-                var mapHistoryList = await con.QueryAsync<mapHistory>(sql);
+                var mapHistoryList = await con.QueryAsync<MapHistory>(sql);
                 return mapHistoryList.ToList();
+            }
+        }
+
+        public async Task<IEnumerable<MapCoordinate>> GetMapCooldinates()
+        {
+            string sql = @"SELECT b.lat, b.lon
+                            FROM userlog a INNER JOIN ipInfo b                            
+                            ON a.ip = b.query
+                            AND a.date >= date_add(now() , interval -1 day)
+                            GROUP BY ip";
+
+            using (var con = _context.CreateConnection())
+            {
+                var mapCoordinate = await con.QueryAsync<MapCoordinate>(sql);
+                return mapCoordinate.ToList();
             }
         }
 

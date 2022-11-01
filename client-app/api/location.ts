@@ -13,6 +13,11 @@ export interface LogInfo {
     isp: string,
 }
 
+export interface mapCoordinate {
+    lat: string,
+    lon: string,
+}
+
 const getLogHistoryAll = async () => {
     return await api.get<LogInfo[]>(`/api/MapHistory/logInfoAll`);
 }
@@ -21,9 +26,14 @@ const getLogHistoryDaily = async () => {
     return await api.get<LogInfo[]>(`/api/MapHistory/logInfoDaily`);
 }
 
-const location = {
+const getDailyIpCoordinate = async () => {
+    return await api.get<mapCoordinate[]>(`/api/MapHistory/dailyIpCoordinate`);
+}
+
+const locationApi = {
     getLogHistoryAll,
-    getLogHistoryDaily
+    getLogHistoryDaily,
+    getDailyIpCoordinate
 };
 
 export default location;
