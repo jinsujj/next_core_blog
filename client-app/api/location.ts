@@ -36,4 +36,4 @@ const locationApi = {
     getDailyIpCoordinate
 };
 
-export default location;
+export default locationApi;

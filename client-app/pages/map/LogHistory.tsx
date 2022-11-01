@@ -1,8 +1,13 @@
 import React, { useEffect, useRef } from 'react';
+import locationApi from '../../api/location';
 
 
 const LogHistory= () => {
   const mapElement = useRef(null);
+
+  const getDailyCoordinate = async () => {
+    return await (await locationApi.getDailyIpCoordinate()).data;
+  }
 
   useEffect(() => {
     const {naver} = window;
@@ -19,10 +24,16 @@ const LogHistory= () => {
     }
 
     const map = new naver.maps.Map(mapElement.current, mapOptions);
-    new naver.maps.Marker({
-      position: location,
-      map,
-    })
+    var data = getDailyCoordinate();
+    data.then(
+      t=> t.map(d => {
+        new naver.maps.Marker({
+          position: new naver.maps.LatLng(Number(d.lat), Number(d.lon)),
+          map,
+        })
+      })
+    )
+
   },[]);
 
   return (
