@@ -3,7 +3,7 @@ declare module 'react-responsive-masonry' {
   
     const Masonry: React.FC<{
       columnsCount?: number;
-      gutter?: number;
+      gutter?: String;
     }>;
   
     export const ResponsiveMasonry: React.FC<{
