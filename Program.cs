@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Next_core_blog.Repository.Batch;
+using Next_core_blog.Repository.Map;
 using Next_Core_Blog.Context;
 using Next_Core_Blog.Repository.BlogNote;
 using Next_Core_Blog.Repository.Users;
@@ -24,6 +25,7 @@ builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddScoped<INoteRepository, NoteRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ISiteMapRepository, SiteMapRepository>();
+builder.Services.AddScoped<IMapHistoryRepository, MapHistoryRepository>();
 
 // Controller loop Handling
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
