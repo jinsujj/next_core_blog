@@ -16,49 +16,76 @@ namespace Next_core_blog.Controllers
         private readonly ILogger<IpHistoryController> _logger;
         private readonly IMapHistoryRepository _mapRepo;
 
-        public IpHistoryController(IConfiguration config, ILogger<IpHistoryController> logger, IMapHistoryRepository mapRepo){
+        public IpHistoryController(IConfiguration config, ILogger<IpHistoryController> logger, IMapHistoryRepository mapRepo)
+        {
             _config = config;
             _logger = logger;
             _mapRepo = mapRepo;
         }
 
         [HttpGet("logInfoAll")]
-        public async Task<IActionResult> getLogInfoAll(){
-            try {
-                _logger.LogInformation("getLogInfoAll: "+DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+        public async Task<IActionResult> GetLogInfoAll()
+        {
+            try
+            {
+                _logger.LogInformation("getLogInfoAll: " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
                 var mapHistory = await _mapRepo.GetLogHistoryAll();
                 return Ok(mapHistory);
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
                 _logger.LogError("error" + ex.Message);
                 return StatusCode(500, ex.Message);
             }
         }
 
         [HttpGet("logInfoDaily")]
-        public async Task<IActionResult> getLogInfoDaily(){
-            try {
-                _logger.LogInformation("getLogInfoDaily: "+DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+        public async Task<IActionResult> GetLogInfoDaily()
+        {
+            try
+            {
+                _logger.LogInformation("getLogInfoDaily: " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
                 var mapHistory = await _mapRepo.GetLogHistoryDaily();
                 return Ok(mapHistory);
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
                 _logger.LogError("error" + ex.Message);
                 return StatusCode(500, ex.Message);
             }
         }
 
         [HttpGet("dailyIpCoordinate")]
-        public async Task<IActionResult> getDailyIpCoordinate(){
-            _logger.LogInformation("getDailyIpCoordinate: "+DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+        public async Task<IActionResult> GetDailyIpCoordinate()
+        {
+            _logger.LogInformation("getDailyIpCoordinate: " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
-            try {
-                var mapHistory = await _mapRepo.GetMapCooldinates();
+            try
+            {
+                var mapHistory = await _mapRepo.GetIpCooldinates();
                 return Ok(mapHistory);
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
+                _logger.LogError("error" + ex.Message);
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("GetNoteTitleByIp")]
+        public async Task<IActionResult> GetNoteTitleByIp()
+        {
+            _logger.LogInformation("GetNoteTitleByIp: " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+
+            try
+            {
+                var mapHistory = await _mapRepo.GetNoteTitleByIp();
+                return Ok(mapHistory);
+            }
+            catch (Exception ex)
+            {
                 _logger.LogError("error" + ex.Message);
                 return StatusCode(500, ex.Message);
             }

@@ -25,7 +25,7 @@ builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddScoped<INoteRepository, NoteRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ISiteMapRepository, SiteMapRepository>();
-builder.Services.AddScoped<IMapHistoryRepository,MapHistoryRepository>();
+builder.Services.AddScoped<IMapHistoryRepository, MapHistoryRepository>();
 
 // Controller loop Handling
 builder.Services.AddControllers().AddNewtonsoftJson(options =>

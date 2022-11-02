@@ -14,7 +14,7 @@ namespace Next_core_blog.Repository.Map
         private readonly DapperContext _context;
         private ILogger<MapHistoryRepository> _logger;
 
-        private MapHistoryRepository(DapperContext context, ILogger<MapHistoryRepository> logger)
+        public MapHistoryRepository(DapperContext context, ILogger<MapHistoryRepository> logger)
         {
             _context = context;
             _logger = logger;
@@ -49,9 +49,9 @@ namespace Next_core_blog.Repository.Map
                                 ON a.content = b.noteid 
                                 LEFT JOIN ipInfo c
                                 ON a.ip = c.query
-                                ORDER BY DATE desc
                             ) hist
-                            WHERE hist.date >= date_add(now(), interval -1 day)"
+                            WHERE hist.date >= date_add(now(), interval -1 day)
+                            ORDER BY hist.date DESC"
                     ;
 
             using (var con = _context.CreateConnection())
@@ -61,13 +61,15 @@ namespace Next_core_blog.Repository.Map
             }
         }
 
-        public async Task<IEnumerable<MapCoordinate>> GetMapCooldinates()
+        public async Task<IEnumerable<MapCoordinate>> GetIpCooldinates()
         {
-            string sql = @"SELECT b.lat, b.lon
+            string sql = @"SELECT a.ip, b.lat, b.lon
                             FROM userlog a INNER JOIN ipInfo b                            
                             ON a.ip = b.query
                             AND a.date >= date_add(now() , interval -1 day)
-                            GROUP BY ip";
+                            GROUP BY ip
+                            ORDER BY a.date DESC
+                            ";
 
             using (var con = _context.CreateConnection())
             {
@@ -75,6 +77,35 @@ namespace Next_core_blog.Repository.Map
                 return mapCoordinate.ToList();
             }
         }
+
+        public async Task<IEnumerable<MapHistory>> GetNoteTitleByIp()
+        {
+            string sql = @"SELECT ip, title 
+                            FROM (
+                                SELECT ip, date, title, country, countryCode, city, lat, lon, timezone, isp
+                                FROM (
+                                    SELECT a.ip, a.date, b.title ,c.country, c.countryCode,
+                                            c.city, c.lat, c.lon, c.timezone, c.isp
+                                    FROM userlog a 
+                                    LEFT JOIN note b
+                                    ON a.content = b.noteid 
+                                    LEFT JOIN ipInfo c
+                                    ON a.ip = c.query
+                                    ORDER BY DATE desc
+                                ) hist
+                                WHERE hist.date >= date_add(now(), interval -1 day)
+                            ) a            
+                            GROUP BY a.ip ,a.title"
+                            ;
+
+            using (var con = _context.CreateConnection())
+            {
+                var mapCoordinate = await con.QueryAsync<MapHistory>(sql);
+                return mapCoordinate.ToList();
+            }
+        }
+
+
 
     }
 }

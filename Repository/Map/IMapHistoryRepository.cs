@@ -1,3 +1,4 @@
+using System.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace Next_core_blog.Repository.Map
     {
         Task<IEnumerable<MapHistory>> GetLogHistoryAll();
         Task<IEnumerable<MapHistory>> GetLogHistoryDaily();
-        Task<IEnumerable<MapCoordinate>> GetMapCooldinates();
+        Task<IEnumerable<MapCoordinate>> GetIpCooldinates();
+        Task<IEnumerable<MapHistory>> GetNoteTitleByIp();
     }
 }
