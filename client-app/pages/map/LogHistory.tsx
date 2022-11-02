@@ -112,13 +112,13 @@ const LogHistory = () => {
     const map = new naver.maps.Map(mapElement.current, mapOptions);
     coordinate.map((t) => {
       // marker Object
-      var marker = new naver.maps.Marker({
+      const marker = new naver.maps.Marker({
         position: new naver.maps.LatLng(parseFloat(t.lat), parseFloat(t.lon)),
         map: map,
       });
 
       // marker Description
-      var infowindow = new naver.maps.InfoWindow({
+      const infowindow = new naver.maps.InfoWindow({
         content: `<div class="description">
                     <h3>${t.ip}</h3>
                     ${ipdictionary
@@ -142,7 +142,7 @@ const LogHistory = () => {
   const getNoteTitleByIp = async () => {
     const keySet: string[] = [];
     const dictionary = new Map<string, string[]>();
-    var { data } = await locationApi.GetNoteTitleByIp();
+    const { data } = await locationApi.GetNoteTitleByIp();
 
     data.map((t) => {
       // key set
@@ -193,7 +193,7 @@ const LogHistory = () => {
             <tbody>
               {logInfo?.map(function (t, index) {
                 return (
-                  <tr>
+                  <tr key={index}>
                     <th scope="row">{index}</th>
                     <td>{t.ip}</td>
                     <td>
