@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -24,6 +26,7 @@ namespace Next_core_blog.Controllers
         }
 
         [HttpGet("logInfoAll")]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public async Task<IActionResult> GetLogInfoAll()
         {
             try
@@ -41,6 +44,7 @@ namespace Next_core_blog.Controllers
         }
 
         [HttpGet("logInfoDaily")]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public async Task<IActionResult> GetLogInfoDaily()
         {
             try
@@ -58,6 +62,7 @@ namespace Next_core_blog.Controllers
         }
 
         [HttpGet("dailyIpCoordinate")]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public async Task<IActionResult> GetDailyIpCoordinate()
         {
             _logger.LogInformation("getDailyIpCoordinate: " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
@@ -75,6 +80,7 @@ namespace Next_core_blog.Controllers
         }
 
         [HttpGet("GetNoteTitleByIp")]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public async Task<IActionResult> GetNoteTitleByIp()
         {
             _logger.LogInformation("GetNoteTitleByIp: " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));

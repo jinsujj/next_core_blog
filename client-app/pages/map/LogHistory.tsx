@@ -1,15 +1,40 @@
 import { format } from "date-fns";
 import React, { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import locationApi, { LogInfo, mapCoordinate } from "../../api/location";
+import { useSelector } from "../../store";
 import palette from "../../styles/palette";
 
-const Container = styled.div`
-  max-width: 1200px;
-  margin: auto auto;
-  box-sizing: border-box;
-  position: relative;
-  background: white;
+interface StyledProps {
+  isDark: boolean;
+}
+
+const Container = styled.div<StyledProps>`
+  ${(props) =>
+    props.isDark &&
+    css`
+      // [ color to dark ]
+      background: ${palette.dark_19} !important;
+      color: ${palette.gray_80};
+
+      .table-striped > tbody > tr:nth-of-type(odd) {
+        background-color: ${palette.black};
+      }
+
+      .naver-map {
+        opacity: 0.8 !important;
+      }
+    `};
+
+  .inner {
+    max-width: 940px;
+    overflow-x: scroll;
+    margin: 0 auto;
+    box-sizing: border-box;
+    position: relative;
+    padding: 0 20px;
+    padding-bottom: 10px;
+  }
 
   .summary {
     border-bottom: 2px solid ${palette.green_53};
@@ -17,7 +42,7 @@ const Container = styled.div`
     margin-bottom: 10px;
   }
 
-  .title {
+  .summary__title {
     font-weight: 600;
     font-size: 32px;
   }
@@ -30,22 +55,36 @@ const Container = styled.div`
       border-bottom: 2px solid ${palette.green_53};
     }
 
-    li {
-      list-style: none !important;
+    .noAuthority {
+      padding: 50% 0%;
+      text-align: center;
     }
-  }
-
-  .table {
-    overflow-x: scroll !importable;
   }
 `;
 
 const LogHistory = () => {
+  const isDarkMode = useSelector((state) => state.common.isDark);
   const [coordinate, setCoordinate] = useState<mapCoordinate[]>([]);
   const [ipdictionary, setIpDictionary] = useState<Map<string, string[]>>();
   const [logInfo, setLogInfo] = useState<LogInfo[]>();
 
   const mapElement = useRef(null);
+
+  const role = useSelector((state) => state.user.role);
+
+  if (role !== "ADMIN") {
+    return (
+      <>
+        <Container isDark={isDarkMode}>
+          <div className="inner">
+            <div className="noAuthority">
+              <h1>조회 권한이 없습니다</h1>
+            </div>
+          </div>
+        </Container>
+      </>
+    );
+  }
 
   // [get Data]
   useEffect(() => {
@@ -124,55 +163,60 @@ const LogHistory = () => {
   };
 
   return (
-    <Container>
-      <div className="summary">
-        <div className="title">블로그 접속 Ip 추적</div>
-      </div>
-      <div
-        ref={mapElement}
-        style={{ minHeight: "600px", marginBottom: "40px" }}
-      />
-      <table className="table table-striped">
-        <thead className="thead-dark">
-          <tr>
-            <th scope="col">row</th>
-            <th scope="col">ip</th>
-            <th scope="col">date</th>
-            <th scope="col">title</th>
-            <th scope="col">country</th>
-            <th scope="col">countryCode</th>
-            <th scope="col">city</th>
-            <th scope="col">lat</th>
-            <th scope="col">lon</th>
-            <th scope="col">timezone</th>
-            <th scope="col">isp</th>
-          </tr>
-        </thead>
-        <tbody>
-          {logInfo?.map(function (t, index) {
-            return (
+    <Container isDark={isDarkMode}>
+      <div className="inner">
+        <div className="summary">
+          <div className="summary__title">블로그 접속 Ip 추적</div>
+        </div>
+        <div
+          className="naver-map"
+          ref={mapElement}
+          style={{ minHeight: "600px", marginBottom: "40px" }}
+        />
+        <div className="boot-table">
+          <table className="table table-striped">
+            <thead className="thead-dark">
               <tr>
-                <th scope="row">{index}</th>
-                <td>{t.ip}</td>
-                <td>
-                  {format(
-                    new Date(t.date.replace(/-/g, "/")),
-                    "yyyy-MM-dd HH:MM:ss"
-                  )}
-                </td>
-                <td>{t.title}</td>
-                <td>{t.country}</td>
-                <td>{t.countryCode}</td>
-                <td>{t.city}</td>
-                <td>{t.lat}</td>
-                <td>{t.lon}</td>
-                <td>{t.timezone}</td>
-                <td>{t.isp}</td>
+                <th scope="col">row</th>
+                <th scope="col">ip</th>
+                <th scope="col">date</th>
+                <th scope="col">title</th>
+                <th scope="col">country</th>
+                <th scope="col">countryCode</th>
+                <th scope="col">city</th>
+                <th scope="col">lat</th>
+                <th scope="col">lon</th>
+                <th scope="col">timezone</th>
+                <th scope="col">isp</th>
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+              {logInfo?.map(function (t, index) {
+                return (
+                  <tr>
+                    <th scope="row">{index}</th>
+                    <td>{t.ip}</td>
+                    <td>
+                      {format(
+                        new Date(t.date.replace(/-/g, "/")),
+                        "yyyy-MM-dd HH:MM:ss"
+                      )}
+                    </td>
+                    <td>{t.title}</td>
+                    <td>{t.country}</td>
+                    <td>{t.countryCode}</td>
+                    <td>{t.city}</td>
+                    <td>{t.lat}</td>
+                    <td>{t.lon}</td>
+                    <td>{t.timezone}</td>
+                    <td>{t.isp}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </Container>
   );
 };
