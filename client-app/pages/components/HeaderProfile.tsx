@@ -19,6 +19,7 @@ const Container = styled.div<StyledProps>`
     css`
       .userInfo {
         color: ${palette.gray_c4} !important;
+        cursor: pointer;
       }
     `}
 
@@ -50,6 +51,7 @@ const Container = styled.div<StyledProps>`
     color: ${palette.black};
     font-size: 16px;
     font-weight: 600;
+    cursor: pointer;
 
     @media only screen and (max-width: 768px) {
       display: none;
@@ -98,6 +100,12 @@ const HeaderProfile = () => {
     }
   };
 
+  const onClickLogHistory = () => {
+    if (userInfo.role === "ADMIN") {
+      Router.push("/map/LogHistory");
+    }
+  };
+
   return (
     <Container isDark={"Y"}>
       <div className="btn-group">
@@ -121,7 +129,9 @@ const HeaderProfile = () => {
             Logout
           </Button>
         </div>
-        <div className="userInfo">{userInfo.name}</div>
+        <div className="userInfo" onClick={onClickLogHistory}>
+          {userInfo.name}
+        </div>
       </div>
     </Container>
   );
