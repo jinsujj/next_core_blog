@@ -341,6 +341,12 @@ const Sidebar = () => {
     }
   };
 
+  const onClickLogHistory = () => {
+    if (userInfo.role === "ADMIN") {
+      Router.push("/map/LogHistory");
+    }
+  };
+
   useEffect(() => {
     getCategoryList();
 
@@ -357,7 +363,11 @@ const Sidebar = () => {
     <Container istoggle={isToggle} isDark={isDarkMode}>
       <div className="inner">
         <div className="toggle-btn" onClick={changeToggle}>
-          {userInfo.isLogged && <div className="userInfo">{userInfo.name}</div>}
+          {userInfo.isLogged && (
+            <div className="userInfo" onClick={onClickLogHistory}>
+              {userInfo.name}
+            </div>
+          )}
         </div>
         <form id="search-form" method="post" action="#">
           <Input
