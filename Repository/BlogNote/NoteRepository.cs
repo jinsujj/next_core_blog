@@ -342,8 +342,23 @@ namespace Next_Core_Blog.Repository.BlogNote
                 return 1;
 
             // save 'userLog, ipInfo' table
-            await saveLog(ipInfo);
+            bool isPost = await isPosted(ipInfo);
+            if (isPost == true)
+                await saveLog(ipInfo);
             return 0;
+        }
+
+        private async Task<Boolean> isPosted(IpLocationInfo ipinfo)
+        {
+            string isNotePostedSql = @"SELECT COUNT(*)
+                                        FROM note a
+                                        WHERE a.noteId = @Ip
+                                        AND a.isPost ='Y' ";
+
+            using (var con = _context.CreateConnection())
+            {
+                return await con.QueryFirstAsync(isNotePostedSql, new { Ip = ipinfo.id });
+            }
         }
 
         private async Task saveLog(IpLocationInfo ipInfo)
