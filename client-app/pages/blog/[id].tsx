@@ -248,10 +248,11 @@ interface IProps {
 }
 
 const blogDetail: NextPage<IProps> = ({ detailNote }) => {
+  console.log(detailNote.noteId);
   const isDarkMode = useSelector((state) => state.common.isDark);
   const iconColor = isDarkMode === true ? "white" : "black";
 
-  let blogDate = detailNote.postDate.replace(/-/g, "/");
+  let blogDate = detailNote.postDate?.replace(/-/g, "/");
   if (detailNote.modifyDate !== null && detailNote.modifyDate !== undefined)
     blogDate = detailNote.modifyDate?.replace(/-/g, "/");
 

@@ -16,7 +16,7 @@ jobs:
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: "6.0.x"
+          dotnet-version: "7.0.x"
 
       - name: "dotnet build"
         run: dotnet build Next_Core_Blog.csproj
