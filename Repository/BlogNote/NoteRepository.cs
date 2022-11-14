@@ -337,7 +337,7 @@ namespace Next_Core_Blog.Repository.BlogNote
 
             // Ignore GoogleBot And Local Log
             if (ipInfo.query.StartsWith("66.249") || ipInfo.query.StartsWith("192.") ||
-                ipInfo.query.StartsWith("127.") 
+                ipInfo.query.StartsWith("127.") || ipInfo.query.StartsWith(":")
             )
                 return 1;
 
