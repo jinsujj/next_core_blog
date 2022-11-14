@@ -337,18 +337,18 @@ namespace Next_Core_Blog.Repository.BlogNote
 
             // Ignore GoogleBot And Local Log
             if (ipInfo.query.StartsWith("66.249") || ipInfo.query.StartsWith("192.") ||
-                ipInfo.query.StartsWith("127.") || ipInfo.query.StartsWith(":")
+                ipInfo.query.StartsWith("127.") 
             )
                 return 1;
 
             // save 'userLog, ipInfo' table
-            bool isPost = await isPosted(ipInfo);
-            if (isPost == true)
+            int isPost = await isPosted(ipInfo);
+            if (isPost >0 )
                 await saveLog(ipInfo);
             return 0;
         }
 
-        private async Task<Boolean> isPosted(IpLocationInfo ipinfo)
+        private async Task<int> isPosted(IpLocationInfo ipinfo)
         {
             string isNotePostedSql = @"SELECT COUNT(*)
                                         FROM note a
@@ -357,7 +357,7 @@ namespace Next_Core_Blog.Repository.BlogNote
 
             using (var con = _context.CreateConnection())
             {
-                return await con.QueryFirstAsync(isNotePostedSql, new { Ip = ipinfo.id });
+                return await con.QueryFirstAsync<int>(isNotePostedSql, new { Ip = ipinfo.id });
             }
         }
 
