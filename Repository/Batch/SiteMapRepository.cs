@@ -40,6 +40,7 @@ namespace Next_core_blog.Repository.Batch
                     if (noteList[i].modifyDate.Length == 0)
                         noteList[i].modifyDate = noteList[i].postDate;
                     SetBlogUrl(noteList, xmlDoc, root, i);
+                    SetWWWBlogUrl(noteList, xmlDoc, root, i);
                 }
                 SaveXml(xmlDoc);
             }
@@ -59,6 +60,18 @@ namespace Next_core_blog.Repository.Batch
             XmlNode url = xmlDoc.CreateElement("url");
             XmlNode loc = xmlDoc.CreateElement("loc");
             loc.InnerText = "https://owl-dev.me/blog/" + count[idx].noteId;
+            url.AppendChild(loc);
+
+            XmlNode lastmod = xmlDoc.CreateElement("lastmod");
+            lastmod.InnerText = count[idx].modifyDate.Split(" ")[0].ToString();
+            url.AppendChild(lastmod);
+            root.AppendChild(url);
+        }
+        private static void SetWWWBlogUrl(NoteInfo[] count, XmlDocument xmlDoc, XmlNode root, int idx)
+        {
+            XmlNode url = xmlDoc.CreateElement("url");
+            XmlNode loc = xmlDoc.CreateElement("loc");
+            loc.InnerText = "https://www.owl-dev.me/blog/" + count[idx].noteId;
             url.AppendChild(loc);
 
             XmlNode lastmod = xmlDoc.CreateElement("lastmod");
