@@ -1,3 +1,4 @@
+using System.Threading.Tasks.Dataflow;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -376,7 +377,12 @@ namespace Next_Core_Blog.Controllers
                 if (openTagIndex != -1 && closeTagIndex != -1)
                 {
                     var buff = content.Substring(openTagIndex, (closeTagIndex - openTagIndex + 1)).ToLower();
-                    if (buff.Contains("typescript")) continue;
+
+                    // Except
+                    if (buff.Contains("typescript") || 
+                        buff.Contains("language-javascrip"))         
+                            continue;
+
                     else if (buff.Contains("script"))
                         return true;
 
