@@ -348,6 +348,8 @@ const Sidebar = () => {
   };
 
   useEffect(() => {
+    if (window.innerWidth > 1580) dispatch(commonAction.setToggleMode(true));
+
     getCategoryList();
 
     noteApi.getTotalReadCount().then((res) => {
