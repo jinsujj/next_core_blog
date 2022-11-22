@@ -23,8 +23,8 @@ Full Stack 개발자가 되기 위해 쌓아온 그간의 경험을 모아서, �
 </p>
   
 Front-end : Next.js  <br>
-Back-end  : .Net Core 5 -> .Net Core 6 <br>
-Language  : typescript , C# , SQL <br>
+Back-end  : .Net Core 5 -> .Net Core 7 <br>
+Language  : Typescript , C# , SQL <br>
 Database  : MySQL 
 <br/>
 </div> 
@@ -38,14 +38,14 @@ Database  : MySQL
 <b>'CommonLibrary'</b>      - *FileUpload* , *Security* 관련 Library 를 처리합니다. <br/> 
 <b>'Program.cs'</b>         - *'Cookie'* 및 *'Cors'*, *'DB Repository'* 를 관리합니다. <br/>
 <b>'Context/DapperContext'</b> - mysql Db 와 ORM 연동을 해줍니다 <br/>
-<b>'Controllers'</b>           - 노트(Note), 유저(User) 관련 컨트롤러를 관리합니다 <br/>
-<b>'Model'</b>                 - 노트(Note), 유저(User) 관련 모델 관리합니다 <br/>
-<b>'Repository'</b>            - 노트(Note), 유저(User) 관련 DB SQL 을 관리합니다 <br/>
+<b>'Controllers'</b>           - 노트(Note), 유저(User) , 인증(OAuth), 방문자 기록(MapHistory) 관련 컨트롤러를 관리합니다 <br/>
+<b>'Model'</b>                 - 노트(Note), 유저(User) , 인증(OAuth), 네이버 지도(Map),SEO(BATCH) - sitemap.xml 관련 모델 관리합니다 <br/>
+<b>'Repository'</b>            - 노트(Note), 유저(User) , 방문자 기록(Map), SEO(Batch)-sitemap.xml 관련 DB SQL 을 관리합니다 <br/>
 <br/>
 <b>'client-app/api'</b>    - api(axios) 정의 부분입니다 <br/>
-<b>'client-app/hooks'</b>  - *'모달'*, *'댓글(Utterance)'*, *'검증(validate)'* hook 으로 처리합니다<br/>
-<b>'client-app/pages'</b>  - posting글(blog/[id]) 과 componet 를 관리합니다 <br/>
-<b>'client-app/store'</b>  - Redux 관련 *'권한'*, *'카테고리'*, *'공통'*, *'유저'* 를 관리합니다.  <br/>
+<b>'client-app/hooks'</b>  - *'모달'*, *'댓글(Utterance)'*, *'검증(validate)'*, '*렌더링 Sync(router)*', *'코드(syntax-highlighter)'* hook 으로 처리합니다<br/>
+<b>'client-app/pages'</b>  - posting글(blog/[id]), 관리자 방문 기록(map), 및 각종 componet 를 관리합니다 <br/>
+<b>'client-app/store'</b>  - Redux Tool kit 관련 *'권한'*, *'카테고리'*, *'공통'*, *'유저'* 를 관리합니다.  <br/>
 <b>'client-app/utils'</b>  - Google Analytics 구현 관련 처리합니다 <br/>
 <br/>
 
