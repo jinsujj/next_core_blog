@@ -7,7 +7,7 @@ import { config } from "@fortawesome/fontawesome-svg-core";
 import axios from "../api";
 import { userActions } from "../store/user";
 import userApi from "../api/user";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { commonAction } from "../store/common";
 import { NextSeo } from "next-seo";
 import { useEffect } from "react";
@@ -18,9 +18,11 @@ config.autoAddCss = false; // Tell Font Awesome to skip adding the CSS automatic
 
 const app = ({ Component, pageProps }: AppProps) => {
   const dispatch = useDispatch();
-  dispatch(commonAction.setPostState("read"));
 
   useEffect(() => {
+    dispatch(commonAction.setPostState("read"));
+    dispatch(commonAction.setDarkMode(getInitDarkMode()));
+
     // kakao Login check
     const parameterCheck = decodeURI(window.location.href).split("?")[1];
     const kakao_access_code =
@@ -45,6 +47,16 @@ const app = ({ Component, pageProps }: AppProps) => {
     } catch (e: any) {
       console.log(e.message);
     }
+  };
+
+  const getInitDarkMode = () => {
+    const now = new Date();
+    const utcNow = now.getTime() + now.getTimezoneOffset() * 60 * 1000; // UTC 시간 밀리세컨드로 변환
+    const koreanTimeDiff = 9 * 60 * 60 * 1000; // 한국시간은 UTC 보다 9시간 빠름
+    const koreaNow = new Date(utcNow + koreanTimeDiff);
+    if (18 <= koreaNow.getHours() || koreaNow.getHours() <= 6) return true;
+
+    return false;
   };
 
   return (
@@ -86,7 +98,7 @@ const app = ({ Component, pageProps }: AppProps) => {
 // Cookie Check
 app.getInitialProps = wrapper.getInitialAppProps((store) => async (context) => {
   // 로컬에서 실행시 주석 해제
-  // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
   const appInitalProps = await App.getInitialProps(context);
 
   try {
