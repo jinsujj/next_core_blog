@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Next_core_blog.Model.BlogNote;
-using Next_Core_Blog.Model.BlogNote;
+using next_core_blog.Model.BlogNote;
+using next_core_blog.Model.BlogNote;
 
-namespace Next_Core_Blog.Repository.BlogNote
+namespace next_core_blog.Repository.BlogNote
 {
     public interface INoteRepository
     {

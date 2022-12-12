@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.IO;
 
-namespace Next_Core_Blog.CommonLibrary
+namespace next_core_blog.CommonLibrary
 {
     public class Security
     {

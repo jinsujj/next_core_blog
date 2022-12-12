@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Extensions.Logging;
-using Next_core_blog.Model.Map;
-using Next_Core_Blog.Context;
+using next_core_blog.Model.Map;
+using next_core_blog.Context;
 
-namespace Next_core_blog.Repository.Map
+namespace next_core_blog.Repository.Map
 {
     public class MapHistoryRepository : IMapHistoryRepository
     {

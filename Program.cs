@@ -8,11 +8,11 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Next_core_blog.Repository.Batch;
-using Next_core_blog.Repository.Map;
-using Next_Core_Blog.Context;
-using Next_Core_Blog.Repository.BlogNote;
-using Next_Core_Blog.Repository.Users;
+using next_core_blog.Repository.Batch;
+using next_core_blog.Repository.Map;
+using next_core_blog.Context;
+using next_core_blog.Repository.BlogNote;
+using next_core_blog.Repository.Users;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -85,7 +85,7 @@ builder.WebHost.ConfigureKestrel((context, options) =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseDeveloperExceptionPage();
     app.UseSwagger();

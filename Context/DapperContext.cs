@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 
-namespace Next_Core_Blog.Context
+namespace next_core_blog.Context
 {
     /*
         Context 란?

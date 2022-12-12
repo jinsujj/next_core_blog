@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Next_Core_Blog.CommonLibrary
+namespace next_core_blog.CommonLibrary
 {
     public class FileUtility
     {

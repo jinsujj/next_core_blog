@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Next_Core_Blog.Model.User
+namespace next_core_blog.Model.User
 {
     public class LoginViewModel
     {

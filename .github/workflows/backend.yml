@@ -19,7 +19,7 @@ jobs:
           dotnet-version: "7.0.x"
 
       - name: "dotnet build"
-        run: dotnet build Next_Core_Blog.csproj
+        run: dotnet build next_core_blog.csproj
 
       - name: Deploy
         run: |

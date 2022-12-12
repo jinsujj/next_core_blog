@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Next_core_blog.Repository.Map;
+using next_core_blog.Repository.Map;
 
-namespace Next_core_blog.Controllers
+namespace next_core_blog.Controllers
 {
     [Route("api/MapHistory")]
     public class IpHistoryController : ControllerBase

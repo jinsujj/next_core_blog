@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 25.0.1700.6
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Next_Core_Blog", "Next_Core_Blog.csproj", "{8E4E0A95-4612-4224-93FE-63C2E754D158}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "next_core_blog", "next_core_blog.csproj", "{8E4E0A95-4612-4224-93FE-63C2E754D158}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{18CF6C57-2ED3-49C1-A9D6-325FB7825F15}"
 	ProjectSection(SolutionItems) = preProject
-		Next_Core_Blog.sln = Next_Core_Blog.sln
+		next_core_blog.sln = next_core_blog.sln
 	EndProjectSection
 EndProject
 Global

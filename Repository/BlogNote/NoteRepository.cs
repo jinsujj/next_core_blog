@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Next_Core_Blog.Model.BlogNote;
+using next_core_blog.Model.BlogNote;
 using Dapper;
-using Next_Core_Blog.Context;
+using next_core_blog.Context;
 using System.Data;
-using Next_core_blog.Model.BlogNote;
+using next_core_blog.Model.BlogNote;
 
-namespace Next_Core_Blog.Repository.BlogNote
+namespace next_core_blog.Repository.BlogNote
 {
     public class NoteRepository : INoteRepository
     {

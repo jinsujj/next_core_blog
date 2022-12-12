@@ -5,9 +5,9 @@ using System.Xml;
 using Dapper;
 using Microsoft.Extensions.Logging;
 using next_core_blog.Model.Batch;
-using Next_Core_Blog.Context;
+using next_core_blog.Context;
 
-namespace Next_core_blog.Repository.Batch
+namespace next_core_blog.Repository.Batch
 {
     public class SiteMapRepository : ISiteMapRepository
     {

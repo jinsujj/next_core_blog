@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Next_Core_Blog": {
+    "next_core_blog": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger",

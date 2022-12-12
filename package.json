@@ -5,7 +5,7 @@
     "caddy_window": "../caddy/caddy.exe reverse-proxy --from localhost:3030 --to localhost:3000",
     "caddy_mac": "caddy reverse-proxy --from localhost:3030 --to localhost:3000",
     "start": "concurrently \"yarn caddy_mac \" \"dotnet watch run\" \"cd client-app && npm run dev\"",
-    "ops": "concurrently \"yarn caddy_mac \" \"cd /bin/Debug/net6.0 && dotnet Next_Core_Blog.dll \" \"cd client-app && npm run dev\"",
+    "ops": "concurrently \"yarn caddy_mac \" \"cd /bin/Debug/net6.0 && dotnet next_core_blog.dll \" \"cd client-app && npm run dev\"",
     "client": "concurrently \"yarn caddy_mac \"  \"cd client-app && npm run dev\""
   },
   "dependencies": {

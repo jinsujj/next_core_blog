@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Extensions.Logging;
 using next_core_blog.Model.Oauth;
-using Next_Core_Blog.Context;
-using Next_Core_Blog.Model.BlogNote;
-using Next_Core_Blog.Model.User;
+using next_core_blog.Context;
+using next_core_blog.Model.BlogNote;
+using next_core_blog.Model.User;
 
-namespace Next_Core_Blog.Repository.Users
+namespace next_core_blog.Repository.Users
 {
     public class UserRepository : IUserRepository
     {

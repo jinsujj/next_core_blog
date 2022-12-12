@@ -1,4 +1,3 @@
-using System.Threading.Tasks.Dataflow;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,14 +17,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
-using Next_core_blog.Model.BlogNote;
-using Next_core_blog.Repository.Batch;
-using Next_Core_Blog.Model.BlogNote;
-using Next_Core_Blog.Model.User;
-using Next_Core_Blog.Repository.BlogNote;
-using Next_Core_Blog.Repository.Users;
+using next_core_blog.Model.BlogNote;
+using next_core_blog.Repository.Batch;
+using next_core_blog.Model.User;
+using next_core_blog.Repository.BlogNote;
+using next_core_blog.Repository.Users;
 
-namespace Next_Core_Blog.Controllers
+namespace next_core_blog.Controllers
 {
     [Route("api/Note")]
     [ApiController]

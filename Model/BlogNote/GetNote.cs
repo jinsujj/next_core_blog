@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Next_Core_Blog.Model.BlogNote
+namespace next_core_blog.Model.BlogNote
 {
     public class GetNote
     {

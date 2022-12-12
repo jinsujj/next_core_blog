@@ -7,16 +7,16 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Next_Core_Blog.CommonLibrary;
-using Next_Core_Blog.Model.User;
-using Next_Core_Blog.Repository.Users;
+using next_core_blog.CommonLibrary;
+using next_core_blog.Model.User;
+using next_core_blog.Repository.Users;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
 
-namespace Next_Core_Blog.Controllers
+namespace next_core_blog.Controllers
 {
     [Route("api/User")]
     [ApiController]

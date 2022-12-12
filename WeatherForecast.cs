@@ -1,6 +1,6 @@
 using System;
 
-namespace Next_Core_Blog
+namespace next_core_blog
 {
     public class WeatherForecast
     {
