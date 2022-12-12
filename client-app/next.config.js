@@ -3,7 +3,7 @@ module.exports = {
   reactStrictMode: true,
 
   i18n: {
-    locales: ["en-US", "ko"],
+    locales: ["ko"],
     defaultLocale: "ko",
   },
   typescript: {
