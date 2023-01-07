@@ -159,6 +159,7 @@ const Container = styled.div<StyledProps>`
   }
 
   .board {
+    font-family: "Nanum Gothic";
     width: 100%;
     min-height: 500px;
     padding-top: 4px;
