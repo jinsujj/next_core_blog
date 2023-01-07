@@ -234,7 +234,7 @@ const Editor = ({ NoteInfo }) => {
     }
 
     content = content.replace("font-family: &quot;Nanum Gothic&quot;", "font-family: 'Nanum Gothic';");
-    setContent(contnet);
+    setContent(content);
     openModal();
   };
 

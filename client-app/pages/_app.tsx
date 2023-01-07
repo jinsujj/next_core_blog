@@ -7,7 +7,7 @@ import { config } from "@fortawesome/fontawesome-svg-core";
 import axios from "../api";
 import { userActions } from "../store/user";
 import userApi from "../api/user";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { commonAction } from "../store/common";
 import { NextSeo } from "next-seo";
 import { useEffect } from "react";
@@ -100,7 +100,8 @@ const app = ({ Component, pageProps }: AppProps) => {
 // Cookie Check
 app.getInitialProps = wrapper.getInitialAppProps((store) => async (context) => {
   // 로컬에서 실행시 주석 해제
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+  //process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
   const appInitalProps = await App.getInitialProps(context);
 
   try {
