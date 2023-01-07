@@ -6,7 +6,4 @@ module.exports = {
     locales: ["ko"],
     defaultLocale: "ko",
   },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
 };

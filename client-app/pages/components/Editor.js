@@ -108,8 +108,8 @@ const Container = styled.form`
   .note-editor.note-airframe,
   .note-editor.note-frame {
     ${(props) =>
-      props.postState === "read" &&
-      css`
+    props.postState === "read" &&
+    css`
         border: 1px solid white !important;
       `}
   }
@@ -226,13 +226,15 @@ const Editor = ({ NoteInfo }) => {
   const openCategoryModal = (event) => {
     event.preventDefault();
 
-    var result = $("#summernote").summernote("code");
-    if (XSS_Check(result)) {
+    var content = $("#summernote").summernote("code");
+    if (XSS_Check(content)) {
       alert("XSS Checked..!!");
       setContent("");
       return;
     }
-    setContent($("#summernote").summernote("code"));
+
+    content = content.replace("font-family: &quot;Nanum Gothic&quot;", "font-family: 'Nanum Gothic';");
+    setContent(contnet);
     openModal();
   };
 

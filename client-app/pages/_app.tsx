@@ -59,6 +59,8 @@ const app = ({ Component, pageProps }: AppProps) => {
     return false;
   };
 
+  const AnyComponent = Component as any;
+
   return (
     <>
       <NextSeo
@@ -89,7 +91,7 @@ const app = ({ Component, pageProps }: AppProps) => {
           content="sxi1RDD-x-R6U-lHMRiV2kEtt-m7NVfNAaK-JoPyzTA"
         />
       </Head>
-      <Component {...pageProps} />
+      <AnyComponent {...pageProps} />
       <div id="root-modal" />
     </>
   );
@@ -98,7 +100,7 @@ const app = ({ Component, pageProps }: AppProps) => {
 // Cookie Check
 app.getInitialProps = wrapper.getInitialAppProps((store) => async (context) => {
   // 로컬에서 실행시 주석 해제
-  // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
   const appInitalProps = await App.getInitialProps(context);
 
   try {

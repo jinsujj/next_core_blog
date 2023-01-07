@@ -40,6 +40,7 @@ const Container = styled.div<StyledProps>`
 
   .board {
     padding-bottom: 10px;
+    font-family: Montserrat, sans-serif;
   }
 
   .summary__write {
