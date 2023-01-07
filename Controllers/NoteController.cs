@@ -58,6 +58,7 @@ namespace next_core_blog.Controllers
             try
             {
                 if (XSS_Check(note.content)) return StatusCode(403);
+                note.content.Replace("&quot", "");
 
                 if (formType == BoardWriteFormType.modify)
                 {
@@ -377,9 +378,9 @@ namespace next_core_blog.Controllers
                     var buff = content.Substring(openTagIndex, (closeTagIndex - openTagIndex + 1)).ToLower();
 
                     // Except
-                    if (buff.Contains("typescript") || 
-                        buff.Contains("language-javascrip"))         
-                            continue;
+                    if (buff.Contains("typescript") ||
+                        buff.Contains("language-javascrip"))
+                        continue;
 
                     else if (buff.Contains("script"))
                         return true;
