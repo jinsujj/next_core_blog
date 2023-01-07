@@ -58,7 +58,7 @@ namespace next_core_blog.Controllers
             try
             {
                 if (XSS_Check(note.content)) return StatusCode(403);
-                note.content.Replace("&quot", "");
+                note.content = note.content.Replace("&quot;", "").ToString();
 
                 if (formType == BoardWriteFormType.modify)
                 {
