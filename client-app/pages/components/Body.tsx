@@ -40,6 +40,7 @@ const Container = styled.div<StyledProps>`
 
   .board {
     padding-bottom: 10px;
+    font-family: "Nanum Gothic", sans-serif;
   }
 
   .summary__write {

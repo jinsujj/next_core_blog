@@ -30,6 +30,7 @@ const Container = styled.div<StyledProps>`
     `}
 
   .imageWrapper {
+    font-family: "Montserrat", sans-serif;
     display: block;
     border-radius: 4px;
     position: relative;
