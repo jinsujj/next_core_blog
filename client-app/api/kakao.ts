@@ -23,68 +23,52 @@ export interface kakaoTokenResponse {
 }
 
 export type kakaoToken = {
-  token: string;
+  code: string;
 };
 
 export type kakaoEmail = {
   Email: string;
 };
 
-
 const getKakaoAccessCode = async () => {
   return await api.get(KAKAO_LOGIN_URI);
 };
 
-const postAccesCode = async (payload: KakaoParam) => {
-  const res = await api.post<kakaoTokenResponse>(
-    `https://kauth.kakao.com/oauth/token`,
-    new URLSearchParams({
-      grant_type: "authorization_code",
-      client_id: payload.client_id,
-      redirect_uri: payload.redirect_uri,
-      code: payload.code,
-      client_secret: payload.client_secret,
-    }),
-    {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
-      },
-      withCredentials: false 
-    },
-  );
-  return res.data;
-};
-
 const kakaoLoginByEmail = async (email: string) => {
-  const kakaoEmail :kakaoEmail= {
-    Email: email
+  const kakaoEmail: kakaoEmail = {
+    Email: email,
   };
   const result = api.post<User>(`/api/Oauth/Kakao/LoginByEmail`, kakaoEmail);
   return result;
-}
-
-const postkakaoLogin = async (token: string) => {
-  const kakaoToken :kakaoToken= {
-    token: token
-  };
-
-  const result = api.post<User>(`/api/Oauth/Kakao/Login`, kakaoToken);
-  return result;
 };
 
-const postKakaoLogout = async (email : string) => {
-  const kakaoEmail :kakaoEmail= {
-    Email: email
+interface KakaoUserTokenResponse {
+  data: { access_token: string };
+}
+interface KakaoLoginResponse {
+  data: User;
+}
+const postkakaoLogin = async (code: string) => {
+  const { data: user } = await api.post<kakaoToken, KakaoLoginResponse>(
+    `/api/Oauth/Kakao/userToken`,
+    { code }
+  );
+
+  return user;
+};
+
+const postKakaoLogout = async (email: string) => {
+  const kakaoEmail: kakaoEmail = {
+    Email: email,
   };
   return api.post(`/api/Oauth/Kakao/Logout`, kakaoEmail);
 };
 
 const kakaoApi = {
   getKakaoAccessCode,
-  postAccesCode,
   postkakaoLogin,
   postKakaoLogout,
-  kakaoLoginByEmail
+  kakaoLoginByEmail,
 };
 
 export default kakaoApi;

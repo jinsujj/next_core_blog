@@ -19,15 +19,21 @@ using next_core_blog.Model.User;
 using System.Net.Http;
 using System.Text;
 using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace next_core_blog.Controllers
 {
+    internal class kakaoUrlList
+    {
+        public const string login = "https://kapi.kakao.com/v2/user/me";
+        public const string logout = "https://kapi.kakao.com/v1/user/logout";
+        public const string getToken = "https://kauth.kakao.com/oauth/token";
+    }
+
     [Route("api/Oauth")]
     [ApiController]
     public class OauthController : ControllerBase
     {
-        private const string kakaoLogin = "https://kapi.kakao.com/v2/user/me";
-        private const string kakaoLogout = "https://kapi.kakao.com/v1/user/logout";
         private readonly IWebHostEnvironment _enviorment;
         private readonly IConfiguration _config;
         private readonly ILogger<OauthController> _logger;
@@ -42,15 +48,63 @@ namespace next_core_blog.Controllers
             this._userRepo = userRepo;
         }
 
+        #region [ kakao get userToken]
+        [HttpPost("Kakao/userToken")]
+        [Produces("application/json")]
+        public async Task<Object> PostAccessCode(KakaoUserTokenParam payload)
+        {
+            using (var client = new HttpClient())
+            {
+                var values = new Dictionary<string, string>
+                {
+                    { "grant_type", "authorization_code" },
+                    { "code", payload.code },
+                    { "client_id", _config.GetValue<string>("KakaoOuathSettings:client_id")},
+                    { "redirect_uri", _config.GetValue<string>("KakaoOuathSettings:redirect_uri") },
+                    { "client_secret",_config.GetValue<string>("KakaoOuathSettings:client_secret") }
+                };
+                var content = new FormUrlEncodedContent(values);
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+
+                KakaoAccessToken kakaoToken = await getAccessToken(client, content);
+
+                var profileResponse = KakaoRequest(kakaoUrlList.login, kakaoToken.access_token).Result;
+                var kakaoProfile = JsonConvert.DeserializeObject<KakaoProfile>(JsonToString(profileResponse));
+
+
+                //카카오 로그인 시, 카카오 이메일 없는 경우가 있어서 로직 분기 처리함.
+                if (String.IsNullOrEmpty(kakaoProfile.kakao_account.email))
+                {
+                    AccountCheckById(kakaoProfile, kakaoToken.access_token);
+                    return await CreateCookie(new KakaoEmail("", kakaoProfile.id.ToString()));
+                }
+                else
+                {
+                    AccountCheckByEmail(kakaoProfile, kakaoToken.access_token);
+                    return await CreateCookie(new KakaoEmail(kakaoProfile.kakao_account.email, ""));
+                }
+            }
+        }
+
+        private static async Task<KakaoAccessToken> getAccessToken(HttpClient client, FormUrlEncodedContent content)
+        {
+            var response = await client.PostAsync(kakaoUrlList.getToken, content);
+            var responseString = await response.Content.ReadAsStringAsync();
+            var responseObject = JsonConvert.DeserializeObject<KakaoAccessToken>(responseString);
+            return responseObject;
+        }
+
+        #endregion
+
         #region [ kakao Login ]
         [HttpPost("Kakao/Login")]
         [Produces("application/json")]
-        public async Task<IActionResult> GetKaKaoProfileInfo([FromBody] KakaoToken kakaoToken)
+        public async Task<IActionResult> GetKaKaoProfileInfo([FromBody] KakaoLoginParam kakaoToken)
         {
             _logger.LogInformation("GetKaKaoProfileInfo" + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + "  |  Token: " + kakaoToken.token);
             try
             {
-                var response = KakaoRequest(kakaoLogin, kakaoToken.token).Result;
+                var response = KakaoRequest(kakaoUrlList.login, kakaoToken.token).Result;
                 var kakaoProfile = JsonConvert.DeserializeObject<KakaoProfile>(
                     JsonToString(response));
 
@@ -108,7 +162,7 @@ namespace next_core_blog.Controllers
             string kakaoToken = await _userRepo.GetKakaoToken(email.email);
             try
             {
-                HttpResponseMessage response = KakaoRequest(kakaoLogout, kakaoToken).Result;
+                HttpResponseMessage response = KakaoRequest(kakaoUrlList.logout, kakaoToken).Result;
                 return Ok(JsonToString(response));
             }
             catch (Exception ex)
