@@ -29,21 +29,17 @@ const app = ({ Component, pageProps }: AppProps) => {
       new URLSearchParams(parameterCheck).get("code") || "";
 
     if (kakao_access_code.length > 1) {
-      kakaoLogin(kakao_access_code);
+      kakaoLogin(kakao_access_code).finally(() => {
+        window.history.pushState(null, "부엉이 개발자", "/");
+      });
     }
   }, []);
 
-  const kakaoLogin = async (kakao_access_code: string) => {
-    const kakaoToken = await kakaoApi.postAccesCode({
-      client_id: process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID || "",
-      redirect_uri: process.env.NEXT_PUBLIC_REDIRECT_URI || "",
-      code: kakao_access_code,
-      client_secret: process.env.NEXT_PUBLIC_KAKAO_CLIENT_SECRET || "",
-    });
-
+  const kakaoLogin = async (code: string) => {
     try {
-      const { data } = await kakaoApi.postkakaoLogin(kakaoToken.access_token);
-      dispatch(userActions.setLoggedUser(data));
+      const user = await kakaoApi.postkakaoLogin(code);
+
+      dispatch(userActions.setLoggedUser(user));
     } catch (e: any) {
       console.log(e.message);
     }
