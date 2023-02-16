@@ -27,6 +27,7 @@ import "prismjs/components/prism-csharp";
 import "prismjs/components/prism-java";
 import "prismjs/components/prism-sql";
 import "prismjs/components/prism-bash";
+import "prismjs/components/prism-python";
 
 interface StyledProps {
   isDark: boolean;
