@@ -60,6 +60,7 @@
                     'bash',
                     'sql',
                     'typescript',
+                    'python',
                 ];
 
                 for (var i = 0; i < languages.length; i++) {
@@ -88,7 +89,7 @@
 
                 var $pre = $('<pre>');
                 $pre.html($code)
-                $pre.addClass('line-numbers' +' language-'+select);
+                $pre.addClass('line-numbers' + ' language-' + select);
 
                 var $code_toolbar = $('<div>');
                 $code_toolbar.html($pre)
