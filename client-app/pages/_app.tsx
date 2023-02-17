@@ -96,7 +96,6 @@ const app = ({ Component, pageProps }: AppProps) => {
 // Cookie Check
 app.getInitialProps = wrapper.getInitialAppProps((store) => async (context) => {
   // 로컬에서 실행시 주석 해제
-  //process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
   const appInitalProps = await App.getInitialProps(context);
 
@@ -105,9 +104,11 @@ app.getInitialProps = wrapper.getInitialAppProps((store) => async (context) => {
       context.ctx.req?.headers.cookie || "";
     const data = await userApi.meAPI();
 
+    console.log("userActions.setGeustUser", userActions.setGeustUser);
     if (data.data.userId) store.dispatch(userActions.setLoggedUser(data.data));
-    else store.dispatch(userActions.initUser());
+    else store.dispatch(userActions.setGeustUser());
   } catch (e: any) {
+    console.log("userActions.setGeustUser", userActions.setGeustUser);
     console.log(e.message);
   }
   return { ...appInitalProps };

@@ -164,8 +164,9 @@ const Header = () => {
             </button>
           </div>
           <div className="btn-group">
-            {isLogged && <HeaderProfile />}
-            {!isLogged && <HeaderAuths />}
+            {`${isLogged}`}
+            {isLogged === true && <HeaderProfile />}
+            {isLogged === false && <HeaderAuths />}
             <ModalPortal>
               <AuthModal closeModal={closeModal} />
             </ModalPortal>
