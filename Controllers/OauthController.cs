@@ -55,6 +55,9 @@ namespace next_core_blog.Controllers
         {
             using (var client = new HttpClient())
             {
+                _logger.LogInformation("client_id: " + _config.GetValue<string>("KakaoOuathSettings:client_id"));
+                _logger.LogInformation("redirect_url " + _config.GetValue<string>("KakaoOuathSettings:redirect_uri"));
+                _logger.LogInformation("client_secret " + _config.GetValue<string>("KakaoOuathSettings:client_secret"));
                 var values = new Dictionary<string, string>
                 {
                     { "grant_type", "authorization_code" },
