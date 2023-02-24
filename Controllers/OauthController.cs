@@ -68,6 +68,8 @@ namespace next_core_blog.Controllers
 
                 KakaoAccessToken kakaoToken = await getAccessToken(client, content);
 
+                _logger.LogInformation("url " + kakaoUrlList.login);
+                _logger.LogInformation("token " + kakaoToken.access_token);
                 var profileResponse = KakaoRequest(kakaoUrlList.login, kakaoToken.access_token).Result;
                 var kakaoProfile = JsonConvert.DeserializeObject<KakaoProfile>(JsonToString(profileResponse));
 
