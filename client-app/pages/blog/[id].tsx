@@ -87,7 +87,7 @@ const Container = styled.div<StyledProps>`
   padding-top: 56px;
 
   .inner {
-    max-width: 940px;
+    max-width: 760px;
     overflow-x: scroll;
     margin: 0 auto;
     box-sizing: border-box;
