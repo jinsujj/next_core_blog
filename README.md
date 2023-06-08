@@ -1,6 +1,6 @@
 > ### 부엉이 개발 블로그 사이트.
 
-Full Stack 개발자가 되기 위해 쌓아온 그간의 경험을 모아서, 최신 트렌드 기술로 리뉴얼 한 개발 블로그입니다.
+Next.js 와 .Net 을 활용해서 토이프로젝트로 진행한 개발블로그 사이트 입니다
 
 <div align=center>
   <p>🔨Techs that I've used in this Project.🔧</p>
