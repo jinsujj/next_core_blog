@@ -80,6 +80,7 @@ const Container = styled.div<StyledProps>`
       }
     `}
 
+  color: ${palette.dark_2F};
   pre {
     color: ${palette.gray_80};
     background-color: (220, 13%, 18%) !important;

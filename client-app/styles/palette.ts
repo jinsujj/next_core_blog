@@ -42,4 +42,5 @@ export default {
   green_8D: "#61C88D",
   green_53: "#219653",
   gray_24: "#242424",
+  dark_2F: "#37352F",
 };
