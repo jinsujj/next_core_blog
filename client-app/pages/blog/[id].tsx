@@ -99,6 +99,16 @@ const Container = styled.div<StyledProps>`
   .summary {
     border-bottom: 2px solid ${palette.green_53};
     width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .summary::before {
+    display: none;
+  }
+
+  .summary.clearfix::after {
+    display: none;
   }
 
   .summary__title {
@@ -120,7 +130,7 @@ const Container = styled.div<StyledProps>`
     align-items: center;
   }
   .post_info {
-    display: flex;
+    flex: none;
     padding-top: 40px;
 
     @media only screen and (max-width: 480px) {
@@ -334,10 +344,8 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
           <div className="board">
             {postState === "read" && (
               <div className="summary clearfix">
-                <h1 className="summary__title float--left">
-                  {detailNote.title}
-                </h1>
-                <div className="post_info float--right">
+                <h1 className="summary__title">{detailNote.title}</h1>
+                <div className="post_info">
                   <ul>
                     <li>
                       <FontAwesomeIcon
