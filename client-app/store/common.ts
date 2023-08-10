@@ -19,7 +19,7 @@ const initialState: CommonState = {
   postState: "read", // 글쓰기 상태 여부
   userIdOfNote: 0, // 현 Note의 작성자 id
   search: "", // 검색 여부
-  sideBarCategory: "", // 검색 카테고리
+  sideBarCategory: "Project", // 검색 카테고리
   sideBarSubCategory: "", // 검색 카테고리
 };
 
