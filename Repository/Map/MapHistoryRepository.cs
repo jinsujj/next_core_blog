@@ -67,7 +67,6 @@ namespace next_core_blog.Repository.Map
                             FROM userlog a INNER JOIN ipInfo b                            
                             ON a.ip = b.query
                             AND a.date >= date_add(now() , interval -1 day)
-                            GROUP BY ip
                             ORDER BY a.date DESC
                             ";
 
