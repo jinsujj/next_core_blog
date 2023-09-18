@@ -125,7 +125,7 @@ namespace next_core_blog.Repository.BlogNote
 
         public async Task<IEnumerable<CategoryViewModel>> GetNoteCategoryList()
         {
-            string sql = @"SELECT a.name as category , NVL(b.subName,'') as subCategory
+            string sql = @"SELECT a.name as category , COALESCE(b.subName,'') as subCategory
                             FROM category a LEFT OUTER JOIN subcategory b
                             ON a.name = b.name";
 
