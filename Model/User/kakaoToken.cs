@@ -14,7 +14,7 @@ namespace next_core_blog.Model.Oauth
     {
         public string token { get; set; }
     }
-    public class KakaoAccessToken
+    public class KakaoToken
     {
         public string access_token { get; set; }
     }

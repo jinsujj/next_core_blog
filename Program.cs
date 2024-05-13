@@ -21,6 +21,7 @@ var builder = WebApplication.CreateBuilder(args);
 *  'builder.Services' gets called by the runtime. Use this method to add services to the container.
 */
 builder.Services.AddControllers();
+builder.Services.AddHttpClient();
 builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddScoped<INoteRepository, NoteRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -92,8 +93,8 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Next_Core_Blog v1"));
 }
 
-app.UseHttpsRedirection();
 app.UseRouting();
+app.UseHttpsRedirection();
 
 // static file dir use wwwroot
 app.UseStaticFiles();
@@ -109,9 +110,5 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
 });
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllers();
-});
-
+app.MapControllers();
 app.Run();
