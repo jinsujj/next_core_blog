@@ -46,8 +46,7 @@ const Container = styled.div<StyledProps>`
   }
 
   ${({useValidation, isValid}) => 
-      useValidation &&
-        !isValid &&
+      useValidation && !isValid &&
         css`
           input{
             background-color: ${palette.snow};
@@ -58,8 +57,7 @@ const Container = styled.div<StyledProps>`
           }
         `}  
    ${({useValidation, isValid}) => 
-        useValidation &&
-          isValid &&
+        useValidation && isValid &&
           css`
             input {
               border-color : ${palette.orange}
@@ -81,6 +79,7 @@ interface IProps extends React.InputHTMLAttributes<HTMLInputElement> {
   width?: string;
 }
 
+
 const Input = ({
   type,
   placeholder,
@@ -94,7 +93,6 @@ const Input = ({
   ...props
 }: IProps) => {
   const validateMode = useSelector((state) => state.common.validateMode);
-
   color = colorChange(color || "");
   focusColor = colorChange(focusColor || "");
 
@@ -114,4 +112,4 @@ const Input = ({
   );
 };
 
-export default React.memo(Input);
+export default Input;

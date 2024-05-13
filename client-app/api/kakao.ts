@@ -42,9 +42,6 @@ const kakaoLoginByEmail = async (email: string) => {
   return result;
 };
 
-interface KakaoUserTokenResponse {
-  data: { access_token: string };
-}
 interface KakaoLoginResponse {
   data: User;
 }
