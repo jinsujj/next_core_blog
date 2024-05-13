@@ -30,8 +30,12 @@ const Logout = () => {
     return api.get(`/api/User/Logout`);
 }
 
-const meAPI = async () => {
-    return  await api.get<User>(`/api/User/meAPI`);
+const meAPI = async(cookieHeader: any) => {
+    return await api.get<User>(`/api/User/meAPI`, {
+        headers: {
+            Cookie: cookieHeader
+        }
+    });
 }
 
 const userApi = {
