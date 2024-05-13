@@ -6,44 +6,44 @@ import category from "./category";
 import common from "./common";
 import user from "./user";
 
-
-const rootRedux = combineReducers({
+const rootReducer = combineReducers({
     common: common.reducer,
     auth : auth.reducer,
     user : user.reducer,
     category: category.reducer,
 });
 
-// 스토어 타입
-export type RootState = ReturnType<typeof rootRedux>;
+// Define the RootState type 
+export type RootState = ReturnType<typeof rootReducer>;
 
-let initialRootState : RootState;
+const reducer = (state: RootState | undefined, action: any) : RootState => {
+    if (action.type == HYDRATE){
+        const nextState = {
+            ...state,           // use previous state
+            ...action.payload,  // apply delta from hydration
+        };
 
-const reducer = (state: any, action:any) =>{
-    if(action.type === HYDRATE){
-        if(state === initialRootState){
-            return {
-                ...state,
-                ...action.payload,
-            }
+        if (state){
+            nextState.user = state.user
         }
-        return state;
-    };
-    return rootRedux(state, action);
-};
+        return nextState;
+    }else {
+        return rootReducer(state, action)
+    }
+}
 
 
-// 타입 지원되는 Custom useSelector
+// Typed useSelector hook for TypeScript
 export const useSelector: TypedUseSelectorHook<RootState> = useReduxSelector;
 
 
 const initStore =() =>{
     const store = configureStore({
         reducer,
-        devTools: true,
+        devTools: process.env.NODE_ENV !== 'production',
     });
-    initialRootState = store.getState();
     return store;
 };
 
+// Create a Next.js wrapper with the store
 export const wrapper = createWrapper(initStore);
