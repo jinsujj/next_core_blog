@@ -9,30 +9,31 @@ export const useUtterances = (commentNodeId: string) => {
   const isDarkMode = useSelector((state) => state.common.isDark);
 
   React.useEffect(() => {
-    const scriptParentNode = document.getElementById(commentNodeId);
-    if (!scriptParentNode) return;
+    const loadUtterancesScript = () => {
+      const scriptParentNode = document.getElementById(commentNodeId);
+      if (!scriptParentNode) return;
 
-    // docs - https://utteranc.es/
-    const script = document.createElement("script");
-    script.src = "https://utteranc.es/client.js";
-    script.async = true;
-    script.setAttribute("repo", REPO_NAME);
-    script.setAttribute("issue-term", "pathname");
-    script.setAttribute("label", "✨comment✨");
-    script.setAttribute("crossorigin", "anonymous");
-    if (isDarkMode) {
-      script.setAttribute("theme", "github-dark");
-    } else {
-      script.setAttribute("theme", "github-light");
-    }
+      // Remove previous script if exists
+      while (scriptParentNode.firstChild) {
+        scriptParentNode.removeChild(scriptParentNode.firstChild);
+      }
 
-    scriptParentNode.appendChild(script);
-
-    return () => {
-      // cleanup - remove the older script with previous theme
-      scriptParentNode.removeChild(scriptParentNode.firstChild as Node);
+      // Load Utterances script
+      const script = document.createElement("script");
+      script.src = "https://utteranc.es/client.js";
+      script.async = true;
+      script.setAttribute("repo", REPO_NAME);
+      script.setAttribute("issue-term", "pathname");
+      script.setAttribute("label", "✨comment✨");
+      script.setAttribute("crossorigin", "anonymous");
+      script.setAttribute("theme", isDarkMode ? "github-dark" : "github-light");
+      scriptParentNode.appendChild(script);
     };
-  }, [commentNodeId]);
+
+    // Delay script loading to ensure DOM readiness
+    const timer = setTimeout(loadUtterancesScript, 1000);
+    return () => clearTimeout(timer);
+  }, [commentNodeId, isDarkMode]);
 };
 
 export default useUtterances;

@@ -301,10 +301,7 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
 
   useEffect(() => {
     return () => {
-      if (
-        detailNote.category !== sideBarCategory ||
-        detailNote.subCategory !== sideBarSubCategory
-      ) {
+      if (detailNote.category !== sideBarCategory) {
         Router.push("/");
       } else if (SearchQuery.includes(detailNote.title)) {
         Router.push("/");

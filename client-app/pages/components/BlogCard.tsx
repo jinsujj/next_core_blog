@@ -95,41 +95,85 @@ const BlogCard = ({ blog }: IProps) => {
   const isDarkMode = useSelector((state) => state.common.isDark);
   const imgUri = process.env.NEXT_PUBLIC_API_URL + "/files/";
 
-  if (blog.thumbImage === null) blog.thumbImage = "default.svg";
+  // 포스트의 날짜를 설정하는 함수
+  const setBlogDate = (postDate: string | undefined, modifyDate: string | undefined) => {
+    let blogDate ="";
+    if (postDate && modifyDate !== null && modifyDate !== undefined) {
+      blogDate = modifyDate.replace(/-/g, "/");
+    } else if (postDate) {
+      blogDate = postDate.replace(/-/g, "/");
+    }
+    return blogDate;
+  };
 
-  let blogDate = blog.postDate.replace(/-/g, "/");
-  if (blog.modifyDate !== null && blog.modifyDate !== undefined)
-    blogDate = blog.modifyDate?.replace(/-/g, "/");
+  // 포스트의 이미지가 있는 경우
+  if (blog && blog.thumbImage) {
+    const blogPostDate = setBlogDate(blog.postDate, blog.modifyDate);
 
-  return (
-    <Container isPost={blog.isPost} isDark={isDarkMode}>
-      <div className="imageWrapper">
-        <Link href={`/blog/${blog.noteId}`} key={blog.noteId} passHref>
-          <img
-            key={blog.noteId}
-            src={`${imgUri}${blog.thumbImage}`}
-            alt={blog.thumbImage}
-          />
-        </Link>
-        <div className="blogTitle">
-          <p>{blog.title}</p>
-        </div>
-        <div className="blogData">
-          <div className="iconDateTime">
-            <FontAwesomeIcon
-              icon={faCalendarCheck}
-              style={{ fontSize: 14, color: `${palette.gray_bb}` }}
+    return (
+      <Container isPost={blog.isPost} isDark={isDarkMode}>
+        <div className="imageWrapper">
+          <Link href={`/blog/${blog.noteId}`} key={blog.noteId} passHref>
+            <img
+              key={blog.noteId}
+              src={`${imgUri}${blog.thumbImage}`}
+              alt={blog.thumbImage}
             />
-            <p>
-              {formatDistance(new Date(), new Date(blogDate), {
-                addSuffix: true,
-              })}
-            </p>
+          </Link>
+          <div className="blogTitle">
+            <p>{blog.title}</p>
+          </div>
+          <div className="blogData">
+            <div className="iconDateTime">
+              <FontAwesomeIcon
+                icon={faCalendarCheck}
+                style={{ fontSize: 14, color: `${palette.gray_bb}` }}
+              />
+              <p>
+                {formatDistance(new Date(), new Date(blogPostDate), {
+                  addSuffix: true,
+                })}
+              </p>
+            </div>
           </div>
         </div>
-      </div>
-    </Container>
-  );
+      </Container>
+    );
+  } 
+  // 포스트의 이미지가 없는 경우
+  else if (blog && !blog.thumbImage) {
+    const blogPostDate = setBlogDate(blog.postDate, blog.modifyDate);
+
+    return (
+      <Container isPost={blog.isPost} isDark={isDarkMode}>
+        <div className="imageWrapper">
+          <Link href={`/blog/${blog.noteId}`} key={blog.noteId} passHref>
+            <img
+              key={blog.noteId}
+              src={`${imgUri}${"default.svg"}`}
+              alt={"default.svg"}
+            />
+          </Link>
+          <div className="blogTitle">
+            <p>{blog.title}</p>
+          </div>
+          <div className="blogData">
+            <div className="iconDateTime">
+              <FontAwesomeIcon
+                icon={faCalendarCheck}
+                style={{ fontSize: 14, color: `${palette.gray_bb}` }}
+              />
+              <p>
+                {formatDistance(new Date(), new Date(blogPostDate), {
+                  addSuffix: true,
+                })}
+              </p>
+            </div>
+          </div>
+        </div>
+      </Container>
+    );
+  }
 };
 
 export default BlogCard;

@@ -6,7 +6,6 @@ WORKDIR /source
 
 # [ Install dependency ]
 COPY ../client-app/package.json ./
-RUN yarn 
 
 # [ Copy Front files ]
 COPY ../client-app/api ./api
@@ -20,7 +19,6 @@ COPY ../client-app/types ./types
 COPY ../client-app/utils ./utils
 COPY ../client-app/.babelrc ./
 COPY ../client-app/tsconfig.json ./
-COPY ../client-app/declarations.* ./
 
 # [ Copy Enviorment key ]
 COPY ../client-app/.env ./
@@ -28,6 +26,7 @@ COPY ../client-app/.env ./
 
 
 # [ Next.js build ]
+RUN yarn install 
 RUN yarn build
 EXPOSE 3000 
 
