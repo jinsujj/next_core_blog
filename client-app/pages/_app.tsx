@@ -11,7 +11,7 @@ import { NextSeo } from "next-seo";
 import { useEffect } from "react";
 import kakaoApi from "../api/kakao";
 import React from "react";
-import AppPropsWithLayout from "../types/AppPropsWithLayout";
+import AppPropsWithLayout from "../types/appPropsWithLayout";
 import { GetServerSideProps } from "next/types";
 
 // font Awesome css 자동추가방지 
