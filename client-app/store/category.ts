@@ -1,4 +1,4 @@
-import { createSlice, Dictionary, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { CategoryState } from "../types/reduxState";
 
 // 초기상태
