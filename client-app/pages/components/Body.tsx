@@ -1,15 +1,15 @@
-import React, { useMemo } from "react";
+import React, { Component, useMemo } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import styled, { css } from "styled-components";
 import noteApi, { PostedNote } from "../../api/note";
 import { useSelector } from "../../store";
 import palette from "../../styles/palette";
-import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import Editor from "./Editor";
 import { useDispatch } from "react-redux";
 import { commonAction } from "../../store/common";
 import BlogCard from "./BlogCard";
+import Masonry, {ResponsiveMasonry } from "react-responsive-masonry";
 
 interface StyledProps {
   isDark: boolean;

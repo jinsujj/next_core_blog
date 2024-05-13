@@ -10,6 +10,7 @@
     "client": "concurrently \"yarn caddy_mac \"  \"cd client-app && npm run dev\""
   },
   "dependencies": {
-    "concurrently": "^7.4.0"
+    "caddy": "^0.0.13",
+    "concurrently": "^8.2.2"
   }
 }

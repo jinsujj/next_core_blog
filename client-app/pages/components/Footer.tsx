@@ -4,10 +4,10 @@ import styled, { css } from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import the icons you need
 import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
-import Link from "next/link";
 import useRouterReady from "../../hooks/useRouterReady";
 import { useSelector } from "../../store";
 import palette from "../../styles/palette";
+import Link from "next/link";
 
 interface StyledProps {
   isDark: boolean;
@@ -76,6 +76,7 @@ const Container = styled.footer<StyledProps>`
   }
 `;
 
+
 const Footer = () => {
   const view = useRouterReady();
   const isDarkMode = useSelector((state) => state.common.isDark);
@@ -92,27 +93,17 @@ const Footer = () => {
           <p>Powered by Next.js + .Net Core</p>
         </div>
         <ul className="site-links float--right">
-          <li>
-            <Link href="https://github.com/jinsujj">
-              <a target="_blank">
-                <FontAwesomeIcon
-                  icon={faGithub}
-                  style={{ fontSize: 30, color: iconColor }}
-                />
-              </a>
-            </Link>
-          </li>
-          <li>
-            <Link href="https://www.linkedin.com/in/jinsu-jang-0b2269107/">
-              <a target="_blank">
-                <FontAwesomeIcon
-                  icon={faLinkedin}
-                  style={{ fontSize: 30, color: iconColor }}
-                />
-              </a>
-            </Link>
-          </li>
-        </ul>
+        <li>
+          <Link href="https://github.com/jinsujj" passHref>
+            <FontAwesomeIcon icon={faGithub} style={{ fontSize: 30, color: iconColor }} />
+          </Link>
+        </li>
+        <li>
+          <Link href="https://www.linkedin.com/in/jinsu-jang-0b2269107/" passHref>
+            <FontAwesomeIcon icon={faLinkedin} style={{ fontSize: 30, color: iconColor }} />
+          </Link>
+        </li>
+      </ul>
       </div>
     </Container>
   );
