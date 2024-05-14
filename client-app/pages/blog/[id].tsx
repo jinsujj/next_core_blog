@@ -1,9 +1,7 @@
 import { GetServerSideProps, GetServerSidePropsContext, NextPage } from "next";
 import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
 import styled, { css } from "styled-components";
 import noteApi, { PostedNote } from "../../api/note";
-import { useSelector } from "../../store";
 import palette from "../../styles/palette";
 import Editor from "../components/Editor";
 import Footer from "../components/Footer";
@@ -16,7 +14,6 @@ import Router from "next/router";
 import { NextSeo } from "next-seo";
 import { format } from "date-fns";
 import Head from "next/head";
-
 import Prism from "prismjs";
 import "prismjs/plugins/line-numbers/prism-line-numbers.css";
 import "prismjs/plugins/line-numbers/prism-line-numbers";
@@ -28,6 +25,8 @@ import "prismjs/components/prism-java";
 import "prismjs/components/prism-sql";
 import "prismjs/components/prism-bash";
 import "prismjs/components/prism-python";
+import { useDispatch } from "react-redux";
+import { useSelector } from "../../store";
 
 interface StyledProps {
   isDark: boolean;
@@ -88,7 +87,7 @@ const Container = styled.div<StyledProps>`
   padding-top: 56px;
 
   .inner {
-    max-width: 760px;
+    max-width: 940px;
     overflow-x: scroll;
     margin: 0 auto;
     box-sizing: border-box;
@@ -260,54 +259,44 @@ interface IProps {
   detailNote: PostedNote;
 }
 
-const blogDetail: NextPage<IProps> = ({ detailNote }) => {
-  console.log(detailNote.noteId);
-  const isDarkMode = useSelector((state) => state.common.isDark);
-  const iconColor = isDarkMode === true ? "white" : "black";
-
-  let blogDate = detailNote.postDate?.replace(/-/g, "/");
-  if (detailNote.modifyDate !== null && detailNote.modifyDate !== undefined)
-    blogDate = detailNote.modifyDate?.replace(/-/g, "/");
-
-  if (detailNote.noteId === undefined) {
-    return (
-      <>
-        <Container isDark={isDarkMode}>
-          <div className="inner">
-            <div className="noAuthority">
-              <h1>조회 권한이 없습니다</h1>
-            </div>
-          </div>
-        </Container>
-      </>
-    );
-  }
-
-  const canonicalUrl = `https://www.owl-dev.me/blog/${detailNote.noteId}`;
-  const SearchQuery = useSelector((state) => state.common.search);
-  const postState = useSelector((state) => state.common.postState);
-  const sideBarCategory = useSelector((state) => state.common.sideBarCategory);
-  const sideBarSubCategory = useSelector(
-    (state) => state.common.sideBarSubCategory
-  );
-
+const BlogDetail: NextPage<IProps> = ({ detailNote }) => {
   const dispatch = useDispatch();
-  dispatch(commonAction.setPostUserIdOfNote(detailNote.userId));
-  useUtterances(detailNote.noteId.toString());
+  const postState = useSelector((state) => state.common.postState);
+  const isDarkMode = useSelector((state) => state.common.isDark);
+  const sideBarCategory = useSelector((state) => state.common.sideBarCategory);
+  const SearchQuery = useSelector((state) => state.common.search);
+  const iconColor = isDarkMode ? "white" : "black";
 
   useEffect(() => {
     Prism.highlightAll();
   }, []);
 
   useEffect(() => {
+    const { category, title } = detailNote;
     return () => {
-      if (detailNote.category !== sideBarCategory) {
-        Router.push("/");
-      } else if (SearchQuery.includes(detailNote.title)) {
+      if (category !== sideBarCategory || SearchQuery.includes(title)) {
         Router.push("/");
       }
     };
-  }, [detailNote, sideBarCategory, sideBarSubCategory, SearchQuery]);
+  }, [detailNote]);
+
+  if (!detailNote.noteId) {
+    return (
+      <Container isDark={isDarkMode}>
+        <div className="inner">
+          <div className="noAuthority">
+            <h1>조회 권한이 없습니다</h1>
+          </div>
+        </div>
+      </Container>
+    );
+  }
+
+  const blogDate = detailNote.modifyDate?.replace(/-/g, "/") || detailNote.postDate?.replace(/-/g, "/");
+  const canonicalUrl = `https://www.owl-dev.me/blog/${detailNote.noteId}`;
+  
+  dispatch(commonAction.setPostUserIdOfNote(detailNote.userId));
+  useUtterances(detailNote.noteId.toString());
 
   return (
     <>
@@ -316,9 +305,7 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
       </Head>
       <NextSeo
         title={detailNote.title}
-        description={
-          "(" + detailNote.title + ") CTO 가 되고픈 부엉이 개발자 블로그 입니다"
-        }
+        description={`(${detailNote.title}) CTO 가 되고픈 부엉이 개발자 블로그 입니다`}
         canonical={canonicalUrl}
         openGraph={{
           url: canonicalUrl,
@@ -333,54 +320,31 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
               type: "svg",
             },
           ],
-          site_name: `${detailNote.category}`,
+          site_name: detailNote.category,
         }}
       />
       <Header />
       <Container isDark={isDarkMode}>
         <div className="inner">
           <div className="board">
-            {postState === "read" && (
+            {["read", "write", "modify"].includes(postState) && (
               <div className="summary clearfix">
                 <h1 className="summary__title">{detailNote.title}</h1>
                 <div className="post_info">
                   <ul>
                     <li>
-                      <FontAwesomeIcon
-                        icon={faCalendarCheck}
-                        style={{ fontSize: 12, color: iconColor }}
-                      />
+                      <FontAwesomeIcon icon={faCalendarCheck} style={{ fontSize: 12, color: iconColor }} />
                     </li>
-                    <li>
-                      {format(
-                        new Date(blogDate.replace(/-/g, "/")),
-                        "yyyy-MM-dd"
-                      )}
-                    </li>
+                    <li>{format(new Date(blogDate.replace(/-/g, "/")), "yyyy-MM-dd")}</li>
                   </ul>
                 </div>
               </div>
             )}
-            {postState === "write" && (
-              <div className="board clearfix">
-                <div className="board">
-                  <Editor NoteInfo={undefined} />
-                </div>
-              </div>
-            )}
-            {postState === "modify" && (
-              <div className="board clearfix">
-                <div className="board">
-                  <Editor NoteInfo={detailNote} />
-                </div>
-              </div>
-            )}
+            {postState === "write" && <Editor NoteInfo={undefined} />}
+            {postState === "modify" && <Editor NoteInfo={detailNote} />}
             {postState === "read" && (
               <div className="board clearfix">
-                <div
-                  className="board"
-                  dangerouslySetInnerHTML={{ __html: detailNote.content }}
-                />
+                <div className="board" dangerouslySetInnerHTML={{ __html: detailNote.content }} />
               </div>
             )}
           </div>
@@ -392,24 +356,20 @@ const blogDetail: NextPage<IProps> = ({ detailNote }) => {
   );
 };
 
-export default blogDetail;
+export default BlogDetail;
 
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
   const id = Number(context.query.id as string);
   const ip = String(
-    context.req.headers["x-real-ip"] ||
-      context.req.connection.remoteAddress ||
-      ("" as string)
+    context.req.headers["x-real-ip"] || context.req.connection.remoteAddress || ""
   );
 
-  noteApi.postIpLog({ ip, id });
+  await noteApi.postIpLog({ ip, id });
   const { data: detailNote } = await noteApi.getNoteById(id);
 
   return {
-    props: {
-      detailNote,
-    },
+    props: { detailNote },
   };
 };
