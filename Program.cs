@@ -78,7 +78,7 @@ builder.WebHost.ConfigureKestrel((context, options) =>
       {
           // Use HTTP/3
           listenOptions.Protocols = HttpProtocols.Http1AndHttp2AndHttp3;
-          listenOptions.UseHttps();
+        //   listenOptions.UseHttps();
       });
  });
 
