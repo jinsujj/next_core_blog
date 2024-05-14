@@ -1,0 +1,14 @@
+services:
+  backend:
+    image: next_core_back:latest
+    ports:
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+
+  frontend:
+    image: next_core_front:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
