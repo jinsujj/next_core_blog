@@ -115,10 +115,10 @@ namespace next_core_blog.Controllers
         {
             try
             {
-                _logger.LogInformation("ip: " + logmodel.ip + " ,id: " + logmodel.id);
+                _logger.LogInformation("ip: " + logmodel.visitorIp + " ,id: " + logmodel.blogId);
 
-                IpLocationInfo ipInfo = GetIpLocation(logmodel.ip).Result;
-                ipInfo.id = logmodel.id;
+                IpLocationInfo ipInfo = GetIpLocation(logmodel.visitorIp).Result;
+                ipInfo.id = logmodel.blogId;
                 await _noteRepo.PostIpLog(ipInfo);
                 return Ok();
             }

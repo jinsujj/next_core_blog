@@ -366,7 +366,7 @@ export const getServerSideProps: GetServerSideProps = async (
     context.req.headers["x-real-ip"] || context.req.connection.remoteAddress || ""
   );
 
-  await noteApi.postIpLog({ ip, blogId });
+  await noteApi.postIpLog({ visitorIp, blogId });
   const { data: detailNote } = await noteApi.getNoteById(blogId);
 
   return {
