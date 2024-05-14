@@ -48,8 +48,8 @@ export type SidebarCategoryView ={
 
 
 export type IpLog = {
-    ip: string;
-    id: number;
+    visitorIp: string;
+    blogId: number;
 }
 
 // formType(0) : insert

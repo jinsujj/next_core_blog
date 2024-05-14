@@ -264,7 +264,7 @@ const BlogDetail: NextPage<IProps> = ({ detailNote }) => {
   const postState = useSelector((state) => state.common.postState);
   const isDarkMode = useSelector((state) => state.common.isDark);
   const sideBarCategory = useSelector((state) => state.common.sideBarCategory);
-  const SearchQuery = useSelector((state) => state.common.search);
+  const searchQuery = useSelector((state) => state.common.search);
   const iconColor = isDarkMode ? "white" : "black";
 
   useEffect(() => {
@@ -274,7 +274,7 @@ const BlogDetail: NextPage<IProps> = ({ detailNote }) => {
   useEffect(() => {
     const { category, title } = detailNote;
     return () => {
-      if (category !== sideBarCategory || SearchQuery.includes(title)) {
+      if (category !== sideBarCategory || searchQuery.includes(title)) {
         Router.push("/");
       }
     };
@@ -361,13 +361,13 @@ export default BlogDetail;
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  const id = Number(context.query.id as string);
-  const ip = String(
+  const blogId = Number(context.query.id as string);
+  const visitorIp = String(
     context.req.headers["x-real-ip"] || context.req.connection.remoteAddress || ""
   );
 
-  await noteApi.postIpLog({ ip, id });
-  const { data: detailNote } = await noteApi.getNoteById(id);
+  await noteApi.postIpLog({ ip, blogId });
+  const { data: detailNote } = await noteApi.getNoteById(blogId);
 
   return {
     props: { detailNote },
