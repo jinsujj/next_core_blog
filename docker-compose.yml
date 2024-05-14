@@ -5,6 +5,7 @@ services:
       - "5001:5001"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
+    restart: always
 
   frontend:
     image: next_core_front:latest
@@ -12,3 +13,4 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
+    restart: always
