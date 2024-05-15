@@ -5,21 +5,21 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /source
 
 # [ Copy Backend files ]
-COPY ../Controllers ./
-COPY ../Repository ./
-COPY ../Model ./
+COPY Controllers/ ./Controllers/
+COPY Repository/ ./Repository/
+COPY Model/ ./Model/
 # File, Security 
-COPY ../CommonLibrary ./
+COPY CommonLibrary/ ./CommonLibrary/
 # DB Dapper ORM 
-COPY ../Context ./
+COPY Context/ ./Context/
 # .NET CS Proj 
-COPY ../*.csproj ./
+COPY *.csproj ./
 # .NET Solution 
-COPY ../*.sln ./
+COPY *.sln ./
 # .NET Entry Point 
-COPY ../Program.cs ./
+COPY Program.cs ./
 # DB ConnectionStrings 
-COPY ../appsettings.json ./
+COPY appsettings.json ./
 
 # [ .NET build and release ]
 RUN dotnet restore

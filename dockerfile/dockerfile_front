@@ -5,23 +5,23 @@ FROM node:latest as build
 WORKDIR /source
 
 # [ Install dependency ]
-COPY ../client-app/package.json ./
+COPY client-app/package.json ./
 
 # [ Copy Front files ]
-COPY ../client-app/api ./api
-COPY ../client-app/hooks ./hooks
-COPY ../client-app/lib ./lib
-COPY ../client-app/pages ./pages
-COPY ../client-app/public ./public
-COPY ../client-app/store ./store
-COPY ../client-app/styles ./styles
-COPY ../client-app/types ./types
-COPY ../client-app/utils ./utils
-COPY ../client-app/.babelrc ./
-COPY ../client-app/tsconfig.json ./
+COPY client-app/api ./api
+COPY client-app/hooks ./hooks
+COPY client-app/lib ./lib
+COPY client-app/pages ./pages
+COPY client-app/public ./public
+COPY client-app/store ./store
+COPY client-app/styles ./styles
+COPY client-app/types ./types
+COPY client-app/utils ./utils
+COPY client-app/.babelrc ./
+COPY client-app/tsconfig.json ./
 
 # [ Copy Enviorment key ]
-COPY ../client-app/.env ./
+COPY client-app/.env ./
 
 
 
