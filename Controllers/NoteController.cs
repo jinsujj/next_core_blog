@@ -189,9 +189,9 @@ namespace next_core_blog.Controllers
         }
 
         [HttpGet("NoteById")]
-        public async Task<IActionResult> GetNoteById(int blodId)
+        public async Task<IActionResult> GetNoteById(int id)
         {
-            _logger.LogInformation($"GetNoteById: {blodId} {DateTime.Now:yyyy/MM/dd HH:mm:ss}");
+            _logger.LogInformation($"GetNoteById: {id} {DateTime.Now:yyyy/MM/dd HH:mm:ss}");
 
             try
             {
@@ -202,7 +202,7 @@ namespace next_core_blog.Controllers
                     userId = Convert.ToInt32(parameterModulationCheck["userId"]);
                 }
                 string ip = HttpContext.Connection.RemoteIpAddress.ToString();
-                var note = await _noteRepo.GetNoteById(blodId, userId, ip);
+                var note = await _noteRepo.GetNoteById(id, userId, ip);
                 return Ok(note);
             }
             catch (Exception ex)
