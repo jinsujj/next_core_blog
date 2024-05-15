@@ -27,18 +27,24 @@ namespace next_core_blog.Controllers
 {
     [Route("api/Note")]
     [ApiController]
-    public class noteController : ControllerBase
+    public class NoteController : ControllerBase
     {
         private const string ipLocationUrl = "http://ip-api.com/json/";
-        private IWebHostEnvironment _enviorment;
+        private readonly IWebHostEnvironment _enviorment;
         private readonly IConfiguration _config;
-        private readonly ILogger<noteController> _logger;
+        private readonly ILogger<NoteController> _logger;
         private readonly INoteRepository _noteRepo;
         private readonly IUserRepository _userRepo;
         private readonly ISiteMapRepository _siteRepo;
 
 
-        public noteController(IWebHostEnvironment environment, IConfiguration config, ILogger<noteController> logger, INoteRepository noteRepo, IUserRepository userRepo, ISiteMapRepository siteRepo)
+        public NoteController(
+            IWebHostEnvironment environment, 
+            IConfiguration config, 
+            ILogger<NoteController> logger, 
+            INoteRepository noteRepo, 
+            IUserRepository userRepo, 
+            ISiteMapRepository siteRepo)
         {
             _enviorment = environment;
             _config = config;
@@ -51,15 +57,16 @@ namespace next_core_blog.Controllers
         #region [ Post Note ]
         [HttpPost]
         [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
-        public IActionResult PostNote(PostNoteView note, BoardWriteFormType formType)
+        public IActionResult PostNote([FromBody] PostNoteView note, BoardWriteFormType formType)
         {
-            _logger.LogInformation("PostNote: " + note.title + " " + formType + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+            _logger.LogInformation($"PostNote: {note.title} {formType} {DateTime.Now:yyyy/MM/dd HH:mm:ss}");
             note.postIp = HttpContext.Connection.RemoteIpAddress.ToString();
+
+            if (XssCheck(note.content)) return StatusCode(403);
+            note.content = note.content.Replace("&quot;", "");
+
             try
             {
-                if (XSS_Check(note.content)) return StatusCode(403);
-                note.content = note.content.Replace("&quot;", "").ToString();
-
                 if (formType == BoardWriteFormType.modify)
                 {
                     var parameterModulationCheck = DecryptTokenInfo(
@@ -75,7 +82,7 @@ namespace next_core_blog.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("error" + ex.Message);
+                _logger.LogError($"error: {ex.Message}");
                 return StatusCode(500, ex.Message);
             }
         }
@@ -86,19 +93,18 @@ namespace next_core_blog.Controllers
         [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public IActionResult PostCategory([FromBody] CategoryViewModel categoryView)
         {
-            _logger.LogInformation("Category: " + categoryView.category + " SubCateghory:  " + categoryView.subCategory + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+            _logger.LogInformation($"Category: {categoryView.category} SubCategory: {categoryView.subCategory} {DateTime.Now:yyyy/MM/dd HH:mm:ss}");
 
             var parameterModulationCheck = DecryptTokenInfo(
                 HttpContext.RequestServices
                 .GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>());
 
-            RegisterViewModel userInfo = _userRepo.GetUserByUserId(categoryView.userId);
+            var userInfo = _userRepo.GetUserByUserId(categoryView.userId);
             if (userInfo.role != parameterModulationCheck["Role"]) return StatusCode(403);
 
             try
             {
-                var result = _noteRepo.PostCategory(
-                    categoryView.category, categoryView.subCategory);
+                var result = _noteRepo.PostCategory(categoryView.category, categoryView.subCategory);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -113,39 +119,34 @@ namespace next_core_blog.Controllers
         [HttpPost("postIpLog")]
         public async Task<IActionResult> PostIpLog([FromBody] IpLogModel logmodel)
         {
+            _logger.LogInformation($"ip: {logmodel.visitorIp}, id: {logmodel.blogId}");
+
             try
             {
-                _logger.LogInformation("ip: " + logmodel.visitorIp + " ,id: " + logmodel.blogId);
-
-                IpLocationInfo ipInfo = GetIpLocation(logmodel.visitorIp).Result;
+                var ipInfo = GetIpLocation(logmodel.visitorIp).Result;
                 ipInfo.id = logmodel.blogId;
                 await _noteRepo.PostIpLog(ipInfo);
                 return Ok();
             }
             catch (Exception ex)
             {
-                _logger.LogError("error" + ex.Message);
+                _logger.LogError($"error: {ex.Message}");
                 return StatusCode(500, ex.Message);
             }
         }
 
         private async Task<IpLocationInfo> GetIpLocation(string requestIp)
         {
-            string requestURL = ipLocationUrl + requestIp;
+            string requestUrl = ipLocationUrl + requestIp;
 
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Accept.Add(
-                    new MediaTypeWithQualityHeaderValue("application/json"));
-                HttpResponseMessage response = await client.GetAsync(requestURL);
-                Stream stream = response.Content.ReadAsStream();
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var response = await client.GetAsync(requestUrl);
+            var stream = await response.Content.ReadAsStreamAsync();
 
-                using (StreamReader sr = new StreamReader(stream))
-                {
-                    JObject jsonResult = JObject.Parse(sr.ReadToEnd());
-                    return jsonResult.ToObject<IpLocationInfo>();
-                }
-            }
+            using var sr = new StreamReader(stream);
+            var jsonResult = JObject.Parse(await sr.ReadToEndAsync());
+            return jsonResult.ToObject<IpLocationInfo>();
         }
         #endregion
 
@@ -154,7 +155,7 @@ namespace next_core_blog.Controllers
         [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public IActionResult DeleteNote(int id)
         {
-            _logger.LogInformation("DeleteNote: " + id + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+            _logger.LogInformation($"DeleteNote: {id} {DateTime.Now:yyyy/MM/dd HH:mm:ss}");
 
             try
             {
@@ -163,7 +164,7 @@ namespace next_core_blog.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("error" + ex.Message);
+                _logger.LogError($"error: {ex.Message}");
                 return StatusCode(500, ex.Message);
             }
         }
@@ -173,7 +174,7 @@ namespace next_core_blog.Controllers
         [HttpGet("getNoteAll")]
         public async Task<IActionResult> GetNoteAll(int userId)
         {
-            _logger.LogInformation("GetNoteAll: " + userId + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+            _logger.LogInformation($"GetNoteAll: {userId} {DateTime.Now:yyyy/MM/dd HH:mm:ss}");
 
             try
             {
@@ -182,31 +183,31 @@ namespace next_core_blog.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("error" + ex.Message);
+                _logger.LogError($"error: {ex.Message}");
                 return StatusCode(500, ex.Message);
             }
         }
 
         [HttpGet("NoteById")]
-        public async Task<IActionResult> GetNoteById(int id)
+        public async Task<IActionResult> GetNoteById(int blodId)
         {
-            _logger.LogInformation("GetNoteById: " + id + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
-            int userId = 0;
-            if (!String.IsNullOrEmpty(HttpContext.Request.Cookies["UserLoginCookie"]))
-            {
-                var parameterModulationCheck = DecryptTokenInfo(HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>());
-                userId = Convert.ToInt32(parameterModulationCheck["userId"]);
-            }
+            _logger.LogInformation($"GetNoteById: {blodId} {DateTime.Now:yyyy/MM/dd HH:mm:ss}");
 
             try
             {
+                int userId = 0;
+                if (!string.IsNullOrEmpty(HttpContext.Request.Cookies["UserLoginCookie"]))
+                {
+                    var parameterModulationCheck = DecryptTokenInfo(HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>());
+                    userId = Convert.ToInt32(parameterModulationCheck["userId"]);
+                }
                 string ip = HttpContext.Connection.RemoteIpAddress.ToString();
-                var note = await _noteRepo.GetNoteById(id, userId, ip);
+                var note = await _noteRepo.GetNoteById(blodId, userId, ip);
                 return Ok(note);
             }
             catch (Exception ex)
             {
-                _logger.LogError("error" + ex.Message);
+                _logger.LogError($"error: {ex.Message}");
                 return StatusCode(500, ex.Message);
             }
         }
@@ -216,7 +217,7 @@ namespace next_core_blog.Controllers
         [HttpGet("search")]
         public async Task<IActionResult> GetNoteBySearch(string query)
         {
-            _logger.LogInformation("GetNoteBySearch: " + query + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+            _logger.LogInformation($"GetNoteBySearch: {query} {DateTime.Now:yyyy/MM/dd HH:mm:ss}");
 
             try
             {
@@ -225,7 +226,7 @@ namespace next_core_blog.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("error" + ex.Message);
+                _logger.LogError($"error: {ex.Message}");
                 return StatusCode(500, ex.Message);
             }
         }
@@ -233,7 +234,7 @@ namespace next_core_blog.Controllers
         [HttpGet("category")]
         public async Task<IActionResult> GetNoteByCategory(int id, string category, string subCategory)
         {
-            _logger.LogInformation("GetNoteByCategory: " + "id: " + id + " ," + category + "|" + subCategory + " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+            _logger.LogInformation($"GetNoteByCategory: id: {id}, {category}|{subCategory} {DateTime.Now:yyyy/MM/dd HH:mm:ss}");
 
             try
             {
@@ -242,7 +243,7 @@ namespace next_core_blog.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("error" + ex.Message);
+                _logger.LogError($"error: {ex.Message}");
                 return StatusCode(500, ex.Message);
             }
         }
@@ -251,7 +252,8 @@ namespace next_core_blog.Controllers
         [Produces("application/json")]
         public async Task<IActionResult> GetCategoryList()
         {
-            _logger.LogInformation("getCategoryList" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+            _logger.LogInformation($"getCategoryList {DateTime.Now:yyyy/MM/dd HH:mm:ss}");
+
             try
             {
                 var categoryList = await _noteRepo.GetNoteCategoryList();
@@ -259,7 +261,7 @@ namespace next_core_blog.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("error" + ex.Message);
+                _logger.LogError($"error: {ex.Message}");
                 return StatusCode(500, ex.Message);
             }
         }
@@ -267,7 +269,8 @@ namespace next_core_blog.Controllers
         [HttpGet("getSidebarCategoryList")]
         public async Task<IActionResult> GetSidebarCategoryList()
         {
-            _logger.LogInformation("getSidebarCategoryList" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+            _logger.LogInformation($"getSidebarCategoryList {DateTime.Now:yyyy/MM/dd HH:mm:ss}");
+
             try
             {
                 var categoryList = await _noteRepo.GetSidebarCategoryList();
@@ -275,7 +278,7 @@ namespace next_core_blog.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("error" + ex.Message);
+                _logger.LogError($"error: {ex.Message}");
                 return StatusCode(500, ex.Message);
             }
         }
@@ -286,30 +289,31 @@ namespace next_core_blog.Controllers
         [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public async Task<string> SaveImage(IFormFile file)
         {
-            string fileName = "";
             try
             {
-                if (fileExtensionType.Where(t => t == Path.GetExtension(file.FileName)).FirstOrDefault().Length < 1)
-                    return "Err.. Check file Ext Type ";
+                var extension = Path.GetExtension(file.FileName);
+                if (!fileExtensionType.Contains(extension))
+                    return "Err.. Check file Ext Type";
 
-                if ((file != null) && (file.Length > 0))
-                    fileName = await SaveImageFile(Path.Combine(_enviorment.WebRootPath, "files"), file);
-
-                return fileName;
+                if (file.Length > 0)
+                {
+                    var fileName = await SaveImageFile(Path.Combine(_enviorment.WebRootPath, "files"), file);
+                    return fileName;
+                }
+                return "Err.. File is empty";
             }
             catch (Exception ex)
             {
-                return "Err.. Check file Type " + ex.Message;
+                return $"Err.. Check file Type: {ex.Message}";
             }
         }
 
-        private async Task<String> SaveImageFile(string uploadDir, IFormFile file)
+        private async Task<string> SaveImageFile(string uploadDir, IFormFile file)
         {
-            string fileFullPath = CommonLibrary.FileUtility.GetFileNameWithNumbering(uploadDir,
-                                Path.GetFileName(ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.ToString()));
+            var fileName = CommonLibrary.FileUtility.GetFileNameWithNumbering(uploadDir, Path.GetFileName(ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName));
+            var fileFullPath = Path.Combine(uploadDir, fileName);
 
-            string fileName = fileFullPath.Split("files")[1].Substring(1);
-            using (FileStream fileStream = new FileStream(fileFullPath, FileMode.OpenOrCreate))
+            await using (var fileStream = new FileStream(fileFullPath, FileMode.OpenOrCreate))
             {
                 await file.CopyToAsync(fileStream);
             }
@@ -362,7 +366,7 @@ namespace next_core_blog.Controllers
         #endregion
 
         #region [ Security Check ]
-        private Boolean XSS_Check(string content)
+        private Boolean XssCheck(string content)
         {
             int openTagIndex = -1, closeTagIndex = -1, index = 0;
             var arrayValue = content.ToArray();
