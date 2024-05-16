@@ -107,17 +107,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // Nginx Reverse Proxy - Real Ip Set
-var forwardedHeadersOptions = new ForwardedHeadersOptions
+app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-};
+});
 
-var knownProxies = configuration.GetSection("ForwardedHeaders:KnownProxies").Get<string[]>();
-foreach (var proxy in knownProxies)
-{
-    forwardedHeadersOptions.KnownProxies.Add(System.Net.IPAddress.Parse(proxy));
-}
-
-app.UseForwardedHeaders(forwardedHeadersOptions);
 app.MapControllers();
 app.Run();
