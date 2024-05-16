@@ -13,9 +13,11 @@ using next_core_blog.Repository.Map;
 using next_core_blog.Context;
 using next_core_blog.Repository.BlogNote;
 using next_core_blog.Repository.Users;
+using Microsoft.Extensions.Configuration;
 
 
 var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
 
 /*
 *  'builder.Services' gets called by the runtime. Use this method to add services to the container.
@@ -86,7 +88,7 @@ builder.WebHost.ConfigureKestrel((context, options) =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
+if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
     app.UseSwagger();
@@ -105,10 +107,17 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // Nginx Reverse Proxy - Real Ip Set
-app.UseForwardedHeaders(new ForwardedHeadersOptions
+var forwardedHeadersOptions = new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-});
+};
 
+var knownProxies = configuration.GetSection("ForwardedHeaders:KnownProxies").Get<string[]>();
+foreach (var proxy in knownProxies)
+{
+    forwardedHeadersOptions.KnownProxies.Add(System.Net.IPAddress.Parse(proxy));
+}
+
+app.UseForwardedHeaders(forwardedHeadersOptions);
 app.MapControllers();
 app.Run();
