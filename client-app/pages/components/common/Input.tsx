@@ -6,7 +6,7 @@ import palette from "../../../styles/palette";
 
 interface StyledProps {
   color: string;
-  focusColor: string;
+  $focuscolor: string;
   isValid : boolean;
   useValidation : boolean;
   width?: string;
@@ -32,7 +32,7 @@ const Container = styled.div<StyledProps>`
 
     &:focus {
       border-color: ${(props) =>
-        props.color === "" ? palette.blue_e8 : props.focusColor};
+        props.color === "" ? palette.blue_e8 : props.$focuscolor};
       box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075),
         0 0 5px rgba(81, 167, 232, 0.5);
     }
@@ -99,7 +99,7 @@ const Input = ({
   return (
     <Container
       color={color}
-      focusColor={focusColor}
+      $focuscolor={focusColor}
       isValid ={isValid}
       width={width}
       useValidation={validateMode && useValidation}
