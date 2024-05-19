@@ -297,7 +297,7 @@ namespace next_core_blog.Controllers
 
                 if (file.Length > 0)
                 {
-                    var fileName = await SaveImageFile(Path.Combine("/", "files"), file);
+                    var fileName = await SaveImageFile(Path.Combine(_enviorment.WebRootPath, "files"), file);
                     return fileName;
                 }
                 return "Err.. File is empty";
@@ -311,6 +311,7 @@ namespace next_core_blog.Controllers
         private async Task<string> SaveImageFile(string uploadDir, IFormFile file)
         {
             var fileName = CommonLibrary.FileUtility.GetFileNameWithNumbering(uploadDir, Path.GetFileName(ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName));
+            Console.WriteLine("fileName: "+ fileName);
             var fileFullPath = Path.Combine(uploadDir, fileName);
 
             await using (var fileStream = new FileStream(fileFullPath, FileMode.OpenOrCreate))
