@@ -10,12 +10,12 @@ import palette from "../../styles/palette";
 
 interface StyledProps {
   $posted: string;
-  isDark: boolean;
+  $isdark: boolean;
 }
 
 const Container = styled.div<StyledProps>`
   ${(props) =>
-    props.isDark &&
+    props.$isdark &&
     css`
       color: ${palette.gray_dc} !important;
       p {
@@ -111,7 +111,7 @@ const BlogCard = ({ blog }: IProps) => {
     const blogPostDate = setBlogDate(blog.postDate, blog.modifyDate);
 
     return (
-      <Container $posted={blog.isPost} isDark={isDarkMode}>
+      <Container $posted={blog.isPost} $isdark={isDarkMode}>
         <div className="imageWrapper">
           <Link href={`/blog/${blog.noteId}`} key={blog.noteId} passHref>
             <img
@@ -145,7 +145,7 @@ const BlogCard = ({ blog }: IProps) => {
     const blogPostDate = setBlogDate(blog.postDate, blog.modifyDate);
 
     return (
-      <Container $posted={blog.isPost} isDark={isDarkMode}>
+      <Container $posted={blog.isPost} $isdark={isDarkMode}>
         <div className="imageWrapper">
           <Link href={`/blog/${blog.noteId}`} key={blog.noteId} passHref>
             <img

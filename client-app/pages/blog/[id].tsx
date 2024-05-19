@@ -29,12 +29,12 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "../../store";
 
 interface StyledProps {
-  isDark: boolean;
+  $isdark: boolean;
 }
 
 const Container = styled.div<StyledProps>`
   ${(props) =>
-    props.isDark &&
+    props.$isdark &&
     css`
       // [ color to dark ]
       color: ${palette.blue_b2} !important;
@@ -282,7 +282,7 @@ const BlogDetail: NextPage<IProps> = ({ detailNote }) => {
 
   if (!detailNote.noteId) {
     return (
-      <Container isDark={isDarkMode}>
+      <Container $isdark={isDarkMode}>
         <div className="inner">
           <div className="noAuthority">
             <h1>조회 권한이 없습니다</h1>
@@ -324,7 +324,7 @@ const BlogDetail: NextPage<IProps> = ({ detailNote }) => {
         }}
       />
       <Header />
-      <Container isDark={isDarkMode}>
+      <Container $isdark={isDarkMode}>
         <div className="inner">
           <div className="board">
             {["read", "write", "modify"].includes(postState) && (

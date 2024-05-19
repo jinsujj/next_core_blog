@@ -13,12 +13,12 @@ import useRouterReady from "../../hooks/useRouterReady";
 import palette from "../../styles/palette";
 
 interface StyledProps {
-  isDark: boolean;
+  $isdark: boolean;
 }
 
 const Container = styled.div<StyledProps>`
   ${(props) =>
-    props.isDark &&
+    props.$isdark &&
     css`
       background-color: ${palette.dark_15} !important;
       .home-button {
@@ -147,7 +147,7 @@ const Header = () => {
   return (
     <>
       <Sidebar />
-      <Container isDark={isDarkMode}>
+      <Container $isdark={isDarkMode}>
         <div className="inner">
           <div className="wrapper">
             <div

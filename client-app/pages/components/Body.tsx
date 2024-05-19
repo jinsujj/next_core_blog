@@ -12,12 +12,12 @@ import BlogCard from "./BlogCard";
 import Masonry, {ResponsiveMasonry } from "react-responsive-masonry";
 
 interface StyledProps {
-  isDark: boolean;
+  $isdark: boolean;
 }
 
 const Container = styled.div<StyledProps>`
   ${(props) =>
-    props.isDark &&
+    props.$isdark &&
     css`
       background-color: ${palette.dark_19} !important;
       .summary__write {
@@ -129,7 +129,7 @@ const Body = () => {
   }, [dispatch, userId, searchQuery, setCategoryFilter, setSubCategoryFilter]);
 
   return (
-    <Container isDark={isDarkMode}>
+    <Container $isdark={isDarkMode}>
       <div className="inner">
         <div className="board">
           {setCategoryFilter && postState == "read" && (

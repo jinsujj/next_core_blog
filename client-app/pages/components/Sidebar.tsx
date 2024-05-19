@@ -18,12 +18,12 @@ import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 
 interface StyledProps {
   istoggle: string;
-  isDark: boolean;
+  $isdark: boolean;
 }
 
 const Container = styled.div<StyledProps>`
   ${(props) =>
-    props.isDark &&
+    props.$isdark &&
     css`
       background-color: ${palette.dark_15} !important;
       a,
@@ -362,7 +362,7 @@ const Sidebar = () => {
   }, []);
 
   return (
-    <Container istoggle={isToggle.toString()} isDark={isDarkMode}>
+    <Container istoggle={isToggle.toString()} $isdark={isDarkMode}>
       <div className="inner">
         <div className="toggle-btn" onClick={changeToggle}>
           {userInfo.isLogged && (

@@ -10,12 +10,12 @@ import palette from "../../styles/palette";
 import Link from "next/link";
 
 interface StyledProps {
-  isDark: boolean;
+  $isdark: boolean;
 }
 
 const Container = styled.footer<StyledProps>`
   ${(props) =>
-    props.isDark &&
+    props.$isdark &&
     css`
       background-color: ${palette.dark_15} !important;
       color: ${palette.gray_dd} !important;
@@ -86,7 +86,7 @@ const Footer = () => {
   }
 
   return (
-    <Container isDark={isDarkMode}>
+    <Container $isdark={isDarkMode}>
       <div className="inner clearfix">
         <div className="float--left">
           <p>©copyright Sasim</p> <br />
