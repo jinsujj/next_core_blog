@@ -6,6 +6,7 @@ using Dapper;
 using Microsoft.Extensions.Logging;
 using next_core_blog.Model.Batch;
 using next_core_blog.Context;
+using System.Text;
 
 namespace next_core_blog.Repository.Batch
 {
@@ -108,10 +109,26 @@ namespace next_core_blog.Repository.Batch
         }
         private static void SaveXml(XmlDocument xmlDoc)
         {
-            var curDirectory = Directory.GetCurrentDirectory();
-            var Path = "/client-app/public/";
+            // docker container path 
+            var directoryPath = "/source/app/wwwroot";
             var fileName = "sitemap.xml";
-            xmlDoc.Save(curDirectory + Path + fileName);
+            var fullPath = Path.Combine(directoryPath, fileName);
+
+            if (!Directory.Exists(directoryPath))
+                Directory.CreateDirectory(directoryPath);
+
+            if (!File.Exists(fullPath))
+            {
+                using (FileStream fs = File.Create(fullPath))
+                {
+                    // 필요시 초기 데이터를 쓸 수 있음
+                    byte[] info = new UTF8Encoding(true).GetBytes("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+                    fs.Write(info, 0, info.Length);
+                }
+            }
+
+            // XML 파일 저장
+            xmlDoc.Save(fullPath);
         }
     }
 }
