@@ -434,30 +434,21 @@ const Sidebar = () => {
               </li>
             </ul>
             {subCategoryMap?.get(category)?.map(function (option, i) {
+              const subCategoryKey = Array.from(option.keys())[0];
               return (
-                <>
-                  <ul className="sub--menu" key={i}>
-                    <li>
-                      <div
-                        onClick={() =>
-                          categoryFilter(
-                            category,
-                            option.entries().next().value[0]
-                          )
-                        }
-                      >
-                        <a href="#">{option.entries().next().value[0]}</a>
-                      </div>
-                    </li>
-                    {option.entries().next().value[0] && (
-                      <li className="count">
-                        ({option.entries().next().value[1]})
-                      </li>
-                    )}
-                  </ul>
-                </>
+                <ul className="sub--menu" key={subCategoryKey}>
+                  <li>
+                    <div onClick={() => categoryFilter(category, subCategoryKey)}>
+                      <a href="#">{subCategoryKey}</a>
+                    </div>
+                  </li>
+                  <li className="count">
+                    ({option.get(subCategoryKey)})
+                  </li>
+                </ul>
               );
-            })}
+              })
+            }
           </div>
         ))}
         <ModalPortal>
