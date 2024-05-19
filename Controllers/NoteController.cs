@@ -297,7 +297,7 @@ namespace next_core_blog.Controllers
 
                 if (file.Length > 0)
                 {
-                    var fileName = await SaveImageFile(Path.Combine(_enviorment.WebRootPath, "files"), file);
+                    var fileName = await SaveImageFile(Path.Combine("/", "files"), file);
                     return fileName;
                 }
                 return "Err.. File is empty";
