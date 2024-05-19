@@ -9,7 +9,7 @@ import { useSelector } from "../../store";
 import palette from "../../styles/palette";
 
 interface StyledProps {
-  isPost: string;
+  $posted: string;
   isDark: boolean;
 }
 
@@ -36,7 +36,7 @@ const Container = styled.div<StyledProps>`
     position: relative;
 
     ${(props) =>
-      props.isPost === "N" &&
+      props.$posted === "N" &&
       css`
         border: 1px solid ${palette.gray_f5};
         background-color: ${palette.gray_f5};
@@ -47,7 +47,7 @@ const Container = styled.div<StyledProps>`
     width: 100%;
     height: 100%;
     ${(props) =>
-      props.isPost === "N" &&
+      props.$posted === "N" &&
       css`
         opacity: 0.2;
       `}
@@ -61,7 +61,7 @@ const Container = styled.div<StyledProps>`
     text-align: center;
     font-weight: bold;
     color: ${(props) =>
-      props.isPost === "N" ? `${palette.gray_7d}` : `${palette.black}`};
+      props.$posted === "N" ? `${palette.gray_7d}` : `${palette.black}`};
     margin: 4px 0;
   }
 
@@ -111,7 +111,7 @@ const BlogCard = ({ blog }: IProps) => {
     const blogPostDate = setBlogDate(blog.postDate, blog.modifyDate);
 
     return (
-      <Container isPost={blog.isPost} isDark={isDarkMode}>
+      <Container $posted={blog.isPost} isDark={isDarkMode}>
         <div className="imageWrapper">
           <Link href={`/blog/${blog.noteId}`} key={blog.noteId} passHref>
             <img
@@ -145,7 +145,7 @@ const BlogCard = ({ blog }: IProps) => {
     const blogPostDate = setBlogDate(blog.postDate, blog.modifyDate);
 
     return (
-      <Container isPost={blog.isPost} isDark={isDarkMode}>
+      <Container $posted={blog.isPost} isDark={isDarkMode}>
         <div className="imageWrapper">
           <Link href={`/blog/${blog.noteId}`} key={blog.noteId} passHref>
             <img
