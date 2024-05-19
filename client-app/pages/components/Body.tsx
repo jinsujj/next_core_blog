@@ -141,7 +141,7 @@ const Body = () => {
             <ResponsiveMasonry
               columnsCountBreakPoints={{ 350: 1, 450: 2, 650: 3, 900: 4 }}
             >
-              <Masonry columnsCount={5} gutter={String(20)}>
+              <Masonry columnsCount={5}gutter="20px">
                 {postNotes.map((blog, index) => (
                   <BlogCard blog={blog} key={index} />
                 ))}
