@@ -11,11 +11,12 @@ import palette from "../../styles/palette";
 import Button from "./common/Button";
 
 interface StyledProps {
-  isDark: string;
+  $isdark: boolean;
 }
+
 const Container = styled.div<StyledProps>`
   ${(props) =>
-    props.isDark &&
+    props.$isdark &&
     css`
       .userInfo {
         color: ${palette.gray_c4} !important;
@@ -70,6 +71,7 @@ const HeaderProfile = () => {
   const userInfo = useSelector((state) => state.user);
   const postState = useSelector((state) => state.common.postState);
   const userIdOfNote = useSelector((state) => state.common.userIdOfNote);
+  const isDarkMode = useSelector((state) => state.common.isDark);
 
   const onClickLogout = () => {
     try {
@@ -107,7 +109,7 @@ const HeaderProfile = () => {
   };
 
   return (
-    <Container isDark={"Y"}>
+    <Container $isdark={isDarkMode}>
       <div className="btn-group">
         {postState === "read" && userIdOfNote === userInfo.userId && (
           <Button onClick={onClickPostBlog} width="110px" color="green_8D">
