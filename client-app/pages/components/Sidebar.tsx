@@ -17,7 +17,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 
 interface StyledProps {
-  istoggle: string;
+  $istoggle: string;
   $isdark: boolean;
 }
 
@@ -46,7 +46,7 @@ const Container = styled.div<StyledProps>`
     `}
 
   ${(props) =>
-    !props.istoggle &&
+    !props.$istoggle &&
     css`
       visibility: hidden;
       width: 0px;
@@ -55,7 +55,7 @@ const Container = styled.div<StyledProps>`
     `}
   
     ${(props) =>
-    props.istoggle &&
+    props.$istoggle &&
     css`
       visibility: visible;
       width: 330px;
@@ -362,7 +362,7 @@ const Sidebar = () => {
   }, []);
 
   return (
-    <Container istoggle={isToggle.toString()} $isdark={isDarkMode}>
+    <Container $istoggle={isToggle.toString()} $isdark={isDarkMode}>
       <div className="inner">
         <div className="toggle-btn" onClick={changeToggle}>
           {userInfo.isLogged && (
