@@ -47,7 +47,7 @@ export type SidebarCategoryView ={
 }
 
 
-export type IpLog = {
+export type IpLogModel = {
     visitorIp: string;
     blogId: number;
 }
@@ -62,7 +62,7 @@ const postCategory = (category: CategoryView) => {
     return api.post(`/api/Note/PostCategory`, category);
 }
 
-const postIpLog = (payload: IpLog) =>{
+const postIpLog = (payload: IpLogModel) =>{
     return api.post(`/api/Note/postIpLog`, payload);
 }
 
