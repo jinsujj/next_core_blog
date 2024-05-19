@@ -311,14 +311,15 @@ namespace next_core_blog.Controllers
         private async Task<string> SaveImageFile(string uploadDir, IFormFile file)
         {
             var fileName = CommonLibrary.FileUtility.GetFileNameWithNumbering(uploadDir, Path.GetFileName(ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName));
-            Console.WriteLine("fileName: "+ fileName);
+
+            var extractedFileName = fileName.Substring(fileName.LastIndexOf("/files/") + "/files/".Length);
             var fileFullPath = Path.Combine(uploadDir, fileName);
 
             await using (var fileStream = new FileStream(fileFullPath, FileMode.OpenOrCreate))
             {
                 await file.CopyToAsync(fileStream);
             }
-            return fileName;
+            return extractedFileName;
         }
         #endregion
 
