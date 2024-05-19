@@ -7,7 +7,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Production
     restart: always
     volumes:
-      - /home/pi/Desktop/next_core_blog/wwwroot/files:/source/app/wwwroot/files
+      - /home/pi/Desktop/next_core_blog/wwwroot:/source/app/wwwroot
 
   frontend:
     image: next_core_front:latest
