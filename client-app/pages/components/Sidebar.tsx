@@ -17,7 +17,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 
 interface StyledProps {
-  istoggle: boolean;
+  istoggle: string;
   isDark: boolean;
 }
 
@@ -362,7 +362,7 @@ const Sidebar = () => {
   }, []);
 
   return (
-    <Container istoggle={isToggle} isDark={isDarkMode}>
+    <Container istoggle={isToggle.toString()} isDark={isDarkMode}>
       <div className="inner">
         <div className="toggle-btn" onClick={changeToggle}>
           {userInfo.isLogged && (
@@ -434,7 +434,10 @@ const Sidebar = () => {
               </li>
             </ul>
             {subCategoryMap?.get(category)?.map(function (option, i) {
-              const subCategoryKey = Array.from(option.keys())[0];
+            const subCategoryKey = Array.from(option.keys())[0];
+            const count = option.get(subCategoryKey) || 0;
+
+            if (count > 0) {
               return (
                 <ul className="sub--menu" key={subCategoryKey}>
                   <li>
@@ -443,12 +446,13 @@ const Sidebar = () => {
                     </div>
                   </li>
                   <li className="count">
-                    ({option.get(subCategoryKey)})
+                    ({count})
                   </li>
                 </ul>
               );
-              })
             }
+            return null;
+          })}
           </div>
         ))}
         <ModalPortal>
