@@ -6,12 +6,12 @@ import { useSelector } from "../../store";
 import palette from "../../styles/palette";
 
 interface StyledProps {
-  isDark: boolean;
+  $isdark: boolean;
 }
 
 const Container = styled.div<StyledProps>`
   ${(props) =>
-    props.isDark &&
+    props.$isdark &&
     css`
       // [ color to dark ]
       background: ${palette.dark_19} !important;
@@ -75,7 +75,7 @@ const LogHistory = () => {
   if (role !== "ADMIN") {
     return (
       <>
-        <Container isDark={isDarkMode}>
+        <Container $isdark={isDarkMode}>
           <div className="inner">
             <div className="noAuthority">
               <h1>조회 권한이 없습니다</h1>
@@ -163,7 +163,7 @@ const LogHistory = () => {
   };
 
   return (
-    <Container isDark={isDarkMode}>
+    <Container $isdark={isDarkMode}>
       <div className="inner">
         <div className="summary">
           <div className="summary__title">블로그 접속 Ip 추적</div>
