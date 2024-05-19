@@ -7,7 +7,7 @@ import palette from "../../../styles/palette";
 interface StyledProps {
   color: string;
   $focuscolor: string;
-  isValid : boolean;
+  $validcheck : boolean;
   useValidation : boolean;
   width?: string;
 }
@@ -45,8 +45,8 @@ const Container = styled.div<StyledProps>`
     color: ${palette.tawny};
   }
 
-  ${({useValidation, isValid}) => 
-      useValidation && !isValid &&
+  ${({useValidation, $validcheck}) => 
+      useValidation && !$validcheck &&
         css`
           input{
             background-color: ${palette.snow};
@@ -56,8 +56,8 @@ const Container = styled.div<StyledProps>`
             }
           }
         `}  
-   ${({useValidation, isValid}) => 
-        useValidation && isValid &&
+   ${({useValidation, $validcheck}) => 
+        useValidation && $validcheck &&
           css`
             input {
               border-color : ${palette.orange}
@@ -100,7 +100,7 @@ const Input = ({
     <Container
       color={color}
       $focuscolor={focusColor}
-      isValid ={isValid}
+      $validcheck ={isValid}
       width={width}
       useValidation={validateMode && useValidation}
     >
