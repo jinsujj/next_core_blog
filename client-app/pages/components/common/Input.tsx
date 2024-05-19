@@ -8,7 +8,7 @@ interface StyledProps {
   color: string;
   $focuscolor: string;
   $validcheck : boolean;
-  useValidation : boolean;
+  $usevalidation : boolean;
   width?: string;
 }
 
@@ -45,8 +45,8 @@ const Container = styled.div<StyledProps>`
     color: ${palette.tawny};
   }
 
-  ${({useValidation, $validcheck}) => 
-      useValidation && !$validcheck &&
+  ${({$usevalidation, $validcheck}) => 
+      $usevalidation && !$validcheck &&
         css`
           input{
             background-color: ${palette.snow};
@@ -56,8 +56,8 @@ const Container = styled.div<StyledProps>`
             }
           }
         `}  
-   ${({useValidation, $validcheck}) => 
-        useValidation && $validcheck &&
+   ${({$usevalidation, $validcheck}) => 
+        $usevalidation && $validcheck &&
           css`
             input {
               border-color : ${palette.orange}
@@ -99,10 +99,10 @@ const Input = ({
   return (
     <Container
       color={color}
+      width={width}
       $focuscolor={focusColor}
       $validcheck ={isValid}
-      width={width}
-      useValidation={validateMode && useValidation}
+      $usevalidation={validateMode && useValidation}
     >
       <input type={type} placeholder={placeholder} value={value} {...props} />
       {useValidation && validateMode && !isValid && errorMessage && (
