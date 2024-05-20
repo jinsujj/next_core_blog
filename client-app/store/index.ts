@@ -13,7 +13,6 @@ const rootReducer = combineReducers({
     category: category.reducer,
 });
 
-// Define the RootState type 
 export type RootState = ReturnType<typeof rootReducer>;
 
 const reducer = (state: RootState | undefined, action: any) : RootState => {
@@ -24,7 +23,11 @@ const reducer = (state: RootState | undefined, action: any) : RootState => {
         };
 
         if (state){
-            nextState.user = state.user
+            nextState.user = {
+                ...state.user,
+                ...action.payload.user,
+                isLogged: action.payload.user.isLogged || state.user.isLogged,
+            };
         }
         return nextState;
     }else {

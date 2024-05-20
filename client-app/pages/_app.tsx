@@ -8,17 +8,19 @@ import userApi from "../api/user";
 import { useDispatch } from "react-redux";
 import { commonAction } from "../store/common";
 import { NextSeo } from "next-seo";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import kakaoApi from "../api/kakao";
 import React from "react";
 import AppPropsWithLayout from "../types/appPropsWithLayout";
-import { GetServerSideProps } from "next/types";
+import { AppContext } from "next/app";
+import cookie from "cookie"; 
 
 // font Awesome css 자동추가방지 
 config.autoAddCss = false
 
 function MyApp({Component, pageProps}: AppPropsWithLayout){
   const dispatch = useDispatch();
+  const [loginAttempted, setLoginAttempted] = useState(false);
 
   useEffect(() => {
     dispatch(commonAction.setPostState("read"));
@@ -26,8 +28,9 @@ function MyApp({Component, pageProps}: AppPropsWithLayout){
 
     (async () => {
       const kakaoAccessCode = new URLSearchParams(window.location.search).get('code');
-      if (kakaoAccessCode) {
+      if (kakaoAccessCode && !loginAttempted) {
         try {
+          setLoginAttempted(true);
           const user = await handleKakaoLogin(kakaoAccessCode);
           dispatch(userActions.setLoggedUser(user));
           window.history.pushState(null, "부엉이 개발자", "/");
@@ -36,7 +39,7 @@ function MyApp({Component, pageProps}: AppPropsWithLayout){
         }
       }
     })();
-  },[]);
+  },[loginAttempted,dispatch]);
 
   const getLayout = Component.getLayout ?? ((page) => page);
   return (
@@ -85,21 +88,35 @@ const initDarkMode = () => {
     return false;
   };
 
- const handleKakaoLogin = async (code: string) => {
-        return await kakaoApi.postkakaoLogin(code);
-  };
+const handleKakaoLogin = async (code: string) => {
+    return await kakaoApi.postkakaoLogin(code);
+};
 
 
-export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(store => async (context) => {
-  const cookieHeader = context.req?.headers.cookie;
-  const data = await userApi.meAPI(cookieHeader);
+MyApp.getInitialProps = wrapper.getInitialAppProps(store => async (context: AppContext) => {
+  const { ctx } = context;
+  const cookieHeader = ctx.req?.headers.cookie;
 
-  if (data.data.userId) {
-    store.dispatch(userActions.setLoggedUser(data.data));
-  } else {
-    store.dispatch(userActions.initUser());
+  if (cookieHeader) {
+    const cookies = cookie.parse(cookieHeader);
+    const userLoginCookie = cookies["UserLoginCookie"];
+    console.log("UserLoginCookie: ",userLoginCookie);
+
+    if(userLoginCookie){
+      const data = await userApi.meAPI(cookieHeader);
+      if (data.data.userId) {
+        store.dispatch(userActions.setLoggedUser(data.data));
+      } else {
+        store.dispatch(userActions.initUser());
+      }
+    }
   }
-  return { props: {} };
+
+  let pageProps = {};
+  if (context.Component.getInitialProps) {
+    pageProps = await context.Component.getInitialProps(ctx);
+  }
+  return {pageProps};
 });
 
 export default wrapper.withRedux(MyApp);

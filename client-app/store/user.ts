@@ -12,18 +12,14 @@ const initialState: UserState = {
 const user = createSlice({
     name: "user",
     initialState,
-    reducers:{
-        // 로그인한 유저 변경하기
-        setLoggedUser(state, acition: PayloadAction<UserState>){
-            state = {...acition.payload, isLogged: true};
-            return state;
+    reducers: {
+        setLoggedUser(state, action: PayloadAction<UserState>) {
+            return {...state, ...action.payload, isLogged: true };
         },
-        // 유저 초기화 하기
-        initUser(state){
-            state = initialState;
-            return state;
-        }
-    }
+        initUser() {
+            return initialState; 
+        },
+    },
 });
 
 export const userActions = {...user.actions};
