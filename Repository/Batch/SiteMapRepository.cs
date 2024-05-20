@@ -110,14 +110,17 @@ namespace next_core_blog.Repository.Batch
         private static void SaveXml(XmlDocument xmlDoc)
         {
             // docker container path 
-            // var directoryPath = "/source/app/wwwroot";
-            // var fileName = "sitemap.xml";
-            // var fullPath = Path.Combine(directoryPath, fileName);
+            var directoryPath = "/source/app/wwwroot";
+            var fileName = "sitemap.xml";
+            var fullPath = Path.Combine(directoryPath, fileName);
 
+            // loacal path
+            /*
             var directoryPath = Directory.GetCurrentDirectory();
             var detailPath = "/client-app/public/";
             var fileName = "sitemap.xml";
             var fullPath = Path.Combine(directoryPath + detailPath, fileName);
+            */
 
             if (!Directory.Exists(directoryPath))
                 Directory.CreateDirectory(directoryPath);
