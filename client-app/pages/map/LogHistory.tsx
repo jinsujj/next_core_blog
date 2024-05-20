@@ -2,8 +2,12 @@ import { format } from "date-fns";
 import React, { useEffect, useRef, useState } from "react";
 import styled, { css } from "styled-components";
 import locationApi, { LogInfo, mapCoordinate } from "../../api/location";
-import { useSelector } from "../../store";
+import { useSelector, wrapper } from "../../store";
 import palette from "../../styles/palette";
+import { GetServerSideProps } from "next";
+import userApi from "../../api/user";
+import cookie from "cookie";
+import { userActions } from "../../store/user";
 
 interface StyledProps {
   $isdark: boolean;
@@ -63,14 +67,13 @@ const Container = styled.div<StyledProps>`
 `;
 
 const LogHistory = () => {
-  const isDarkMode = useSelector((state) => state.common.isDark);
   const [coordinate, setCoordinate] = useState<mapCoordinate[]>([]);
   const [ipdictionary, setIpDictionary] = useState<Map<string, string[]>>();
   const [logInfo, setLogInfo] = useState<LogInfo[]>();
-
-  const mapElement = useRef(null);
-
+  
+  const isDarkMode = useSelector((state) => state.common.isDark);
   const role = useSelector((state) => state.user.role);
+  const mapElement = useRef(null);
 
   if (role !== "ADMIN") {
     return (
@@ -220,5 +223,31 @@ const LogHistory = () => {
     </Container>
   );
 };
+
+export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
+  (store) => async (context) => {
+    const { req } = context;
+    const cookieHeader = req?.headers.cookie;
+
+    if (cookieHeader) {
+      const cookies = cookie.parse(cookieHeader);
+      const userLoginCookie = cookies["UserLoginCookie"];
+      console.log("UserLoginCookie: ", userLoginCookie);
+
+      if (userLoginCookie) {
+        const data = await userApi.meAPI(cookieHeader);
+        if (data.data.userId) {
+          store.dispatch(userActions.setLoggedUser(data.data));
+        } else {
+          store.dispatch(userActions.initUser());
+        }
+      }
+    }
+
+    return {
+      props: {}, // Will be passed to the page component as props
+    };
+  }
+);
 
 export default LogHistory;
