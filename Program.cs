@@ -61,9 +61,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         options.Cookie.Name = "UserLoginCookie";
         options.SlidingExpiration = true;
-        options.ExpireTimeSpan = new TimeSpan(6, 0, 0); // 6 hour
+        options.ExpireTimeSpan = new TimeSpan(6, 0, 0);
         options.Cookie.HttpOnly = true;
-        options.Cookie.SameSite = SameSiteMode.None;
+        options.Cookie.SameSite = SameSiteMode.Strict;
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
         options.Cookie.Domain = ".owl-dev.me";
     });
