@@ -18,6 +18,7 @@
     "axios": "^1.6.8",
     "babel-plugin-styled-components": "^2.1.4",
     "caddy": "^0.0.13",
+    "cookie": "^0.6.0",
     "date-fns": "^3.6.0",
     "next": "^14.2.3",
     "next-redux-wrapper": "^8.1.0",
@@ -33,6 +34,7 @@
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^14.2.3",
+    "@types/cookie": "^0.6.0",
     "@types/node": "^20.12.11",
     "@types/prismjs": "^1.26.4",
     "@types/react": "18.3.2",

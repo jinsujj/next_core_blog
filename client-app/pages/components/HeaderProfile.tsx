@@ -75,16 +75,20 @@ const HeaderProfile = () => {
 
   const onClickLogout = () => {
     try {
-      dispatch(userActions.initUser());
-      if (userInfo.isLogged === true) {
-        dispatch(userActions.initUser());
-      }
       userApi.Logout();
       kakaoApi.postKakaoLogout(userInfo.email);
+      dispatch(userActions.initUser());
+      deleteCookie('UserLoginCookie');
       Router.push("../");
     } catch (e: any) {
       console.log(e.message);
     }
+  };
+
+  const deleteCookie = (name:string) => {
+    console.log("deleteCookie");
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+    console.log("deleteCookie finished");
   };
 
   const onClickPostBlog = () => {
