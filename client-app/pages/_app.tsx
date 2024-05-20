@@ -4,7 +4,6 @@ import Head from "next/head";
 import "@fortawesome/fontawesome-svg-core/styles.css"; // import Font Awesome CSS
 import { config } from "@fortawesome/fontawesome-svg-core";
 import { userActions } from "../store/user";
-import userApi from "../api/user";
 import { useDispatch } from "react-redux";
 import { commonAction } from "../store/common";
 import { NextSeo } from "next-seo";
@@ -12,8 +11,6 @@ import { useEffect, useState } from "react";
 import kakaoApi from "../api/kakao";
 import React from "react";
 import AppPropsWithLayout from "../types/appPropsWithLayout";
-import { AppContext } from "next/app";
-import cookie from "cookie"; 
 
 // font Awesome css 자동추가방지 
 config.autoAddCss = false
@@ -91,32 +88,5 @@ const initDarkMode = () => {
 const handleKakaoLogin = async (code: string) => {
     return await kakaoApi.postkakaoLogin(code);
 };
-
-
-MyApp.getInitialProps = wrapper.getInitialAppProps(store => async (context: AppContext) => {
-  const { ctx } = context;
-  const cookieHeader = ctx.req?.headers.cookie;
-
-  if (cookieHeader) {
-    const cookies = cookie.parse(cookieHeader);
-    const userLoginCookie = cookies["UserLoginCookie"];
-    console.log("UserLoginCookie: ",userLoginCookie);
-
-    if(userLoginCookie){
-      const data = await userApi.meAPI(cookieHeader);
-      if (data.data.userId) {
-        store.dispatch(userActions.setLoggedUser(data.data));
-      } else {
-        store.dispatch(userActions.initUser());
-      }
-    }
-  }
-
-  let pageProps = {};
-  if (context.Component.getInitialProps) {
-    pageProps = await context.Component.getInitialProps(ctx);
-  }
-  return {pageProps};
-});
 
 export default wrapper.withRedux(MyApp);
