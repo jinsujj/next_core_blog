@@ -18,6 +18,8 @@ COPY client-app/styles ./styles
 COPY client-app/types ./types
 COPY client-app/utils ./utils
 COPY client-app/.babelrc ./
+COPY client-app/next.config.js ./
+COPY client-app/package.json ./
 COPY client-app/tsconfig.json ./
 
 # [ Copy Enviorment key ]
