@@ -35,7 +35,7 @@ namespace next_core_blog.Repository.Batch
                 XmlDocument xmlDoc = new XmlDocument();
                 XmlNode root = SetRootTag(xmlDoc);
 
-                SetDefaultUrl(xmlDoc, noteList, root);
+                // SetDefaultUrl(xmlDoc, noteList, root);
                 for (int i = 0; i < noteList.Length; i++)
                 {
                     if (noteList[i].modifyDate == null)
@@ -110,9 +110,14 @@ namespace next_core_blog.Repository.Batch
         private static void SaveXml(XmlDocument xmlDoc)
         {
             // docker container path 
-            var directoryPath = "/source/app/wwwroot";
+            // var directoryPath = "/source/app/wwwroot";
+            // var fileName = "sitemap.xml";
+            // var fullPath = Path.Combine(directoryPath, fileName);
+
+            var directoryPath = Directory.GetCurrentDirectory();
+            var detailPath = "/client-app/public/";
             var fileName = "sitemap.xml";
-            var fullPath = Path.Combine(directoryPath, fileName);
+            var fullPath = Path.Combine(directoryPath + detailPath, fileName);
 
             if (!Directory.Exists(directoryPath))
                 Directory.CreateDirectory(directoryPath);
