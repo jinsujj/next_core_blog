@@ -138,22 +138,26 @@ namespace next_core_blog.Controllers
         [Produces("application/json")]
         public async Task<RegisterViewModel> meAPIAsync()
         {
-            // Get the encrypted cookie value
             var opt = HttpContext.RequestServices.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>();
-            var cookie = opt.CurrentValue.CookieManager.GetRequestCookie(
-                HttpContext, "UserLoginCookie");
-            Dictionary<string, string> tokenInfo = new Dictionary<string, string>();
+            var cookie = opt.CurrentValue.CookieManager.GetRequestCookie(HttpContext, "UserLoginCookie");
+
             if (!string.IsNullOrEmpty(cookie))
             {
                 var dataProtector = opt.CurrentValue.DataProtectionProvider.CreateProtector("Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationMiddleware", CookieAuthenticationDefaults.AuthenticationScheme, "v2");
                 var ticketDataFormat = new TicketDataFormat(dataProtector);
                 var ticket = ticketDataFormat.Unprotect(cookie);
-                foreach (var claim in ticket.Principal.Claims)
+
+                if (ticket?.Principal?.Claims != null)
                 {
-                    tokenInfo.Add(claim.Type, claim.Value);
+                    Dictionary<string, string> tokenInfo = new Dictionary<string, string>();
+                    foreach (var claim in ticket.Principal.Claims)
+                    {
+                        tokenInfo.Add(claim.Type, claim.Value);
+                    }
+                    return await _userRepo.GetUserByEmail(tokenInfo["Email"]);
                 }
-                return await _userRepo.GetUserByEmail(tokenInfo["Email"]); ;
             }
+            _logger.LogInformation("meAPIAsync:" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + "cookie not exist");
 
             return null;
         }
