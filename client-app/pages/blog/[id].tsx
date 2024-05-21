@@ -26,7 +26,10 @@ import "prismjs/components/prism-sql";
 import "prismjs/components/prism-bash";
 import "prismjs/components/prism-python";
 import { useDispatch } from "react-redux";
-import { useSelector } from "../../store";
+import { useSelector, wrapper } from "../../store";
+import cookie from "cookie";
+import userApi from "../../api/user";
+import { userActions } from "../../store/user";
 
 interface StyledProps {
   $isdark: boolean;
@@ -266,7 +269,7 @@ const BlogDetail: NextPage<IProps> = ({ detailNote }) => {
   const sideBarCategory = useSelector((state) => state.common.sideBarCategory);
   const searchQuery = useSelector((state) => state.common.search);
   const iconColor = isDarkMode ? "white" : "black";
-
+  console.log(isDarkMode);
   useEffect(() => {
     Prism.highlightAll();
   }, []);
@@ -358,18 +361,34 @@ const BlogDetail: NextPage<IProps> = ({ detailNote }) => {
 
 export default BlogDetail;
 
-export const getServerSideProps: GetServerSideProps = async (
-  context: GetServerSidePropsContext
-) => {
-  const blogId = Number(context.query.id as string);
-  const visitorIp = String(
-    context.req.headers["x-real-ip"] || context.req.connection.remoteAddress || ""
-  );
+export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
+  (store) => async (context: GetServerSidePropsContext) => {
+    const { req, query } = context;
 
-  await noteApi.postIpLog({ visitorIp, blogId });
-  const { data: detailNote } = await noteApi.getNoteById(blogId);
+    const blogId = Number(query.id as string);
+    const visitorIp = String(context.req.headers['x-real-ip'] || req.socket.remoteAddress || '');
 
-  return {
-    props: { detailNote },
-  };
-};
+    await noteApi.postIpLog({ visitorIp, blogId });
+    const { data: detailNote } = await noteApi.getNoteById(blogId);
+
+    const cookieHeader = req?.headers.cookie;
+
+    if (cookieHeader) {
+      const cookies = cookie.parse(cookieHeader);
+      const userLoginCookie = cookies["UserLoginCookie"];
+
+      if (userLoginCookie) {
+        const data = await userApi.meAPI(cookieHeader);
+        if (data.data.userId) {
+          store.dispatch(userActions.setLoggedUser(data.data));
+        } else {
+          store.dispatch(userActions.initUser());
+        }
+      }
+    }
+
+    return {
+      props: { detailNote },
+    };
+  }
+);
