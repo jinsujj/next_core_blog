@@ -7,12 +7,17 @@ import { wrapper } from "../store";
 import userApi from "../api/user";
 import { userActions } from "../store/user";
 import cookie from "cookie"; 
+import noteApi, { PostedNote } from "../api/note";
 
-const Home: NextPage = () => {
+interface IProps {
+  blogContents: PostedNote[];
+}
+
+const Home: NextPage<IProps> = ({blogContents}) => {
   return (
     <>
       <Header />
-      <Body />
+      <Body blogContents ={blogContents} />
       <Footer />
     </>
   );
@@ -38,8 +43,12 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
       }
     }
 
+    const state = store.getState();
+    const blogContentsResponse = await noteApi.getNoteAll(state.user.userId);
+    const blogContents = blogContentsResponse.data;
+
     return {
-      props: {}, // Will be passed to the page component as props
+      props: {blogContents},
     };
   }
 );

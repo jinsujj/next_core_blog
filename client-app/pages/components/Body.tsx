@@ -88,9 +88,14 @@ const Container = styled.div<StyledProps>`
   }
 `;
 
-const Body = () => {
+interface IProps {
+  blogContents: PostedNote[];
+}
+
+
+const Body:React.FC<IProps> = ({blogContents}) => {
   const userId = useSelector((state) => state.user.userId);
-  const [postNotes, setPostNotes] = useState<PostedNote[]>([]);
+  const [postNotes, setPostNotes] = useState<PostedNote[]>(blogContents||[]);
   const postState = useSelector((state) => state.common.postState);
   const searchQuery = useSelector((state) => state.common.search);
   const setCategoryFilter = useSelector(
@@ -120,10 +125,7 @@ const Body = () => {
         .getNoteByCategory(userId, setCategoryFilter, setSubCategoryFilter)
         .then((res) => setPostNotes(res.data || []));
     }
-    // Default
-    else {
-      noteApi.getNoteAll(userId).then((res) => setPostNotes(res.data || []));
-    }
+    
     dispatch(commonAction.setToggleMode(false));
     dispatch(commonAction.setPostState("read"));
   }, [dispatch, userId, searchQuery, setCategoryFilter, setSubCategoryFilter]);
