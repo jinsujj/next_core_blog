@@ -7,17 +7,12 @@ import { wrapper } from "../store";
 import userApi from "../api/user";
 import { userActions } from "../store/user";
 import cookie from "cookie"; 
-import noteApi, { PostedNote } from "../api/note";
 
-interface IProps {
-  blogContents: PostedNote[];
-}
-
-const Home: NextPage<IProps> = ({blogContents}) => {
+const Home: NextPage = ({}) => {
   return (
     <>
       <Header />
-      <Body blogContents ={blogContents} />
+      <Body/>
       <Footer />
     </>
   );
@@ -42,13 +37,8 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
         }
       }
     }
-
-    const state = store.getState();
-    const blogContentsResponse = await noteApi.getNoteAll(state.user.userId);
-    const blogContents = blogContentsResponse.data;
-
     return {
-      props: {blogContents},
+      props: {},
     };
   }
 );
