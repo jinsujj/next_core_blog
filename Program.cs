@@ -66,6 +66,14 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.SameSite = SameSiteMode.Strict;
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
         options.Cookie.Domain = ".owl-dev.me";
+
+        
+        var env = builder.Environment;
+        if (env.IsDevelopment())
+        {
+            options.Cookie.Domain = null;
+            options.Cookie.SameSite = SameSiteMode.None;
+        }
     });
 
 // Swagger Generateç
