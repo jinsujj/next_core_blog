@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using next_core_blog.Model.Map;
 using next_core_blog.Repository.Map;
+using NodaTime;
 
 namespace next_core_blog.Controllers
 {
@@ -49,15 +51,41 @@ namespace next_core_blog.Controllers
         {
             try
             {
-                _logger.LogInformation("getLogInfoDaily: " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+                _logger.LogInformation("getLogInfoDaily: " + DateTime.UtcNow.ToString("yyyy/MM/dd HH:mm:ss") + " UTC");
 
-                var mapHistory = await _mapRepo.GetLogHistoryDaily();
-                return Ok(mapHistory);
+                IEnumerable<MapHistory> mapHistory = await _mapRepo.GetLogHistoryDaily();
+                var processedHistory = mapHistory.Select(log =>
+                {
+                    if (string.IsNullOrEmpty(log.timezone))
+                        log.timezone = "Asia/Seoul";
+
+                    log.date = ConvertByTimezone(log.date, log.timezone);
+                    return log;
+                });
+
+                return Ok(processedHistory);
             }
             catch (Exception ex)
             {
-                _logger.LogError("error" + ex.Message);
+                _logger.LogError("error: " + ex.Message);
                 return StatusCode(500, ex.Message);
+            }
+        }
+
+        private string ConvertByTimezone(string utcDateTime, string timezone)
+        {
+            if (DateTime.TryParse(utcDateTime, out var utcDateTimeParsed))
+            {
+                var timeZoneProvider = DateTimeZoneProviders.Tzdb;
+                var dateTimeZone = timeZoneProvider[timezone];
+                var instant = Instant.FromDateTimeUtc(DateTime.SpecifyKind(utcDateTimeParsed, DateTimeKind.Utc));
+                var localDateTime = instant.InZone(dateTimeZone).ToDateTimeUnspecified();
+                return localDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+            }
+            else
+            {
+                _logger.LogError("Invalid UTC DateTime string: " + utcDateTime);
+                throw new ArgumentException("Invalid UTC DateTime string: " + utcDateTime);
             }
         }
 
