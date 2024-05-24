@@ -278,17 +278,13 @@ const BlogDetail: NextPage<IProps> = ({ detailNote }) => {
   }, []);
 
   useEffect(() => {
-    dispatch(commonAction.setCategoryFilter(category));
-    dispatch(commonAction.setSubCategoryFilter(subCategory||''));
-  }, [dispatch]);
-
-  useEffect(() => {
-    return () => {
-      if(category !== sideBarCategory || (sideBarSubCategory && sideBarSubCategory !== subCategory)){
+    if((category !== sideBarCategory)
+        || (sideBarSubCategory && sideBarSubCategory !== subCategory)
+        || (searchQuery.length > 0)){
+        console.log("go to main");
         Router.push("/");
       }
-    };
-  }, [sideBarCategory, sideBarSubCategory]);
+  }, [dispatch, sideBarCategory, sideBarSubCategory, searchQuery]);
 
   if (!detailNote.noteId) {
     return (
@@ -376,8 +372,13 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
     const visitorIp = String(context.req.headers['x-real-ip'] || req.socket.remoteAddress || '');
 
     await noteApi.postIpLog({ visitorIp, blogId });
-    const { data: detailNote } = await noteApi.getNoteById(blogId);
 
+    // category setting
+    const { data: detailNote } = await noteApi.getNoteById(blogId);
+    store.dispatch(commonAction.setCategoryFilter(detailNote.category));
+    store.dispatch(commonAction.setSubCategoryFilter(detailNote.subCategory||''));
+
+    // session check
     const cookieHeader = req?.headers.cookie;
 
     if (cookieHeader) {
