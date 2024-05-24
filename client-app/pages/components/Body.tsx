@@ -94,36 +94,35 @@ const Body: React.FC = () => {
   const [postNotes, setPostNotes] = useState<PostedNote[]>([]);
   const postState = useSelector((state) => state.common.postState);
   const searchQuery = useSelector((state) => state.common.search);
-  const setCategoryFilter = useSelector(
-    (state) => state.common.sideBarCategory
-  );
-  const setSubCategoryFilter = useSelector(
-    (state) => state.common.sideBarSubCategory
-  );
+  const setCategoryFilter = useSelector((state) => state.common.sideBarCategory);
+  const setSubCategoryFilter = useSelector((state) => state.common.sideBarSubCategory);
   const isDarkMode = useSelector((state) => state.common.isDark);
 
   const dispatch = useDispatch();
+
   useMemo(() => {
     dispatch(commonAction.setPostUserIdOfNote(0));
   }, [dispatch]);
 
   // Get BlogCard data
   useEffect(() => {
-    // Search
-    if (searchQuery.length > 0) {
-      noteApi.getNoteBySearch(searchQuery).then((res) => setPostNotes(res.data || []));
-    }
-    // Category Click
-    else if (setCategoryFilter.length > 0 || setSubCategoryFilter.length > 0) {
-      noteApi.getNoteByCategory(userId, setCategoryFilter, setSubCategoryFilter)
-        .then((res) => setPostNotes(res.data || []));
-    } 
-    else{
-      noteApi.getNoteAll(userId).then((res) => setPostNotes(res.data || []));
-    }
+    const fetchNotes = async () => {
+      if (searchQuery.length > 0) {
+        const blogs = await noteApi.getNoteBySearch(searchQuery);
+        setPostNotes(blogs.data || []);
+      } else if (setCategoryFilter.length > 0 || setSubCategoryFilter.length > 0) {
+        const blogs = await noteApi.getNoteByCategory(userId, setCategoryFilter, setSubCategoryFilter);
+        setPostNotes(blogs.data || []);
+      } else {
+        const blogs = await noteApi.getNoteAll(userId);
+        setPostNotes(blogs.data || []);
+      }
 
-    dispatch(commonAction.setToggleMode(false));
-    dispatch(commonAction.setPostState("read"));
+      dispatch(commonAction.setToggleMode(false));
+      dispatch(commonAction.setPostState("read"));
+    };
+
+    fetchNotes();
   }, [dispatch, userId, searchQuery, setCategoryFilter, setSubCategoryFilter]);
 
   return (
