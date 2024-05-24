@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarCheck } from "@fortawesome/free-solid-svg-icons";
 import { commonAction } from "../../store/common";
 import useUtterances from "../../hooks/useUtterances";
-import Router from "next/router";
+import { useRouter } from "next/router";
 import { NextSeo } from "next-seo";
 import { format } from "date-fns";
 import Head from "next/head";
@@ -270,6 +270,7 @@ const BlogDetail: NextPage<IProps> = ({ detailNote }) => {
   const sideBarSubCategory = useSelector((state) => state.common.sideBarSubCategory);
   const searchQuery = useSelector((state) => state.common.search);
   const iconColor = isDarkMode ? "white" : "black";
+  const router = useRouter();
 
   const { category, subCategory } = detailNote;
   
@@ -279,10 +280,16 @@ const BlogDetail: NextPage<IProps> = ({ detailNote }) => {
 
   useEffect(() => {
     if((category !== sideBarCategory)
-        || (sideBarSubCategory && sideBarSubCategory !== subCategory)
-        || (searchQuery.length > 0)){
-        console.log("go to main");
-        Router.push("/");
+      || (sideBarSubCategory && sideBarSubCategory !== subCategory)
+      || (searchQuery.length > 0)){
+      router.push({
+          pathname: '/',
+          query: {
+            category: sideBarCategory,
+            subCategory: sideBarSubCategory,
+            search: searchQuery
+          }
+        });
       }
   }, [dispatch, sideBarCategory, sideBarSubCategory, searchQuery]);
 

@@ -7,6 +7,7 @@ import { wrapper } from "../store";
 import userApi from "../api/user";
 import { userActions } from "../store/user";
 import cookie from "cookie"; 
+import { commonAction } from "../store/common";
 
 const Home: NextPage = ({}) => {
   return (
@@ -23,6 +24,22 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
     const { req } = context;
     const cookieHeader = req?.headers.cookie;
 
+    const { category = null, subCategory = null, search = null } = context.query;
+
+   // sidebar filtering
+    if (category) {
+      console.log("category: "+category);
+      store.dispatch(commonAction.setCategoryFilter(category as string));
+    }
+    if (subCategory) {
+      console.log("subCategory: "+subCategory);
+      store.dispatch(commonAction.setSubCategoryFilter(subCategory as string));
+    }
+    if (search) {
+      store.dispatch(commonAction.setSearchFilter(search as string));
+    }
+
+    // Cookie check
     if (cookieHeader) {
       const cookies = cookie.parse(cookieHeader);
       const userLoginCookie = cookies["UserLoginCookie"];
