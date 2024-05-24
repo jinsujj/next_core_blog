@@ -100,7 +100,7 @@ const Body: React.FC = () => {
 
   const dispatch = useDispatch();
 
-  useMemo(() => {
+  useEffect(() => {
     dispatch(commonAction.setPostUserIdOfNote(0));
   }, [dispatch]);
 
