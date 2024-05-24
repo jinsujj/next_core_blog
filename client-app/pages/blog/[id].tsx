@@ -269,7 +269,7 @@ const BlogDetail: NextPage<IProps> = ({ detailNote }) => {
   const sideBarCategory = useSelector((state) => state.common.sideBarCategory);
   const searchQuery = useSelector((state) => state.common.search);
   const iconColor = isDarkMode ? "white" : "black";
-  console.log(isDarkMode);
+  
   useEffect(() => {
     Prism.highlightAll();
   }, []);

@@ -244,10 +244,8 @@ const Container = styled.div<StyledProps>`
 const Sidebar = () => {
   const [categoryList, setCategoryList] = useState<string[]>([]);
   const [categoryMap, setCategoryMap] = useState<Map<string, number>>();
-  const [subCategoryMap, setSubCategoryMap] =
-    useState<Map<string, Map<string, number>[]>>();
+  const [subCategoryMap, setSubCategoryMap] = useState<Map<string, Map<string, number>[]>>();
   const [search, setSearch] = useState("");
-
   const [todayCount, setTodayCount] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
 
@@ -256,6 +254,8 @@ const Sidebar = () => {
   const userInfo = useSelector((state) => state.user);
   const isDarkMode = useSelector((state) => state.common.isDark);
   const iconColor = isDarkMode === true ? "yellow" : "ff9500";
+
+
   const { openModal, ModalPortal, closeModal } = useModal();
 
   const changeToggle = () => {
@@ -304,9 +304,7 @@ const Sidebar = () => {
   };
 
   // search button filter
-  const searchButtonFilter = async (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const searchButtonFilter = async ( event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     dispatch(commonAction.setSearchFilter(search));
     setSearch("");
@@ -349,7 +347,6 @@ const Sidebar = () => {
 
   useEffect(() => {
     if (window.innerWidth > 1580) dispatch(commonAction.setToggleMode(true));
-
     getCategoryList();
 
     noteApi.getTotalReadCount().then((res) => {
@@ -359,7 +356,7 @@ const Sidebar = () => {
     noteApi.getTodayReadCount().then((res) => {
       setTodayCount(res.data);
     });
-  }, []);
+  }, [dispatch]);
 
   return (
     <Container $istoggle={isToggle} $isdark={isDarkMode}>
