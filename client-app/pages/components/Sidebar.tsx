@@ -243,8 +243,8 @@ const Container = styled.div<StyledProps>`
 
 const Sidebar = () => {
   const [categoryList, setCategoryList] = useState<string[]>([]);
-  const [categoryMap, setCategoryMap] = useState<Map<string, number>>();
-  const [subCategoryMap, setSubCategoryMap] = useState<Map<string, Map<string, number>[]>>();
+  const [categoryMap, setCategoryMap] = useState<Map<string, number>>(new Map());
+  const [subCategoryMap, setSubCategoryMap] = useState<Map<string, Map<string, number>[]>>(new Map());
   const [search, setSearch] = useState("");
   const [todayCount, setTodayCount] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
@@ -253,8 +253,7 @@ const Sidebar = () => {
   const isToggle = useSelector((state) => state.common.toggle);
   const userInfo = useSelector((state) => state.user);
   const isDarkMode = useSelector((state) => state.common.isDark);
-  const iconColor = isDarkMode === true ? "yellow" : "ff9500";
-
+  const iconColor = isDarkMode === true ? "yellow" : "#ff9500";
 
   const { openModal, ModalPortal, closeModal } = useModal();
 
@@ -276,23 +275,21 @@ const Sidebar = () => {
     const category = new Map<string, number>();
     const dictionary = new Map<string, Map<string, number>[]>();
 
-    data.map((t) => {
-      const subCategoryArr = Array<Map<string, number>>();
+    data.forEach((t) => {
+      const subCategoryArr = [];
       const subCategory = new Map<string, number>();
-      // key set
+
       if (!category.has(t.name)) {
         categoryList.push(t.name);
         category.set(t.name, t.mainCount);
         subCategory.set(t.subName, t.subCount);
         subCategoryArr.push(subCategory);
         dictionary.set(t.name, subCategoryArr);
-      }
-      // value set
-      else {
+      } else {
         subCategory.set(t.subName, t.subCount);
         const buff = dictionary.get(t.name);
-        if (!!buff) {
-          buff?.push(subCategory);
+        if (buff) {
+          buff.push(subCategory);
           dictionary.set(t.name, buff);
         }
       }
@@ -303,14 +300,12 @@ const Sidebar = () => {
     setSubCategoryMap(dictionary);
   };
 
-  // search button filter
-  const searchButtonFilter = async ( event: React.MouseEvent<HTMLButtonElement>) => {
+  const searchButtonFilter = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     dispatch(commonAction.setSearchFilter(search));
     setSearch("");
   };
 
-  // category filter
   const categoryFilter = (category: string, subCategory: string) => {
     dispatch(commonAction.setCategoryFilter(category));
     dispatch(commonAction.setSubCategoryFilter(subCategory));
@@ -430,26 +425,26 @@ const Sidebar = () => {
                 ({categoryMap && categoryMap.get(category)})
               </li>
             </ul>
-            {subCategoryMap?.get(category)?.map(function (option, i) {
-            const subCategoryKey = Array.from(option.keys())[0];
-            const count = option.get(subCategoryKey) || 0;
+            {subCategoryMap.get(category)?.map((option, i) => {
+              const subCategoryKey = Array.from(option.keys())[0];
+              const count = option.get(subCategoryKey) || 0;
 
-            if (count > 0) {
-              return (
-                <ul className="sub--menu" key={subCategoryKey}>
-                  <li>
-                    <div onClick={() => categoryFilter(category, subCategoryKey)}>
-                      <a href="#">{subCategoryKey}</a>
-                    </div>
-                  </li>
-                  <li className="count">
-                    ({count})
-                  </li>
-                </ul>
-              );
-            }
-            return null;
-          })}
+              if (count > 0) {
+                return (
+                  <ul className="sub--menu" key={subCategoryKey}>
+                    <li>
+                      <div onClick={() => categoryFilter(category, subCategoryKey)}>
+                        <a href="#">{subCategoryKey}</a>
+                      </div>
+                    </li>
+                    <li className="count">
+                      ({count})
+                    </li>
+                  </ul>
+                );
+              }
+              return null;
+            })}
           </div>
         ))}
         <ModalPortal>
