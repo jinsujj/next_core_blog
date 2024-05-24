@@ -267,21 +267,28 @@ const BlogDetail: NextPage<IProps> = ({ detailNote }) => {
   const postState = useSelector((state) => state.common.postState);
   const isDarkMode = useSelector((state) => state.common.isDark);
   const sideBarCategory = useSelector((state) => state.common.sideBarCategory);
+  const sideBarSubCategory = useSelector((state) => state.common.sideBarSubCategory);
   const searchQuery = useSelector((state) => state.common.search);
   const iconColor = isDarkMode ? "white" : "black";
+
+  const { category, subCategory } = detailNote;
   
   useEffect(() => {
     Prism.highlightAll();
   }, []);
 
   useEffect(() => {
-    const { category, title } = detailNote;
+    dispatch(commonAction.setCategoryFilter(category));
+    dispatch(commonAction.setSubCategoryFilter(subCategory||''));
+  }, [dispatch]);
+
+  useEffect(() => {
     return () => {
-      if (category !== sideBarCategory || searchQuery.includes(title)) {
+      if(category !== sideBarCategory || (sideBarSubCategory && sideBarSubCategory !== subCategory)){
         Router.push("/");
       }
     };
-  }, [detailNote]);
+  }, [sideBarCategory, sideBarSubCategory]);
 
   if (!detailNote.noteId) {
     return (

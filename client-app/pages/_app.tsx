@@ -35,7 +35,7 @@ const AppInner = ({ Component, pageProps }: { Component: any; pageProps: any }) 
     dispatch(commonAction.setPostState("read"));
     dispatch(commonAction.setDarkMode(initDarkMode()));
 
-    (async () => {
+    const handleLogin = async () => {
       const kakaoAccessCode = new URLSearchParams(window.location.search).get('code');
       if (kakaoAccessCode && !loginAttempted) {
         try {
@@ -47,7 +47,9 @@ const AppInner = ({ Component, pageProps }: { Component: any; pageProps: any }) 
           console.error('Login failed:', error);
         }
       }
-    })();
+    };
+
+    handleLogin();
   }, [loginAttempted, dispatch]);
 
   const getLayout = Component.getLayout ?? ((page: any) => page);
