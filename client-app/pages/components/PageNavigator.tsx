@@ -139,7 +139,7 @@ interface IProps {
                 <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
               </svg>
               <div className="text">
-                <span>이전 포스트 {prevNote?.noteId}</span>
+                <span>이전 포스트</span>
                 <div className="title">{prevNote?.title}</div>
               </div>
             </div>
@@ -147,7 +147,7 @@ interface IProps {
           {nextNote!!! && (
             <div className="nav-item next" onClick={() => PageNavigate(nextNote.noteId)}>
               <div className="text">
-                <span>다음 포스트 {nextNote?.noteId}</span>
+                <span>다음 포스트</span>
                 <div className="title">{nextNote?.title}</div>
               </div>
               <svg viewBox="0 0 24 24">
