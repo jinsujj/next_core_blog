@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@babel/runtime": "^7.24.7",
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
     "@fortawesome/free-brands-svg-icons": "^6.5.2",
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
@@ -33,6 +34,7 @@
     "yarn": "^1.22.22"
   },
   "devDependencies": {
+    "@babel/runtime": "^7.24.7",
     "@next/eslint-plugin-next": "^14.2.3",
     "@types/cookie": "^0.6.0",
     "@types/node": "^20.12.11",

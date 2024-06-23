@@ -6,6 +6,12 @@ WORKDIR /source
 
 # [ Install dependency ]
 COPY client-app/package.json ./
+COPY client-app/yarn.lock ./
+
+# [ Copy Enviorment key ]
+COPY client-app/.env ./
+
+RUN yarn install
 
 # [ Copy Front files ]
 COPY client-app/api ./api
@@ -22,13 +28,8 @@ COPY client-app/next.config.js ./
 COPY client-app/package.json ./
 COPY client-app/tsconfig.json ./
 
-# [ Copy Enviorment key ]
-COPY client-app/.env ./
-
-
 
 # [ Next.js build ]
-RUN yarn install 
 RUN yarn build
 EXPOSE 3000
 
