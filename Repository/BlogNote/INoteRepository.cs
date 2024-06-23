@@ -12,6 +12,7 @@ namespace next_core_blog.Repository.BlogNote
         int DeleteNote(int id);
 
         // Get Note
+        Task<IEnumerable<Summary>> GetSummary();
         Task<IEnumerable<GetNote>> GetNoteAll(int userId);
         Task<IEnumerable<GetNote>> GetNoteByCategory(int userId, string category, string subCategory);
         Task<IEnumerable<GetNote>> GetNoteBySearch(string searchQuery);
@@ -20,7 +21,6 @@ namespace next_core_blog.Repository.BlogNote
         Task<IEnumerable<CategoryViewModel>> GetNoteCategoryList();
         Task<IEnumerable<SidebarCategoryViewModel>> GetSidebarCategoryList();
 
-        Task<int> GetCountAll();
         Task<int> GetTotalReadCount();
         Task<int> GetTodayReadCount();
         Task<int> PostIpLog(IpLocationInfo logModel);

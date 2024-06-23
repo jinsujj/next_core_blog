@@ -25,7 +25,7 @@ using next_core_blog.Repository.Users;
 
 namespace next_core_blog.Controllers
 {
-    [Route("api/Note")]
+    [Route("api/notes")]
     [ApiController]
     public class NoteController : ControllerBase
     {
@@ -89,7 +89,7 @@ namespace next_core_blog.Controllers
         #endregion
 
         #region [ Post Category ]
-        [HttpPost("PostCategory")]
+        [HttpPost("categories")]
         [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public IActionResult PostCategory([FromBody] CategoryViewModel categoryView)
         {
@@ -116,7 +116,7 @@ namespace next_core_blog.Controllers
         #endregion
 
         #region [ Save Log ]
-        [HttpPost("postIpLog")]
+        [HttpPost("ipLog")]
         public async Task<IActionResult> PostIpLog([FromBody] IpLogModel logmodel)
         {
             _logger.LogInformation($"ip: {logmodel.visitorIp}, id: {logmodel.blogId}");
@@ -171,7 +171,7 @@ namespace next_core_blog.Controllers
         #endregion
 
         #region [ Get Note Info ]
-        [HttpGet("getNoteAll")]
+        [HttpGet("/")]
         public async Task<IActionResult> GetNoteAll(int userId)
         {
             _logger.LogInformation($"GetNoteAll: {userId} {DateTime.Now:yyyy/MM/dd HH:mm:ss}");
@@ -188,7 +188,22 @@ namespace next_core_blog.Controllers
             }
         }
 
-        [HttpGet("NoteById")]
+        [HttpGet("summary")]
+        public async Task<IActionResult> GetSummary() 
+        {
+            _logger.LogInformation($"summary: {DateTime.Now:yyyy/MM/dd HH:mm:ss}");
+
+            try{
+                var results = await _noteRepo.GetSummary();
+                return Ok(results);
+            }
+            catch (Exception ex){
+                _logger.LogError($"error: {ex.Message}");
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("detail")]
         public async Task<IActionResult> GetNoteById(int id)
         {
             _logger.LogInformation($"GetNoteById: {id} {DateTime.Now:yyyy/MM/dd HH:mm:ss}");
@@ -248,7 +263,7 @@ namespace next_core_blog.Controllers
             }
         }
 
-        [HttpGet("getCategoryList")]
+        [HttpGet("categories")]
         [Produces("application/json")]
         public async Task<IActionResult> GetCategoryList()
         {
@@ -266,7 +281,7 @@ namespace next_core_blog.Controllers
             }
         }
 
-        [HttpGet("getSidebarCategoryList")]
+        [HttpGet("sidebar/categories")]
         public async Task<IActionResult> GetSidebarCategoryList()
         {
             _logger.LogInformation($"getSidebarCategoryList {DateTime.Now:yyyy/MM/dd HH:mm:ss}");
@@ -322,22 +337,7 @@ namespace next_core_blog.Controllers
             return extractedFileName;
         }
         #endregion
-
         #region [ Read Count Info ]
-        [HttpGet("noteCountAll")]
-        public IActionResult GetCountAll()
-        {
-            try
-            {
-                return Ok(_noteRepo.GetCountAll());
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("error" + ex.Message);
-                return StatusCode(500, ex.Message);
-            }
-        }
-
         [HttpGet("totalReadCount")]
         public async Task<IActionResult> GetTotalReadCount()
         {

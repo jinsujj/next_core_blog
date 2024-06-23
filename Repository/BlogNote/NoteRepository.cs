@@ -32,16 +32,18 @@ namespace next_core_blog.Repository.BlogNote
             }
         }
 
-        public async Task<int> GetCountAll()
+        public async Task<IEnumerable<Summary>> GetSummary()
         {
-            string sql = @"SELECT COUNT(*)
-                            FROM note
-                            WHERE isPost ='Y'";
+            string sql = @"
+                SELECT noteId, title
+                FROM note 
+                WHERE isPost = 'Y'
+                ORDER BY noteId
+            ";
 
-            using (var con = _context.CreateConnection())
-            {
-                var result = await con.QueryFirstOrDefaultAsync<int>(sql);
-                return result;
+            using (var con = _context.CreateConnection()){
+                var notes = await con.QueryAsync<Summary>(sql);
+                return notes.ToList();
             }
         }
 

@@ -30,6 +30,7 @@ import { useSelector, wrapper } from "../../store";
 import cookie from "cookie";
 import userApi from "../../api/user";
 import { userActions } from "../../store/user";
+import PageNavigator from "../components/PageNavigator";
 
 interface StyledProps {
   $isdark: boolean;
@@ -360,6 +361,7 @@ const BlogDetail: NextPage<IProps> = ({ detailNote }) => {
                 <div className="board" dangerouslySetInnerHTML={{ __html: detailNote.content }} />
               </div>
             )}
+            <PageNavigator noteId={detailNote.noteId}/>
           </div>
           <div className="utterances" id={detailNote.noteId.toString()}></div>
         </div>
