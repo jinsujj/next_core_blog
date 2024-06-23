@@ -1,9 +1,9 @@
 # build
 docker-build-backend:
-	docker build -f ./docker/Dockerfile_back -t next_core_blog_backend .
+	docker build -f ./dockerfile/dockerfile_back -t next_core_blog_backend .
 
 docker-build-frontend:
-	docker build -f ./docker/Dockerfile_front -t next_core_blog_front .
+	docker build -f ./dockerfile/dockerfile_front -t next_core_blog_front .
 
 # run
 docker-run-backend:
