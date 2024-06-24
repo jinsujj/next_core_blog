@@ -8,6 +8,7 @@ import userApi from "../api/user";
 import { userActions } from "../store/user";
 import cookie from "cookie"; 
 import { commonAction } from "../store/common";
+import noteApi from "../api/note";
 
 const Home: NextPage = ({}) => {
   return (
@@ -26,19 +27,6 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
 
     const { category = null, subCategory = null, search = null } = context.query;
 
-   // sidebar filtering
-    if (category) {
-      console.log("category: "+category);
-      store.dispatch(commonAction.setCategoryFilter(category as string));
-    }
-    if (subCategory) {
-      console.log("subCategory: "+subCategory);
-      store.dispatch(commonAction.setSubCategoryFilter(subCategory as string));
-    }
-    if (search) {
-      store.dispatch(commonAction.setSearchFilter(search as string));
-    }
-
     // Cookie check
     if (cookieHeader) {
       const cookies = cookie.parse(cookieHeader);
@@ -54,9 +42,36 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
         }
       }
     }
+
+    // sidebar filtering
+    if (category) {
+      console.log("category: "+category);
+      store.dispatch(commonAction.setCategoryFilter(category as string));
+    }
+    else if (subCategory) {
+      console.log("subCategory: "+subCategory);
+      store.dispatch(commonAction.setSubCategoryFilter(subCategory as string));
+    }
+    else if (search) {
+      store.dispatch(commonAction.setSearchFilter(search as string));
+    }
+    else {
+      // init to random page
+      const response = await noteApi.getNoteSummary();
+      const randomIdx = Math.floor(Math.random() * response.data.length);
+      const blogId = response.data[randomIdx].noteId;
+
+      return {
+        redirect:{
+          destination: `/blog/${blogId}`,
+          permanent: false,
+        }
+      };
+    }
+
     return {
-      props: {},
-    };
+      props :{},
+    }
   }
 );
 
