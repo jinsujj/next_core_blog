@@ -171,7 +171,7 @@ namespace next_core_blog.Controllers
         #endregion
 
         #region [ Get Note Info ]
-        [HttpGet("/")]
+        [HttpGet("all")]
         public async Task<IActionResult> GetNoteAll(int userId)
         {
             _logger.LogInformation($"GetNoteAll: {userId} {DateTime.Now:yyyy/MM/dd HH:mm:ss}");

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import styled, { css } from "styled-components";
 import useModal from "../../hooks/useModal";
@@ -7,7 +7,7 @@ import { commonAction } from "../../store/common";
 import HeaderAuths from "./HeaderAuth";
 import HeaderProfile from "./HeaderProfile";
 import AuthModal from "./authModal/AuthModal";
-import Router from "next/router";
+import { useRouter } from "next/router";
 import Sidebar from "./Sidebar";
 import useRouterReady from "../../hooks/useRouterReady";
 import palette from "../../styles/palette";
@@ -122,27 +122,28 @@ const Container = styled.div<StyledProps>`
 `;
 
 const Header = () => {
+  const router = useRouter();
   const isToggle = useSelector((state) => state.common.toggle);
   const isLogged = useSelector((state) => state.user.isLogged);
   const isDarkMode = useSelector((state) => state.common.isDark);
-
+  
   const { ModalPortal, closeModal } = useModal();
   const dispatch = useDispatch();
-
-  const changeToggle = () => {
-    dispatch(commonAction.setToggleMode(!isToggle));
-  };
-
-  const goHome = () => {
-    dispatch(commonAction.initCommonState());
-    Router.push("/");
-  };
 
   const view = useRouterReady();
 
   if (!view) {
     return null;
   }
+
+  const changeToggle = () => {
+    dispatch(commonAction.setToggleMode(!isToggle));
+  };
+
+  const goHome = () => {
+      dispatch(commonAction.setCategoryFilter("Project"));
+      router.push("/?category=Project");
+  };
 
   return (
     <>
